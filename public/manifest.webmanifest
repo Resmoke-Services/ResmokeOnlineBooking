@@ -1,0 +1,21 @@
+{
+    "name": "Resmoke Reservations",
+    "short_name": "Resmoke",
+    "description": "Online booking for Resmoke services.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#192231",
+    "theme_color": "#2563eb",
+    "icons": [
+        {
+            "src": "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fresmoke_logo.jpg?alt=media&token=d87ce1ef-bcab-451e-bb87-7b84806c8575",
+            "sizes": "192x192",
+            "type": "image/jpeg"
+        },
+        {
+            "src": "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fresmoke_logo.jpg?alt=media&token=d87ce1ef-bcab-451e-bb87-7b84806c8575",
+            "sizes": "512x512",
+            "type": "image/jpeg"
+        }
+    ]
+}
