@@ -24,6 +24,9 @@ import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { doc, setDoc } from "firebase/firestore";
+import { firestore } from "@/lib/firebase";
+
 
 const contactFormSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -56,15 +59,15 @@ export default function ContactPage() {
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: user?.isGuest ? name : user?.displayName?.split(' ')[0] || '',
-      surname: user?.isGuest ? surname : user?.displayName?.split(' ')[1] || '',
-      cellNumber,
-      email: user?.isGuest ? email : user?.email || '',
-      address,
-    },
+    defaultValues: { name, surname, cellNumber, email, address },
     mode: "onChange",
   });
+  
+  // Resets the form if data in the store changes (e.g., after login)
+  useEffect(() => {
+    form.reset({ name, surname, cellNumber, email, address });
+  }, [name, surname, cellNumber, email, address, form]);
+
 
   // Effect to load Google Maps script
   useEffect(() => {
@@ -109,19 +112,33 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
-
-  useEffect(() => {
-    form.reset({
-      name: user?.isGuest ? name : user?.displayName?.split(' ')[0] || '',
-      surname: user?.isGuest ? surname : user?.displayName?.split(' ')[1] || '',
-      cellNumber,
-      email: user?.isGuest ? email : user?.email || '',
-      address 
-    });
-  }, [name, surname, cellNumber, email, address, form, user]);
-
   async function onSubmit(data: BookingFormData) {
     setIsSubmitting(true);
+    
+    // Update store with latest form data
+    setName(data.name);
+    setSurname(data.surname);
+    setCellNumber(data.cellNumber);
+    setEmail(data.email);
+    setAddress(data.address);
+
+    // If user is not a guest, save/update their details in Firestore
+    if (user && !user.isGuest) {
+      try {
+        const userRef = doc(firestore, 'users', user.uid);
+        await setDoc(userRef, {
+          name: data.name,
+          surname: data.surname,
+          cellNumber: data.cellNumber,
+          address: data.address,
+          email: data.email, // ensure email is saved
+          displayName: `${data.name} ${data.surname}`.trim(),
+        }, { merge: true }); // Use merge to avoid overwriting other fields like createdAt
+      } catch (error) {
+        console.error("Failed to save user details to Firestore:", error);
+        // We don't need to block the booking for this, but good to know.
+      }
+    }
     
     try {
       const response = await fetch('https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke-simple', {
@@ -159,12 +176,6 @@ export default function ContactPage() {
       }
 
       setAvailability(availabilityData);
-      
-      setName(data.name);
-      setSurname(data.surname);
-      setCellNumber(data.cellNumber);
-      setEmail(data.email);
-      setAddress(data.address);
       router.push("/select-datetime");
 
     } catch (error: any) {
@@ -269,7 +280,7 @@ export default function ContactPage() {
               />
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button type="submit" disabled={!form.formState.isValid || isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+              <Button type="submit" disabled={isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isSubmitting ? "Processing..." : "Next"}
               </Button>

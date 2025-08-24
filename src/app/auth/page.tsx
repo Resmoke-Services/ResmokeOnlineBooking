@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { setUser, user } = useBookingStore();
+  const { setUser, setName, setSurname, setCellNumber, setAddress, setEmail, user } = useBookingStore();
 
   useEffect(() => {
     if (user) {
@@ -29,30 +29,47 @@ export default function AuthPage() {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      const credential = GoogleAuthProvider.credentialFromResult(result);
       const user = result.user;
 
       if (user) {
         const userRef = doc(firestore, 'users', user.uid);
         const userDoc = await getDoc(userRef);
 
-        if (!userDoc.exists()) {
-          // New user, save their data
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            createdAt: new Date(),
-          });
-        }
-        
-        setUser({
+        const userData = {
             uid: user.uid,
             email: user.email || '',
             displayName: user.displayName || 'User',
             isGuest: false,
-        });
+        };
+        setUser(userData);
+        setEmail(userData.email);
+
+        if (userDoc.exists()) {
+          // Existing user, pre-fill data from Firestore
+          const data = userDoc.data();
+          setName(data.name || userData.displayName.split(' ')[0] || '');
+          setSurname(data.surname || userData.displayName.split(' ')[1] || '');
+          setCellNumber(data.cellNumber || '');
+          setAddress(data.address || '');
+        } else {
+          // New user, save their basic data
+          const nameParts = user.displayName?.split(' ') || ['User'];
+          const newName = nameParts[0];
+          const newSurname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+          await setDoc(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            name: newName,
+            surname: newSurname,
+            createdAt: new Date(),
+          });
+
+          setName(newName);
+          setSurname(newSurname);
+        }
+        
         router.push('/book');
       }
     } catch (error: any) {
@@ -72,6 +89,12 @@ export default function AuthPage() {
         email: '',
         isGuest: true,
     });
+    // Reset fields for guest
+    setName('');
+    setSurname('');
+    setCellNumber('');
+    setAddress('');
+    setEmail('');
     router.push('/book');
   };
 
