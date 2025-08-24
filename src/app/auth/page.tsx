@@ -7,7 +7,7 @@ import { FaUserSecret } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
-import { auth } from '@/lib/firebase';
+import { getClientAuth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInAnonymously, signInWithPopup } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import BookingFlowLayout from '@/components/booking-flow-layout';
@@ -29,6 +29,7 @@ export default function AuthPage() {
         });
         return;
     }
+    const auth = getClientAuth();
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
@@ -87,6 +88,7 @@ export default function AuthPage() {
 
   const handleGuestSignIn = async () => {
     try {
+      const auth = getClientAuth();
       const result = await signInAnonymously(auth);
       const user = result.user;
       

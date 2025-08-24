@@ -13,10 +13,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase App
-const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const auth: Auth = getAuth(app);
+// A function to initialize and get the Firebase app instance (client-side)
+const getClientApp = (): FirebaseApp => {
+    if (getApps().length) {
+        return getApp();
+    }
+    return initializeApp(firebaseConfig);
+}
 
-// Export only the core app and auth instances.
-// Firestore will be initialized safely on the client via the useFirestore hook.
-export { app, auth };
+// A function to get the Auth instance (client-side)
+const getClientAuth = (): Auth => {
+    return getAuth(getClientApp());
+}
+
+// Export the functions to be used in client components
+export { getClientApp, getClientAuth };
