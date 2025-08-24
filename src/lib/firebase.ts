@@ -15,6 +15,7 @@ const firebaseConfig = {
 // Initialize Firebase for SSR
 const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
-const firestore: Firestore = getFirestore(app);
+// Conditionally initialize Firestore only on the client side
+const firestore: Firestore = typeof window !== 'undefined' ? getFirestore(app) : ({} as Firestore);
 
 export { app, auth, firestore };
