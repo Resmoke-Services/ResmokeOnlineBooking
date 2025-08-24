@@ -7,6 +7,17 @@ import 'firebase/firestore';
 // Singleton holder for the Firebase app instance.
 let app: FirebaseApp | null = null;
 
+// Hardcoded Firebase config to ensure keys are always available.
+const firebaseConfig = {
+  apiKey: "AIzaSyCgFELygoR1bCxivlbiTzCzuyjbYUmx1RE",
+  authDomain: "resmokeonlinebooking.firebaseapp.com",
+  projectId: "resmokeonlinebooking",
+  storageBucket: "resmokeonlinebooking.firebasestorage.app",
+  messagingSenderId: "122043207768",
+  appId: "1:122043207768:web:49692c2f6d65eedda8fa2d",
+};
+
+
 // A function to initialize and get the Firebase app instance (client-side)
 const getClientApp = (): FirebaseApp => {
     if (app) {
@@ -18,17 +29,7 @@ const getClientApp = (): FirebaseApp => {
         app = getApp();
         return app;
     }
-
-    // Moved config object inside the function to ensure env vars are available on the client
-    const firebaseConfig = {
-      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    };
-
+    
     // Initialize the app and store it in the singleton variable.
     app = initializeApp(firebaseConfig);
     return app;
