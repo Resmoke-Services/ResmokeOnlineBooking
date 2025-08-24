@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { FaUserSecret } from 'react-icons/fa';
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import BookingFlowLayout from '@/components/booking-flow-layout';
 import { useToast } from '@/hooks/use-toast';
@@ -18,14 +17,8 @@ import { useFirestore } from '@/hooks/use-firestore';
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { setUser, setName, setSurname, setCellNumber, setAddress, setEmail, user } = useBookingStore();
+  const { setUser, setName, setSurname, setCellNumber, setAddress, setEmail } = useBookingStore();
   const firestore = useFirestore();
-
-  useEffect(() => {
-    if (user) {
-      router.push('/book');
-    }
-  }, [user, router]);
 
   const handleGoogleSignIn = async () => {
     if (!firestore) {
