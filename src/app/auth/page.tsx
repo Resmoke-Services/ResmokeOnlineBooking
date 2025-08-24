@@ -8,16 +8,18 @@ import { FaUserSecret } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
-import { auth, firestore } from '@/lib/firebase';
+import { auth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, User } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import BookingFlowLayout from '@/components/booking-flow-layout';
 import { useToast } from '@/hooks/use-toast';
+import { useFirestore } from '@/hooks/use-firestore';
 
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { setUser, setName, setSurname, setCellNumber, setAddress, setEmail, user } = useBookingStore();
+  const firestore = useFirestore();
 
   useEffect(() => {
     if (user) {
@@ -26,6 +28,14 @@ export default function AuthPage() {
   }, [user, router]);
 
   const handleGoogleSignIn = async () => {
+    if (!firestore) {
+        toast({
+            variant: "destructive",
+            title: "Initialization Error",
+            description: "Database is not ready. Please try again in a moment.",
+        });
+        return;
+    }
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);

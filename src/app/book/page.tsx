@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
-import { firestore } from "@/lib/firebase";
+import { useFirestore } from "@/hooks/use-firestore";
 
 
 const contactFormSchema = z.object({
@@ -41,6 +41,7 @@ export default function ContactPage() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user, name, surname, cellNumber, email, address, setName, setSurname, setCellNumber, setEmail, setAddress, setAvailability } = useBookingStore();
+  const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
@@ -123,7 +124,7 @@ export default function ContactPage() {
     setAddress(data.address);
 
     // If user is not a guest, save/update their details in Firestore
-    if (user && !user.isGuest) {
+    if (user && !user.isGuest && firestore) {
       try {
         const userRef = doc(firestore, 'users', user.uid);
         await setDoc(userRef, {

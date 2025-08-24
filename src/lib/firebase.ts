@@ -12,10 +12,19 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase for SSR
+// Initialize Firebase App
 const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
-// Conditionally initialize Firestore only on the client side
-const firestore: Firestore = typeof window !== 'undefined' ? getFirestore(app) : ({} as Firestore);
 
-export { app, auth, firestore };
+// Firestore instance will be initialized on the client via a hook
+let firestore: Firestore;
+
+// This function will be called from a client component or hook
+export const getClientFirestore = () => {
+  if (!firestore) {
+    firestore = getFirestore(app);
+  }
+  return firestore;
+};
+
+export { app, auth };
