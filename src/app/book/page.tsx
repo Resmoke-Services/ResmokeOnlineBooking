@@ -123,8 +123,8 @@ export default function ContactPage() {
     setEmail(data.email);
     setAddress(data.address);
 
-    // If user is not a guest, save/update their details in Firestore
-    if (user && !user.isGuest && firestore) {
+    // Save/update their details in Firestore for any authenticated user
+    if (user && firestore) {
       try {
         const userRef = doc(firestore, 'users', user.uid);
         await setDoc(userRef, {
