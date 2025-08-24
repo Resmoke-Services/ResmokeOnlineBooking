@@ -1,8 +1,7 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
-// This side-effect import is required for Firestore to work.
+// This side-effect import is required for Firestore to work on the client.
 import 'firebase/firestore';
 
 const firebaseConfig = {
@@ -18,15 +17,6 @@ const firebaseConfig = {
 const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth: Auth = getAuth(app);
 
-// Firestore instance will be initialized on the client via a hook
-let firestore: Firestore;
-
-// This function will be called from a client component or hook
-export const getClientFirestore = () => {
-  if (!firestore) {
-    firestore = getFirestore(app);
-  }
-  return firestore;
-};
-
+// Export only the core app and auth instances.
+// Firestore will be initialized safely on the client via the useFirestore hook.
 export { app, auth };
