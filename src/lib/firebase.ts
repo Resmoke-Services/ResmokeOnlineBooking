@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, persistentLocalCache } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,7 +17,7 @@ let app: FirebaseApp;
 if (!getApps().length) {
   app = initializeApp(firebaseConfig);
   initializeFirestore(app, {
-    localCache: memoryLocalCache(),
+    localCache: persistentLocalCache(/*{tabManager: new IndexedDbLruDelegate(...)}*/{}),
   });
 } else {
   app = getApp();
