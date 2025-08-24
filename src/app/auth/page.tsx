@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
 import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInAnonymously, signInWithPopup } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import BookingFlowLayout from '@/components/booking-flow-layout';
 import { useToast } from '@/hooks/use-toast';
@@ -85,20 +85,33 @@ export default function AuthPage() {
     }
   };
 
-  const handleGuestSignIn = () => {
-    setUser({
-        uid: `guest_${new Date().getTime()}`,
-        displayName: 'Guest',
-        email: '',
-        isGuest: true,
-    });
-    // Reset fields for guest
-    setName('');
-    setSurname('');
-    setCellNumber('');
-    setAddress('');
-    setEmail('');
-    router.push('/book');
+  const handleGuestSignIn = async () => {
+    try {
+      const result = await signInAnonymously(auth);
+      const user = result.user;
+      
+      setUser({
+          uid: user.uid,
+          displayName: 'Guest',
+          email: '',
+          isGuest: true,
+      });
+      
+      // Reset fields for guest
+      setName('');
+      setSurname('');
+      setCellNumber('');
+      setAddress('');
+      setEmail('');
+      router.push('/book');
+    } catch (error: any) {
+       console.error("Anonymous Sign-In Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Guest Sign-in Failed",
+        description: error.message || "Could not sign in as a guest. Please try again.",
+      });
+    }
   };
 
   return (
