@@ -30,22 +30,22 @@ const itemToRepairSchema = z.object({
   }),
   descriptions: z.record(z.string()).optional(),
 }).refine((data) => {
-    if (data.items.includes("OTHER") && (!data.descriptions?.['OTHER'] || data.descriptions['OTHER'].trim().length < 3)) {
+    if (data.items.includes("OTHER") && (!data.descriptions?.['OTHER'] || data.descriptions['OTHER'].trim().length < 6)) {
         return false;
     }
     return true;
 }, {
-    message: "Please provide a description for the 'Other' item (min. 3 characters).",
+    message: "Please provide a description for the 'Other' item (min. 6 characters).",
     path: ["descriptions.OTHER"],
 }).refine((data) => {
     for (const item of data.items) {
-        if (!data.descriptions?.[item] || data.descriptions[item].trim().length < 3) {
+        if (!data.descriptions?.[item] || data.descriptions[item].trim().length < 6) {
             return false;
         }
     }
     return true;
 }, {
-    message: "Please describe the problem for each selected item (min. 3 characters).",
+    message: "Please describe the problem for each selected item (min. 6 characters).",
     path: ["descriptions"],
 });
 
