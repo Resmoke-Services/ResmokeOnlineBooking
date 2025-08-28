@@ -326,7 +326,7 @@ export default function ContactPage() {
                           <SelectValue placeholder="Select suburb" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="max-h-60">
                         {suburbs.map((sub) => (
                           <SelectItem key={sub} value={sub}>{sub}</SelectItem>
                         ))}
