@@ -7,12 +7,15 @@ export interface UserProfile {
   isGuest: boolean;
 }
 
+export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | null;
+
 export interface BookingFormData {
   name: string;
   surname: string;
   cellNumber: string;
   email: string;
   address: string;
+  propertyType: PropertyType;
 }
 
 export interface BookingSlot {

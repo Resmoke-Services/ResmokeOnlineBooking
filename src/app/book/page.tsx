@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import type { BookingFormData, AvailabilitySlot } from "@/lib/types";
@@ -34,13 +35,16 @@ const contactFormSchema = z.object({
   cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(5, { message: "Address must be at least 5 characters." }),
+  propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate"], {
+    required_error: "You need to select a property type.",
+  }),
 });
 
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, setName, setSurname, setCellNumber, setEmail, setAddress, setAvailability } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, propertyType, setName, setSurname, setCellNumber, setEmail, setAddress, setPropertyType, setAvailability } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -60,14 +64,14 @@ export default function ContactPage() {
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address },
+    defaultValues: { name, surname, cellNumber, email, address, propertyType: propertyType || undefined },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address });
-  }, [name, surname, cellNumber, email, address, form]);
+    form.reset({ name, surname, cellNumber, email, address, propertyType: propertyType || undefined });
+  }, [name, surname, cellNumber, email, address, propertyType, form]);
 
 
   // Effect to load Google Maps script
@@ -135,6 +139,7 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
+    setPropertyType(data.propertyType);
 
     // Save/update their details in Firestore for any authenticated user
     if (user && firestore) {
@@ -145,6 +150,7 @@ export default function ContactPage() {
           surname: data.surname,
           cellNumber: data.cellNumber,
           address: data.address,
+          propertyType: data.propertyType,
           email: data.email, // ensure email is saved
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true }); // Use merge to avoid overwriting other fields like createdAt
@@ -291,6 +297,56 @@ export default function ContactPage() {
                           addressInputRef.current = el;
                         }}
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="propertyType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Property Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="House" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            House
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Complex" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Complex
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Estate" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Estate
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Complex in an Estate" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Complex in an Estate
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile } from '@/lib/types';
+import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -14,6 +14,7 @@ interface BookingState extends BookingData {
   setCellNumber: (cellNumber: string) => void;
   setEmail: (email: string) => void;
   setAddress: (address: string) => void;
+  setPropertyType: (propertyType: PropertyType) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
@@ -26,6 +27,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   cellNumber: '',
   email: '',
   address: '',
+  propertyType: null,
   selectedDateTime: null,
   webhookConfirmation: null,
 };
@@ -46,6 +48,7 @@ export const useBookingStore = create<BookingState>()(
       setCellNumber: (cellNumber) => set({ cellNumber }),
       setEmail: (email) => set({ email }),
       setAddress: (address) => set({ address }),
+      setPropertyType: (propertyType) => set({ propertyType }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
