@@ -234,8 +234,8 @@ export default function ContactPage() {
     <BookingFlowLayout>
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle className="text-2xl">Your Details</CardTitle>
-          <CardDescription>Please provide your contact information to proceed with your booking.</CardDescription>
+          <CardTitle className="text-2xl">Customer Profile</CardTitle>
+          <CardDescription>Please provide your details to proceed with your booking.</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
