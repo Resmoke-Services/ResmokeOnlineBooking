@@ -115,7 +115,7 @@ export default function ItemToRepairPage() {
       }
 
       setAvailability(availabilityData);
-      router.push("/select-datetime");
+      router.push("/select_datetime");
 
     } catch (error: any) {
       console.error("Failed to fetch availability:", error);
