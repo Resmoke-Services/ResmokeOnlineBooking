@@ -142,7 +142,11 @@ export default function ContactPage() {
     }
     
     try {
-      const response = await fetch('https://primary-production-5528.up.railway.app/webhook/4a512a78-fd84-4bd0-8a24-9aa553495ddb', {
+      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+      if (!webhookUrl) {
+        throw new Error("Webhook URL is not configured. Please contact support.");
+      }
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
