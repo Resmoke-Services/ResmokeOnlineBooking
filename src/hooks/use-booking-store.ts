@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem } from '@/lib/types';
+import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -21,7 +21,9 @@ interface BookingState extends BookingData {
   setPropertyType: (propertyType: PropertyType) => void;
   setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
-  setOtherItemDescription: (description: string) => void;
+  setProblemDescriptions: (descriptions: Record<string, string>) => void;
+  setPaymentMethods: (methods: PaymentMethod[]) => void;
+  setTermsAgreement: (agreement: TermsAgreement) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
@@ -41,7 +43,9 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   propertyType: null,
   accessCodeRequired: null,
   itemsToRepair: [],
-  otherItemDescription: '',
+  problemDescriptions: {},
+  paymentMethods: [],
+  termsAgreement: null,
   selectedDateTime: null,
   webhookConfirmation: null,
 };
@@ -69,7 +73,9 @@ export const useBookingStore = create<BookingState>()(
       setPropertyType: (propertyType) => set({ propertyType }),
       setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
-      setOtherItemDescription: (otherItemDescription) => set({ otherItemDescription }),
+      setProblemDescriptions: (problemDescriptions) => set({ problemDescriptions }),
+      setPaymentMethods: (paymentMethods) => set({ paymentMethods }),
+      setTermsAgreement: (termsAgreement) => set({ termsAgreement }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
@@ -82,5 +88,4 @@ export const useBookingStore = create<BookingState>()(
   )
 );
 
-    
     

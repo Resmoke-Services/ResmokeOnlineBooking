@@ -195,7 +195,7 @@ export default function ContactPage() {
       }
     }
     
-    router.push("/item-to-repair");
+    router.push("/item_to_repair");
   }
 
   if (!user) {
@@ -479,4 +479,6 @@ export default function ContactPage() {
 }
 
     
+    
+
     

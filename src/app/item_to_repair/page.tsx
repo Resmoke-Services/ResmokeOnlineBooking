@@ -2,7 +2,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -22,115 +22,72 @@ import { useBookingStore } from "@/hooks/use-booking-store";
 import { repairItems, type RepairItem } from "@/lib/types";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2, ChevronLeft } from "lucide-react";
-import type { AvailabilitySlot } from "@/lib/types";
+import { ChevronLeft } from "lucide-react";
 
 const itemToRepairSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: "You have to select at least one item.",
   }),
-  otherDescription: z.string().optional(),
+  descriptions: z.record(z.string()).optional(),
 }).refine((data) => {
-    if (data.items.includes("OTHER") && (!data.otherDescription || data.otherDescription.trim().length < 3)) {
+    if (data.items.includes("OTHER") && (!data.descriptions?.['OTHER'] || data.descriptions['OTHER'].trim().length < 3)) {
         return false;
     }
     return true;
 }, {
     message: "Please provide a description for the 'Other' item (min. 3 characters).",
-    path: ["otherDescription"],
+    path: ["descriptions.OTHER"],
+}).refine((data) => {
+    for (const item of data.items) {
+        if (!data.descriptions?.[item] || data.descriptions[item].trim().length < 3) {
+            return false;
+        }
+    }
+    return true;
+}, {
+    message: "Please describe the problem for each selected item (min. 3 characters).",
+    path: ["descriptions"],
 });
 
+type FormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, itemsToRepair, otherItemDescription, setAvailability, setItemsToRepair, setOtherItemDescription } = useBookingStore();
+  const { user, itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
 
-  const form = useForm<{items: string[], otherDescription?: string}>({
+  const form = useForm<FormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
       items: itemsToRepair,
-      otherDescription: otherItemDescription,
+      descriptions: problemDescriptions,
     },
+    mode: 'onChange',
   });
 
-  const selectedItems = form.watch("items");
-
+  const selectedItems = form.watch("items", []);
+  
   useEffect(() => {
     if (!user) {
       router.replace('/auth');
     }
   }, [user, router]);
   
-  async function onSubmit(data: { items: string[], otherDescription?: string }) {
-    setIsSubmitting(true);
+  function onSubmit(data: FormData) {
+    const finalItems = data.items as RepairItem[];
+    const finalDescriptions: Record<string, string> = {};
     
-    setItemsToRepair(data.items as RepairItem[]);
-    setOtherItemDescription(data.otherDescription || "");
+    finalItems.forEach(item => {
+        finalDescriptions[item] = data.descriptions?.[item] || '';
+    });
 
-    const bookingDetails = {
-        name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired,
-        itemsToRepair: data.items,
-        otherItemDescription: data.items.includes("OTHER") ? data.otherDescription : "",
-    };
-
-    try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
-      if (!webhookUrl) {
-        throw new Error("Webhook URL is not configured. Please contact support.");
-      }
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookingDetails),
-      });
-
-      if (!response.ok) {
-        let errorDetails = `Error: ${response.status}`;
-        try {
-          const errorJson = await response.json();
-          errorDetails = errorJson.message || JSON.stringify(errorJson);
-        } catch (e) {
-          // If parsing JSON fails, use the status text.
-          errorDetails = `${errorDetails}: ${response.statusText}`;
-        }
-        throw new Error(errorDetails);
-      }
-      
-      const responseText = await response.text();
-      let availabilityData: AvailabilitySlot[] = [];
-
-      if (responseText) {
-        try {
-          availabilityData = JSON.parse(responseText);
-        } catch (e) {
-          throw new Error("Failed to parse availability data from server.");
-        }
-      } else {
-        console.log("Received empty but successful response for availability. Assuming no slots.");
-      }
-
-      setAvailability(availabilityData);
-      router.push("/select_datetime");
-
-    } catch (error: any) {
-      console.error("Failed to fetch availability:", error);
-      toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description: error.message || "An unexpected error occurred. Please try again.",
-      });
-    } finally {
-        setIsSubmitting(false);
-    }
+    setItemsToRepair(finalItems);
+    setProblemDescriptions(finalDescriptions);
+    
+    router.push("/payment_and_terms");
   }
 
   if (!user) {
-    return <BookingFlowLayout><div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div></BookingFlowLayout>
+    return <BookingFlowLayout><div className="flex justify-center items-center h-64"></div></BookingFlowLayout>
   }
   
   return (
@@ -138,7 +95,7 @@ export default function ItemToRepairPage() {
       <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="text-2xl">Item to be Repaired</CardTitle>
-          <CardDescription>Please select the item(s) you need repaired.</CardDescription>
+          <CardDescription>Select the item(s) you need repaired and describe the problem.</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -195,32 +152,38 @@ export default function ItemToRepairPage() {
                   )}
                 />
 
-                {selectedItems?.includes('OTHER') && (
-                    <FormField
-                        control={form.control}
-                        name="otherDescription"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Description for "Other"</FormLabel>
-                                <FormControl>
-                                    <Textarea
-                                        placeholder="Please describe the item and the issue."
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
-                        )}
-                    />
-                )}
+                {selectedItems.length > 0 && <hr className="my-4"/>}
+
+                {selectedItems.map((item) => {
+                    const itemLabel = repairItems.find(i => i.id === item)?.label || "Item";
+                    return (
+                        <FormField
+                            key={item}
+                            control={form.control}
+                            name={`descriptions.${item}`}
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Problem with {itemLabel}</FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            placeholder={`Please describe the issue with the ${itemLabel.toLowerCase()}.`}
+                                            {...field}
+                                            value={field.value || ''}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )
+                })}
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={() => router.back()}>
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSubmitting ? "Processing..." : "Next"}
+              <Button type="submit" disabled={!form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+                Next
               </Button>
             </CardFooter>
           </form>
@@ -229,3 +192,5 @@ export default function ItemToRepairPage() {
     </BookingFlowLayout>
   );
 }
+
+    

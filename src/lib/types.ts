@@ -60,6 +60,14 @@ export const repairItems = [
 
 export type RepairItem = (typeof repairItems)[number]['id'];
 
+export type PaymentMethod = "Card" | "Cash" | "EFT";
+
+export interface TermsAgreement {
+    paymentOnPremises: boolean;
+    emailConsent: boolean;
+    smsConsent: boolean;
+}
+
 export interface BookingFormData {
   name: string;
   surname: string;
@@ -73,7 +81,9 @@ export interface BookingFormData {
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
   itemsToRepair: RepairItem[];
-  otherItemDescription: string;
+  problemDescriptions: Record<string, string>;
+  paymentMethods: PaymentMethod[];
+  termsAgreement: TermsAgreement | null;
 }
 
 export interface BookingSlot {
@@ -93,5 +103,4 @@ export interface AvailabilitySlot {
   slotStart: string;
 }
 
-    
     
