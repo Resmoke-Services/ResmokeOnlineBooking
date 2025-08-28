@@ -41,7 +41,7 @@ export interface BookingFormData {
   cellNumber: string;
   email: string;
   address: string;
-  suburb: Suburb;
+  suburb?: Suburb;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
 }

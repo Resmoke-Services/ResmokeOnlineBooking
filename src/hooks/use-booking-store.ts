@@ -29,7 +29,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   cellNumber: '',
   email: '',
   address: '',
-  suburb: 'Other',
+  suburb: undefined,
   propertyType: null,
   accessCodeRequired: null,
   selectedDateTime: null,
