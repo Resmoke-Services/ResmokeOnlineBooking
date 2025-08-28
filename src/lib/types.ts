@@ -8,6 +8,7 @@ export interface UserProfile {
 }
 
 export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | null;
+export type AccessCodeRequired = "Yes" | "No" | null;
 
 export interface BookingFormData {
   name: string;
@@ -16,6 +17,7 @@ export interface BookingFormData {
   email: string;
   address: string;
   propertyType: PropertyType;
+  accessCodeRequired: AccessCodeRequired;
 }
 
 export interface BookingSlot {

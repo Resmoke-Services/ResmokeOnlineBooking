@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType } from '@/lib/types';
+import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -15,6 +15,7 @@ interface BookingState extends BookingData {
   setEmail: (email: string) => void;
   setAddress: (address: string) => void;
   setPropertyType: (propertyType: PropertyType) => void;
+  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
@@ -28,6 +29,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   email: '',
   address: '',
   propertyType: null,
+  accessCodeRequired: null,
   selectedDateTime: null,
   webhookConfirmation: null,
 };
@@ -49,6 +51,7 @@ export const useBookingStore = create<BookingState>()(
       setEmail: (email) => set({ email }),
       setAddress: (address) => set({ address }),
       setPropertyType: (propertyType) => set({ propertyType }),
+      setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),

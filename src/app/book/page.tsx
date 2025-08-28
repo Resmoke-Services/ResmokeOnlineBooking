@@ -38,13 +38,16 @@ const contactFormSchema = z.object({
   propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate"], {
     required_error: "You need to select a property type.",
   }),
+  accessCodeRequired: z.enum(["Yes", "No"], {
+    required_error: "You need to select an option for access code.",
+  }),
 });
 
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, propertyType, setName, setSurname, setCellNumber, setEmail, setAddress, setPropertyType, setAvailability } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setPropertyType, setAccessCodeRequired, setAvailability } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -64,14 +67,14 @@ export default function ContactPage() {
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, propertyType: propertyType || undefined },
+    defaultValues: { name, surname, cellNumber, email, address, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, propertyType: propertyType || undefined });
-  }, [name, surname, cellNumber, email, address, propertyType, form]);
+    form.reset({ name, surname, cellNumber, email, address, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+  }, [name, surname, cellNumber, email, address, propertyType, accessCodeRequired, form]);
 
 
   // Effect to load Google Maps script
@@ -140,6 +143,7 @@ export default function ContactPage() {
     setEmail(data.email);
     setAddress(data.address);
     setPropertyType(data.propertyType);
+    setAccessCodeRequired(data.accessCodeRequired);
 
     // Save/update their details in Firestore for any authenticated user
     if (user && firestore) {
@@ -151,6 +155,7 @@ export default function ContactPage() {
           cellNumber: data.cellNumber,
           address: data.address,
           propertyType: data.propertyType,
+          accessCodeRequired: data.accessCodeRequired,
           email: data.email, // ensure email is saved
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true }); // Use merge to avoid overwriting other fields like createdAt
@@ -344,6 +349,40 @@ export default function ContactPage() {
                           </FormControl>
                           <FormLabel className="font-normal">
                             Complex in an Estate
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accessCodeRequired"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Access Code Required</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-row space-x-8"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Yes" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Yes
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="No" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            No
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
