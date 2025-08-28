@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { FaUserSecret } from 'react-icons/fa';
@@ -13,12 +14,19 @@ import { doc, setDoc, getDoc } from 'firebase/firestore';
 import StaticPageLayout from '@/components/static-page-layout';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
+import { Loader2 } from 'lucide-react';
 
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { setUser, setName, setSurname, setCellNumber, setAddress, setEmail } = useBookingStore();
+  const { user, setUser, setName, setSurname, setCellNumber, setAddress, setEmail } = useBookingStore();
   const firestore = useFirestore();
+
+  useEffect(() => {
+    if (user) {
+      router.replace('/book');
+    }
+  }, [user, router]);
 
   const handleGoogleSignIn = async () => {
     if (!firestore) {
@@ -115,6 +123,17 @@ export default function AuthPage() {
       });
     }
   };
+  
+  // While checking the user state, show a spinner to prevent the page from flashing.
+  if (user) {
+    return (
+      <StaticPageLayout>
+        <div className="flex justify-center items-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      </StaticPageLayout>
+    );
+  }
 
   return (
     <StaticPageLayout>
