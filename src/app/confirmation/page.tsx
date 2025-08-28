@@ -13,6 +13,26 @@ import { generateConfirmationMessage, type ConfirmationOutput } from "@/ai/flows
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import ConfirmationSkeleton from "@/components/confirmation-skeleton";
 
+function getValidDate(details: any, selectedDateTime: { date: string; time: string; } | null): Date | null {
+    // 1. Prioritize `dateTime` from the server confirmation
+    if (details?.dateTime) {
+        const parsed = parseISO(details.dateTime);
+        if (isValid(parsed)) return parsed;
+    }
+    // 2. Try to construct from `Date` and `Time` fields
+    if (details?.Date && details?.Time) {
+        const parsed = parse(`${details.Date} ${details.Time}`, 'yyyy-MM-dd HH:mm', new Date());
+        if (isValid(parsed)) return parsed;
+    }
+    // 3. Fallback to the user's selected date and time from the store
+    if (selectedDateTime?.date && selectedDateTime?.time) {
+        const parsed = parse(`${selectedDateTime.date} ${selectedDateTime.time}`, 'yyyy-MM-dd HH:mm', new Date());
+        if (isValid(parsed)) return parsed;
+    }
+    return null;
+}
+
+
 export default function ConfirmationPage() {
   const router = useRouter();
   const { name, surname, email, cellNumber, address, webhookConfirmation, selectedDateTime, resetBooking } = useBookingStore();
@@ -77,19 +97,9 @@ export default function ConfirmationPage() {
       try {
         const bookingStatus = bookingDetails.status || "Confirmed";
         
-        let bookingDate: Date | null = null;
-        if (bookingDetails.dateTime) {
-          const parsed = parseISO(bookingDetails.dateTime);
-          if (isValid(parsed)) bookingDate = parsed;
-        } else if (bookingDetails.Date && bookingDetails.Time) {
-          const parsed = parse(`${bookingDetails.Date} ${bookingDetails.Time}`, 'yyyy-MM-dd HH:mm', new Date());
-          if (isValid(parsed)) bookingDate = parsed;
-        } else if (selectedDateTime?.date && selectedDateTime?.time) {
-          const parsed = parse(`${selectedDateTime.date} ${selectedDateTime.time}`, 'yyyy-MM-dd HH:mm', new Date());
-          if (isValid(parsed)) bookingDate = parsed;
-        }
+        const bookingDate = getValidDate(bookingDetails, selectedDateTime);
 
-        if (bookingDate && isValid(bookingDate)) {
+        if (bookingDate) {
             const formattedDateTimeForAI = format(bookingDate, 'dd LLL yyyy HH:mm');
             const response = await generateConfirmationMessage({
               name,
@@ -157,14 +167,7 @@ export default function ConfirmationPage() {
      )
   }
 
-  let displayDate: Date | null = null;
-  if (bookingDetails.dateTime) {
-    const parsedDate = parseISO(bookingDetails.dateTime);
-    if (isValid(parsedDate)) displayDate = parsedDate;
-  } else if (selectedDateTime?.date && selectedDateTime?.time) {
-    const parsed = parse(`${selectedDateTime.date} ${selectedDateTime.time}`, 'yyyy-MM-dd HH:mm', new Date());
-    if (isValid(parsed)) displayDate = parsed;
-  }
+  const displayDate = getValidDate(bookingDetails, selectedDateTime);
 
   const formattedDate = bookingDetails.Date || (displayDate ? format(displayDate, "EEEE, MMMM do, yyyy") : "Date not specified");
   const formattedTime = bookingDetails.Time || (displayDate ? format(displayDate, "HH:mm") : "Time not specified");
