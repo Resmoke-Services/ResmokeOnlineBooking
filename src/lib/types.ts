@@ -7,7 +7,7 @@ export interface UserProfile {
   isGuest: boolean;
 }
 
-export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | null;
+export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | "Other" | null;
 export type AccessCodeRequired = "Yes" | "No" | null;
 
 export interface BookingFormData {

@@ -35,7 +35,7 @@ const contactFormSchema = z.object({
   cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(5, { message: "Address must be at least 5 characters." }),
-  propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate"], {
+  propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate", "Other"], {
     required_error: "You need to select a property type.",
   }),
   accessCodeRequired: z.enum(["Yes", "No"], {
@@ -317,7 +317,7 @@ export default function ContactPage() {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
-                        className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8"
+                        className="flex flex-wrap gap-x-8 gap-y-2"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
@@ -349,6 +349,14 @@ export default function ContactPage() {
                           </FormControl>
                           <FormLabel className="font-normal">
                             Complex in an Estate
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Other" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Other
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
