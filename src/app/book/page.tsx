@@ -100,13 +100,18 @@ export default function ContactPage() {
         new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
         new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
       );
+      
+      // Define a location bias for Centurion
+      const centurionLocation = new window.google.maps.LatLng(-25.8545, 28.1884);
 
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
           componentRestrictions: { country: "za" }, // Restrict to South Africa
           bounds: gautengBounds,
-          strictBounds: true, // Only show results within the defined bounds
+          location: centurionLocation, // Prioritize this location
+          radius: 20000, // Bias results within a 20km radius of the location
+          strictBounds: true, // Only show results within the defined gautengBounds
           fields: ["formatted_address"],
           types: ["address"],
         }
