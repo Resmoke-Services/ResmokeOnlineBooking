@@ -1,10 +1,10 @@
 
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { AppHeader } from '@/components/app-header';
 import { ServiceCard } from '@/components/service-card';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { BookingHeader } from '@/components/booking-header';
 
 const services = [
   {
@@ -36,7 +36,7 @@ const services = [
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <AppHeader />
+      <BookingHeader />
 
       <main className="flex-1">
         <section className="relative w-full h-[60vh] md:h-[70vh]">

@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
-import StaticPageLayout from '@/components/static-page-layout';
+import BookingFlowLayout from '@/components/booking-flow-layout';
 
 const serviceOptions = [
   {
@@ -105,7 +105,7 @@ const serviceOptions = [
 
 export default function ServicePage() {
   return (
-    <StaticPageLayout>
+    <BookingFlowLayout>
       <div className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">APPLIANCE REPAIRS</h1>
         <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>
@@ -144,6 +144,6 @@ export default function ServicePage() {
           </Link>
         ))}
       </div>
-    </StaticPageLayout>
+    </BookingFlowLayout>
   );
 }

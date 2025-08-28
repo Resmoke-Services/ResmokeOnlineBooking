@@ -1,9 +1,12 @@
 
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from 'lucide-react';
+import { BookingHeader } from "@/components/booking-header";
 
 interface ServiceCategoryCardProps {
   title: string;
@@ -92,24 +95,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
 export default function ServicesPage() {
   return (
      <div className="min-h-screen flex flex-col bg-background text-foreground">
-        {/* Header */}
-        <header className="sticky top-0 z-50 backdrop-blur-lg bg-background/50 border-b border-border/50">
-            <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-3">
-                     <Image
-                        src="https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fresmoke_logo.jpg?alt=media&token=d87ce1ef-bcab-451e-bb87-7b84806c8575"
-                        alt="Resmoke Services Logo"
-                        width={48}
-                        height={48}
-                        className="rounded-full border-2 border-primary/50"
-                        data-ai-hint="company logo"
-                    />
-                    <span className="text-xl font-bold tracking-tight text-foreground">Resmoke Services</span>
-                </Link>
-                <nav>
-                </nav>
-            </div>
-        </header>
+        <BookingHeader />
 
         <main className="flex-grow">
             <section id="services" className="py-24">
