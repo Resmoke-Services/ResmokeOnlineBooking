@@ -6,6 +6,7 @@ import 'firebase/firestore';
 
 // Singleton holder for the Firebase app instance.
 let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
 
 // Firebase config read from environment variables
 const firebaseConfig = {
@@ -36,8 +37,15 @@ const getClientApp = (): FirebaseApp => {
 
 // A function to get the Auth instance (client-side)
 const getClientAuth = (): Auth => {
-    return getAuth(getClientApp());
+    if (auth) {
+        return auth;
+    }
+    auth = getAuth(getClientApp());
+    return auth;
 }
 
 // Export the functions to be used in client components
-export { getClientApp, getClientAuth };
+const clientApp = getClientApp();
+const clientAuth = getClientAuth();
+
+export { clientApp, clientAuth as auth };
