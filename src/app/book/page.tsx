@@ -142,7 +142,7 @@ export default function ContactPage() {
     }
     
     try {
-      const response = await fetch('https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke-simple', {
+      const response = await fetch('https://primary-production-5528.up.railway.app/webhook/4a512a78-fd84-4bd0-8a24-9aa553495ddb', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
