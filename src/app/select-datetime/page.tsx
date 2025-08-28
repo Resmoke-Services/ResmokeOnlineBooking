@@ -37,7 +37,7 @@ export default function SelectDateTimePage() {
   useEffect(() => {
     // If user lands here without filling details, redirect them
     if (!name) {
-      router.replace("/user-profile");
+      router.replace("/customer_profile");
     }
   }, [name, router]);
 
@@ -166,7 +166,7 @@ export default function SelectDateTimePage() {
            <CardDescription className="text-base">We're sorry, but there are no booking slots available at this time. Please try again later.</CardDescription>
         </CardHeader>
         <CardContent>
-           <Button onClick={() => router.push('/user-profile')}>
+           <Button onClick={() => router.push('/customer_profile')}>
              <ChevronLeft className="mr-2 h-4 w-4" /> Go Back
            </Button>
         </CardContent>
@@ -224,7 +224,7 @@ export default function SelectDateTimePage() {
       </Card>
 
       <div className="mt-8 flex justify-between items-center">
-        <Button variant="outline" onClick={() => router.push('/user-profile')}> <ChevronLeft className="mr-2 h-4 w-4" /> Back</Button>
+        <Button variant="outline" onClick={() => router.push('/customer_profile')}> <ChevronLeft className="mr-2 h-4 w-4" /> Back</Button>
         <Button onClick={handleConfirm} disabled={!selectedDate || !selectedTime || isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? "Confirming..." : "Confirm Booking"}

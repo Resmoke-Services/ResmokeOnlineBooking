@@ -52,7 +52,7 @@ export default function ConfirmationPage() {
   useEffect(() => {
     // Redirect if essential data is missing
     if (!name || !webhookConfirmation) {
-      router.replace("/user-profile");
+      router.replace("/customer_profile");
       return;
     }
 
@@ -139,7 +139,7 @@ export default function ConfirmationPage() {
                 </Alert>
             </CardContent>
             <CardFooter>
-                 <Button onClick={() => router.push('/user-profile')}>Try Again</Button>
+                 <Button onClick={() => router.push('/customer_profile')}>Try Again</Button>
             </CardFooter>
         </Card>
       </BookingFlowLayout>
