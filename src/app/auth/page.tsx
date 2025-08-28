@@ -10,7 +10,7 @@ import { useBookingStore } from '@/hooks/use-booking-store';
 import { getClientAuth } from '@/lib/firebase';
 import { GoogleAuthProvider, signInAnonymously, signInWithPopup } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import BookingFlowLayout from '@/components/booking-flow-layout';
+import StaticPageLayout from '@/components/static-page-layout';
 import { useToast } from '@/hooks/use-toast';
 import { useFirestore } from '@/hooks/use-firestore';
 
@@ -117,7 +117,7 @@ export default function AuthPage() {
   };
 
   return (
-    <BookingFlowLayout>
+    <StaticPageLayout>
       <div className="flex justify-center items-center py-12">
         <Card className="w-full max-w-md shadow-xl">
           <CardHeader className="text-center">
@@ -144,6 +144,6 @@ export default function AuthPage() {
           </CardContent>
         </Card>
       </div>
-    </BookingFlowLayout>
+    </StaticPageLayout>
   );
 }
