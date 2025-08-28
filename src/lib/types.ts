@@ -9,6 +9,15 @@ export interface UserProfile {
 export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | "Other" | null;
 export type AccessCodeRequired = "Yes" | "No" | null;
 
+export const cities = [
+    "Centurion",
+    "Pretoria",
+    "Midrand",
+    "Other",
+] as const;
+
+export type City = (typeof cities)[number];
+
 export const suburbs = [
   "Amberfield",
   "Celtisdal",
@@ -57,6 +66,8 @@ export interface BookingFormData {
   cellNumber: string;
   email: string;
   address: string;
+  city?: City;
+  otherCityDescription?: string;
   suburb?: Suburb;
   otherSuburbDescription?: string;
   propertyType: PropertyType;
@@ -82,4 +93,5 @@ export interface AvailabilitySlot {
   slotStart: string;
 }
 
+    
     

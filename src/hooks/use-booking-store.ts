@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, RepairItem } from '@/lib/types';
+import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -14,6 +14,8 @@ interface BookingState extends BookingData {
   setCellNumber: (cellNumber: string) => void;
   setEmail: (email: string) => void;
   setAddress: (address: string) => void;
+  setCity: (city: City) => void;
+  setOtherCityDescription: (description: string) => void;
   setSuburb: (suburb: Suburb) => void;
   setOtherSuburbDescription: (description: string) => void;
   setPropertyType: (propertyType: PropertyType) => void;
@@ -32,6 +34,8 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   cellNumber: '',
   email: '',
   address: '',
+  city: undefined,
+  otherCityDescription: '',
   suburb: undefined,
   otherSuburbDescription: '',
   propertyType: null,
@@ -58,6 +62,8 @@ export const useBookingStore = create<BookingState>()(
       setCellNumber: (cellNumber) => set({ cellNumber }),
       setEmail: (email) => set({ email }),
       setAddress: (address) => set({ address }),
+      setCity: (city) => set({ city }),
+      setOtherCityDescription: (otherCityDescription) => set({ otherCityDescription }),
       setSuburb: (suburb) => set({ suburb }),
       setOtherSuburbDescription: (otherSuburbDescription) => set({ otherSuburbDescription }),
       setPropertyType: (propertyType) => set({ propertyType }),
@@ -76,4 +82,5 @@ export const useBookingStore = create<BookingState>()(
   )
 );
 
+    
     

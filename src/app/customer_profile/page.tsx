@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import type { BookingFormData } from "@/lib/types";
-import { suburbs } from "@/lib/types";
+import { suburbs, cities } from "@/lib/types";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -38,6 +38,10 @@ const contactFormSchema = z.object({
   cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(5, { message: "Address must be at least 5 characters." }),
+  city: z.enum(cities, {
+    required_error: "You need to select a city.",
+  }),
+  otherCityDescription: z.string().optional(),
   suburb: z.enum(suburbs, {
     required_error: "You need to select a suburb.",
   }),
@@ -56,15 +60,23 @@ const contactFormSchema = z.object({
 }, {
     message: "Please specify your suburb (min. 3 characters).",
     path: ["otherSuburbDescription"],
+}).refine(data => {
+    if (data.city === 'Other' && (!data.otherCityDescription || data.otherCityDescription.trim().length < 3)) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Please specify your city (min. 3 characters).",
+    path: ["otherCityDescription"],
 });
 
-type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'suburb' | 'propertyType' | 'accessCodeRequired' | 'otherSuburbDescription'>
+type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'city' | 'otherCityDescription' | 'suburb' | 'propertyType' | 'accessCodeRequired' | 'otherSuburbDescription'>
 
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, suburb, otherSuburbDescription, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setOtherSuburbDescription, setPropertyType, setAccessCodeRequired } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setCity, setOtherCityDescription, setSuburb, setOtherSuburbDescription, setPropertyType, setAccessCodeRequired } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -83,15 +95,16 @@ export default function ContactPage() {
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
+    defaultValues: { name, surname, cellNumber, email, address, city: city || undefined, otherCityDescription, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
     mode: "onChange",
   });
 
   const selectedSuburb = form.watch("suburb");
+  const selectedCity = form.watch("city");
   
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
-  }, [name, surname, cellNumber, email, address, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
+    form.reset({ name, surname, cellNumber, email, address, city: city || undefined, otherCityDescription, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+  }, [name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
 
   useEffect(() => {
     if (apiKey && apiKey !== "your_google_maps_api_key_here") {
@@ -153,6 +166,8 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
+    setCity(data.city);
+    setOtherCityDescription(data.otherCityDescription || '');
     setSuburb(data.suburb);
     setOtherSuburbDescription(data.otherSuburbDescription || '');
     setPropertyType(data.propertyType);
@@ -166,6 +181,8 @@ export default function ContactPage() {
           surname: data.surname,
           cellNumber: data.cellNumber,
           address: data.address,
+          city: data.city,
+          otherCityDescription: data.otherCityDescription,
           suburb: data.suburb,
           otherSuburbDescription: data.otherSuburbDescription,
           propertyType: data.propertyType,
@@ -269,6 +286,52 @@ export default function ContactPage() {
                   </FormItem>
                 )}
               />
+               <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {cities.map((city) => (
+                           <FormItem key={city} className="flex items-center space-x-3 space-y-0">
+                             <FormControl>
+                               <RadioGroupItem value={city} />
+                             </FormControl>
+                             <FormLabel className="font-normal">
+                               {city}
+                             </FormLabel>
+                           </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {selectedCity === 'Other' && (
+                <FormField
+                  control={form.control}
+                  name="otherCityDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Please Specify Your City</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please enter your city name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
                <FormField
                 control={form.control}
                 name="suburb"
@@ -415,4 +478,5 @@ export default function ContactPage() {
   );
 }
 
+    
     
