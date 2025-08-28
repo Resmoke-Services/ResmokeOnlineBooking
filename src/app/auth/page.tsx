@@ -26,7 +26,7 @@ export default function AuthPage() {
   useEffect(() => {
     // If user is already logged in (not from a redirect), go to booking page.
     if (user) {
-      router.replace('/book');
+      router.replace('/user-profile');
       return;
     }
 
@@ -72,7 +72,7 @@ export default function AuthPage() {
             setSurname(newSurname);
           }
           
-          router.replace('/book'); // Redirect to booking after processing
+          router.replace('/user-profile'); // Redirect to booking after processing
         } else {
             // No redirect result, so it's a fresh visit to the page.
             setIsLoading(false);
@@ -119,7 +119,7 @@ export default function AuthPage() {
       setCellNumber('');
       setAddress('');
       setEmail('');
-      router.push('/book');
+      router.push('/user-profile');
     } catch (error: any) {
        console.error("Anonymous Sign-In Error:", error);
       toast({
