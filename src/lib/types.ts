@@ -1,5 +1,4 @@
 
-
 export interface UserProfile {
   uid: string;
   email: string;
@@ -10,12 +9,39 @@ export interface UserProfile {
 export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | "Other" | null;
 export type AccessCodeRequired = "Yes" | "No" | null;
 
+export const suburbs = [
+  "Amberfield",
+  "Celtisdal",
+  "Centurion CBD",
+  "Clubview",
+  "Die Hoewes",
+  "Doringkloof",
+  "Eldoraigne",
+  "Hennopspark",
+  "Heuweloord",
+  "Highveld",
+  "Irene",
+  "Lyttelton",
+  "Pierre van Ryneveld",
+  "Raslouw",
+  "Rooihuiskraal",
+  "Thatchfield",
+  "The Reeds",
+  "Valhalla",
+  "Wierdapark",
+  "Zwartkop",
+  "Other",
+] as const;
+
+export type Suburb = (typeof suburbs)[number];
+
 export interface BookingFormData {
   name: string;
   surname: string;
   cellNumber: string;
   email: string;
   address: string;
+  suburb: Suburb;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
 }

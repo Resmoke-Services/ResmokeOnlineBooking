@@ -17,9 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import type { BookingFormData, AvailabilitySlot } from "@/lib/types";
+import { suburbs } from "@/lib/types";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +37,9 @@ const contactFormSchema = z.object({
   cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(5, { message: "Address must be at least 5 characters." }),
+  suburb: z.enum(suburbs, {
+    required_error: "You need to select a suburb.",
+  }),
   propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate", "Other"], {
     required_error: "You need to select a property type.",
   }),
@@ -47,7 +52,7 @@ export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setPropertyType, setAccessCodeRequired, setAvailability } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired, setAvailability } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -67,14 +72,14 @@ export default function ContactPage() {
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
+    defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
-  }, [name, surname, cellNumber, email, address, propertyType, accessCodeRequired, form]);
+    form.reset({ name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+  }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
 
 
   // Effect to load Google Maps script
@@ -142,6 +147,7 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
+    setSuburb(data.suburb);
     setPropertyType(data.propertyType);
     setAccessCodeRequired(data.accessCodeRequired);
 
@@ -154,6 +160,7 @@ export default function ContactPage() {
           surname: data.surname,
           cellNumber: data.cellNumber,
           address: data.address,
+          suburb: data.suburb,
           propertyType: data.propertyType,
           accessCodeRequired: data.accessCodeRequired,
           email: data.email, // ensure email is saved
@@ -303,6 +310,28 @@ export default function ContactPage() {
                         }}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="suburb"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Suburb</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a suburb" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {suburbs.map((sub) => (
+                          <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
