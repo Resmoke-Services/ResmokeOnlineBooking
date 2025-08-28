@@ -1,15 +1,15 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FcGoogle } from 'react-icons/fc';
 import { FaUserSecret } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
-import { getClientAuth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInAnonymously, signInWithPopup } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { GoogleAuthProvider, signInAnonymously, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import StaticPageLayout from '@/components/static-page-layout';
 import { useToast } from '@/hooks/use-toast';
@@ -21,82 +21,89 @@ export default function AuthPage() {
   const { toast } = useToast();
   const { user, setUser, setName, setSurname, setCellNumber, setAddress, setEmail } = useBookingStore();
   const firestore = useFirestore();
+  const [isLoading, setIsLoading] = useState(true); // To handle redirect processing
 
   useEffect(() => {
+    // If user is already logged in (not from a redirect), go to booking page.
     if (user) {
       router.replace('/book');
+      return;
     }
-  }, [user, router]);
 
-  const handleGoogleSignIn = async () => {
-    if (!firestore) {
-        toast({
-            variant: "destructive",
-            title: "Initialization Error",
-            description: "Database is not ready. Please try again in a moment.",
-        });
-        return;
-    }
-    const auth = getClientAuth();
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
+    const processRedirect = async () => {
+      if (!firestore) return;
 
-      if (user) {
-        const userRef = doc(firestore, 'users', user.uid);
-        const userDoc = await getDoc(userRef);
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User has successfully signed in via redirect.
+          const user = result.user;
+          const userRef = doc(firestore, 'users', user.uid);
+          const userDoc = await getDoc(userRef);
 
-        const userData = {
+          const userData = {
             uid: user.uid,
             email: user.email || '',
             displayName: user.displayName || 'User',
             isGuest: false,
-        };
-        setUser(userData);
-        setEmail(userData.email);
+          };
+          setUser(userData);
+          setEmail(userData.email);
 
-        if (userDoc.exists()) {
-          // Existing user, pre-fill data from Firestore
-          const data = userDoc.data();
-          setName(data.name || userData.displayName.split(' ')[0] || '');
-          setSurname(data.surname || userData.displayName.split(' ')[1] || '');
-          setCellNumber(data.cellNumber || '');
-          setAddress(data.address || '');
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setName(data.name || userData.displayName.split(' ')[0] || '');
+            setSurname(data.surname || userData.displayName.split(' ')[1] || '');
+            setCellNumber(data.cellNumber || '');
+            setAddress(data.address || '');
+          } else {
+            const nameParts = user.displayName?.split(' ') || ['User'];
+            const newName = nameParts[0];
+            const newSurname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+            await setDoc(userRef, {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName,
+              name: newName,
+              surname: newSurname,
+              createdAt: new Date(),
+            });
+            setName(newName);
+            setSurname(newSurname);
+          }
+          
+          router.replace('/book'); // Redirect to booking after processing
         } else {
-          // New user, save their basic data
-          const nameParts = user.displayName?.split(' ') || ['User'];
-          const newName = nameParts[0];
-          const newSurname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-
-          await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            name: newName,
-            surname: newSurname,
-            createdAt: new Date(),
-          });
-
-          setName(newName);
-          setSurname(newSurname);
+            // No redirect result, so it's a fresh visit to the page.
+            setIsLoading(false);
         }
-        
-        router.push('/book');
+      } catch (error: any) {
+        console.error("Redirect Result Error:", error);
+        toast({
+          variant: "destructive",
+          title: "Authentication Failed",
+          description: error.message || "Could not process sign-in. Please try again.",
+        });
+        setIsLoading(false);
       }
-    } catch (error: any) {
-      console.error("Google Sign-In Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Authentication Failed",
-        description: error.message || "Could not sign in with Google. Please try again.",
-      });
+    };
+
+    // We need to wait for firestore to be initialized.
+    if (firestore) {
+      processRedirect();
     }
+  }, [firestore, router, setAddress, setCellNumber, setEmail, setName, setSurname, setUser, toast, user]);
+
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    const provider = new GoogleAuthProvider();
+    // Start the redirect flow. The logic in useEffect will handle the result.
+    await signInWithRedirect(auth, provider);
   };
 
   const handleGuestSignIn = async () => {
+    setIsLoading(true);
     try {
-      const auth = getClientAuth();
       const result = await signInAnonymously(auth);
       const user = result.user;
       
@@ -107,7 +114,6 @@ export default function AuthPage() {
           isGuest: true,
       });
       
-      // Reset fields for guest
       setName('');
       setSurname('');
       setCellNumber('');
@@ -121,11 +127,11 @@ export default function AuthPage() {
         title: "Guest Sign-in Failed",
         description: error.message || "Could not sign in as a guest. Please try again.",
       });
+      setIsLoading(false);
     }
   };
   
-  // While checking the user state, show a spinner to prevent the page from flashing.
-  if (user) {
+  if (isLoading) {
     return (
       <StaticPageLayout>
         <div className="flex justify-center items-center py-12">
