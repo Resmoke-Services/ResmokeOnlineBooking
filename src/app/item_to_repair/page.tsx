@@ -122,7 +122,7 @@ export default function ItemToRepairPage() {
                                       checked={field.value?.includes(item.id)}
                                       onCheckedChange={(checked) => {
                                         return checked
-                                          ? field.onChange([...field.value, item.id])
+                                          ? field.onChange([...(field.value || []), item.id])
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value) => value !== item.id
@@ -192,5 +192,3 @@ export default function ItemToRepairPage() {
     </BookingFlowLayout>
   );
 }
-
-    
