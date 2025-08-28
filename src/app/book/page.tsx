@@ -323,7 +323,7 @@ export default function ContactPage() {
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a suburb" />
+                          <SelectValue placeholder="Select suburb" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
