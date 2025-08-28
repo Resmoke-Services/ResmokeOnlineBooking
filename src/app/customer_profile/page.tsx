@@ -85,7 +85,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (!user) {
-      router.replace('/auth');
+      router.replace('/user_profile');
     }
   }, [user, router]);
 

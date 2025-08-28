@@ -68,7 +68,7 @@ export default function ItemToRepairPage() {
   
   useEffect(() => {
     if (!user) {
-      router.replace('/auth');
+      router.replace('/user_profile');
     }
   }, [user, router]);
   

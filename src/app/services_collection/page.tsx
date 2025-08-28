@@ -36,7 +36,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/auth"
+    href: "/user_profile"
   }
 ];
 

@@ -29,7 +29,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/auth"
+    href: "/user_profile"
   },
   {
     type: 'collection_delivery',
@@ -59,7 +59,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/auth"
+    href: "/user_profile"
   }
 ];
 

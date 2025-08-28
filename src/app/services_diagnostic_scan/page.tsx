@@ -35,7 +35,7 @@ const serviceOptions = [
       alt: "Technician performing diagnostic scan",
       hint: "car diagnostic"
     },
-    href: "/auth"
+    href: "/user_profile"
   },
   {
     type: 'onsite',
@@ -72,7 +72,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/auth"
+    href: "/user_profile"
   }
 ];
 

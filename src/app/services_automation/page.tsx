@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "Smart home automation interface",
       hint: "home automation"
     },
-    href: "/auth"
+    href: "/user_profile"
   }
 ];
 

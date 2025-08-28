@@ -69,7 +69,7 @@ export default function PaymentAndTermsPage() {
 
   useEffect(() => {
     if (!store.user) {
-      router.replace('/auth');
+      router.replace('/user_profile');
     }
     if (store.itemsToRepair.length === 0) {
         router.replace('/item_to_repair');
