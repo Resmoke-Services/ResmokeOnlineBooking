@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import type { BookingFormData, AvailabilitySlot } from "@/lib/types";
+import type { BookingFormData } from "@/lib/types";
 import { suburbs } from "@/lib/types";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
@@ -48,11 +48,14 @@ const contactFormSchema = z.object({
   }),
 });
 
+// We are not using all fields for this form, so we can Pick them
+type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'suburb' | 'propertyType' | 'accessCodeRequired'>
+
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired, setAvailability } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -70,7 +73,7 @@ export default function ContactPage() {
     setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
   }, []);
 
-  const form = useForm<BookingFormData>({
+  const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
     mode: "onChange",
@@ -138,7 +141,7 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
-  async function onSubmit(data: BookingFormData) {
+  async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
     
     // Update store with latest form data
@@ -172,58 +175,7 @@ export default function ContactPage() {
       }
     }
     
-    try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
-      if (!webhookUrl) {
-        throw new Error("Webhook URL is not configured. Please contact support.");
-      }
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        let errorDetails = `Error: ${response.status}`;
-        try {
-          const errorJson = await response.json();
-          errorDetails = errorJson.message || JSON.stringify(errorJson);
-        } catch (e) {
-          // If parsing JSON fails, use the status text.
-          errorDetails = `${errorDetails}: ${response.statusText}`;
-        }
-        throw new Error(errorDetails);
-      }
-      
-      const responseText = await response.text();
-      let availabilityData: AvailabilitySlot[] = [];
-
-      if (responseText) {
-        try {
-          availabilityData = JSON.parse(responseText);
-        } catch (e) {
-          throw new Error("Failed to parse availability data from server.");
-        }
-      } else {
-        // Handle empty but successful response
-        console.log("Received empty but successful response for availability. Assuming no slots.");
-      }
-
-      setAvailability(availabilityData);
-      router.push("/select-datetime");
-
-    } catch (error: any) {
-      console.error("Failed to fetch availability:", error);
-      toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description: error.message || "An unexpected error occurred. Please try again.",
-      });
-    } finally {
-        setIsSubmitting(false);
-    }
+    router.push("/item-to-repair");
   }
 
   if (!user) {
@@ -430,7 +382,7 @@ export default function ContactPage() {
               />
             </CardContent>
             <CardFooter className="flex justify-end">
-              <Button type="submit" disabled={isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+              <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
                 {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {isSubmitting ? "Processing..." : "Next"}
               </Button>

@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb } from '@/lib/types';
+import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, RepairItem } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -17,6 +17,8 @@ interface BookingState extends BookingData {
   setSuburb: (suburb: Suburb) => void;
   setPropertyType: (propertyType: PropertyType) => void;
   setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired) => void;
+  setItemsToRepair: (items: RepairItem[]) => void;
+  setOtherItemDescription: (description: string) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
@@ -32,6 +34,8 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   suburb: undefined,
   propertyType: null,
   accessCodeRequired: null,
+  itemsToRepair: [],
+  otherItemDescription: '',
   selectedDateTime: null,
   webhookConfirmation: null,
 };
@@ -55,6 +59,8 @@ export const useBookingStore = create<BookingState>()(
       setSuburb: (suburb) => set({ suburb }),
       setPropertyType: (propertyType) => set({ propertyType }),
       setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
+      setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
+      setOtherItemDescription: (otherItemDescription) => set({ otherItemDescription }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),

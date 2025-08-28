@@ -35,6 +35,22 @@ export const suburbs = [
 
 export type Suburb = (typeof suburbs)[number];
 
+export const repairItems = [
+    { id: 'DISHWASHER', label: 'DISHWASHER' },
+    { id: 'MICROWAVE', label: 'MICROWAVE' },
+    { id: 'OVEN', label: 'OVEN' },
+    { id: 'TUMBLE_DRYER', label: 'TUMBLE DRYER' },
+    { id: 'WASHING_MACHINE', label: 'WASHING MACHINE' },
+    { id: 'FRIDGE', label: 'FRIDGE', note: "We don't do Regas or Compressor Exchange" },
+    { id: 'ICE_MACHINE', label: 'ICE MACHINE', note: 'We repair this item at our workshop only' },
+    { id: 'TV', label: 'TV', note: 'We repair this item at our workshop only' },
+    { id: 'GHD', label: 'GHD', note: 'We repair this item at our workshop only' },
+    { id: 'CAR', label: 'CAR', note: 'Diagnostic Scan Onsite - Repairs at Workshop Only' },
+    { id: 'OTHER', label: 'Other' },
+] as const;
+
+export type RepairItem = (typeof repairItems)[number]['id'];
+
 export interface BookingFormData {
   name: string;
   surname: string;
@@ -44,6 +60,8 @@ export interface BookingFormData {
   suburb?: Suburb;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
+  itemsToRepair: RepairItem[];
+  otherItemDescription: string;
 }
 
 export interface BookingSlot {
