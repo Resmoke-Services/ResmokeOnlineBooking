@@ -95,10 +95,18 @@ export default function ContactPage() {
   // Effect to attach Autocomplete to the input field
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
+      // Define the bounds for Gauteng, South Africa
+      const gautengBounds = new window.google.maps.LatLngBounds(
+        new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
+        new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
+      );
+
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
           componentRestrictions: { country: "za" }, // Restrict to South Africa
+          bounds: gautengBounds,
+          strictBounds: true, // Only show results within the defined bounds
           fields: ["formatted_address"],
           types: ["address"],
         }
