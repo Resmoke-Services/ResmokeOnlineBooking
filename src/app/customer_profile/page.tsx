@@ -18,6 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import type { BookingFormData } from "@/lib/types";
@@ -40,22 +41,30 @@ const contactFormSchema = z.object({
   suburb: z.enum(suburbs, {
     required_error: "You need to select a suburb.",
   }),
+  otherSuburbDescription: z.string().optional(),
   propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate", "Other"], {
     required_error: "You need to select a property type.",
   }),
   accessCodeRequired: z.enum(["Yes", "No"], {
     required_error: "You need to select an option for access code.",
   }),
+}).refine(data => {
+    if (data.suburb === 'Other' && (!data.otherSuburbDescription || data.otherSuburbDescription.trim().length < 3)) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Please specify your suburb (min. 3 characters).",
+    path: ["otherSuburbDescription"],
 });
 
-// We are not using all fields for this form, so we can Pick them
-type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'suburb' | 'propertyType' | 'accessCodeRequired'>
+type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'suburb' | 'propertyType' | 'accessCodeRequired' | 'otherSuburbDescription'>
 
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, suburb, otherSuburbDescription, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setOtherSuburbDescription, setPropertyType, setAccessCodeRequired } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -69,23 +78,21 @@ export default function ContactPage() {
   }, [user, router]);
 
   useEffect(() => {
-    // This ensures the env var is only read on the client side
     setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
   }, []);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
+    defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
     mode: "onChange",
   });
+
+  const selectedSuburb = form.watch("suburb");
   
-  // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
-  }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
+    form.reset({ name, surname, cellNumber, email, address, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+  }, [name, surname, cellNumber, email, address, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
 
-
-  // Effect to load Google Maps script
   useEffect(() => {
     if (apiKey && apiKey !== "your_google_maps_api_key_here") {
       const loader = new Loader({
@@ -107,26 +114,23 @@ export default function ContactPage() {
     }
   }, [apiKey, toast]);
 
-  // Effect to attach Autocomplete to the input field
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
-      // Define the bounds for Gauteng, South Africa
       const gautengBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
-        new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
+        new window.google.maps.LatLng(-26.75, 27.7),
+        new window.google.maps.LatLng(-25.5, 28.5)
       );
       
-      // Define a location bias for Centurion
       const centurionLocation = new window.google.maps.LatLng(-25.8545, 28.1884);
 
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
-          componentRestrictions: { country: "za" }, // Restrict to South Africa
+          componentRestrictions: { country: "za" },
           bounds: gautengBounds,
-          location: centurionLocation, // Prioritize this location
-          radius: 20000, // Bias results within a 20km radius of the location
-          strictBounds: true, // Only show results within the defined gautengBounds
+          location: centurionLocation,
+          radius: 20000,
+          strictBounds: true,
           fields: ["formatted_address"],
           types: ["address"],
         }
@@ -144,17 +148,16 @@ export default function ContactPage() {
   async function onSubmit(data: ContactFormData) {
     setIsSubmitting(true);
     
-    // Update store with latest form data
     setName(data.name);
     setSurname(data.surname);
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
     setSuburb(data.suburb);
+    setOtherSuburbDescription(data.otherSuburbDescription || '');
     setPropertyType(data.propertyType);
     setAccessCodeRequired(data.accessCodeRequired);
 
-    // Save/update their details in Firestore for any authenticated user
     if (user && firestore) {
       try {
         const userRef = doc(firestore, 'users', user.uid);
@@ -164,14 +167,14 @@ export default function ContactPage() {
           cellNumber: data.cellNumber,
           address: data.address,
           suburb: data.suburb,
+          otherSuburbDescription: data.otherSuburbDescription,
           propertyType: data.propertyType,
           accessCodeRequired: data.accessCodeRequired,
-          email: data.email, // ensure email is saved
+          email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
-        }, { merge: true }); // Use merge to avoid overwriting other fields like createdAt
+        }, { merge: true });
       } catch (error) {
         console.error("Failed to save user details to Firestore:", error);
-        // We don't need to block the booking for this, but good to know.
       }
     }
     
@@ -288,6 +291,24 @@ export default function ContactPage() {
                   </FormItem>
                 )}
               />
+              {selectedSuburb === 'Other' && (
+                <FormField
+                  control={form.control}
+                  name="otherSuburbDescription"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Please Specify Your Suburb</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Please enter your suburb name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
               <FormField
                 control={form.control}
                 name="propertyType"
@@ -393,3 +414,5 @@ export default function ContactPage() {
     </BookingFlowLayout>
   );
 }
+
+    

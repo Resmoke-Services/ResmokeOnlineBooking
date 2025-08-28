@@ -58,6 +58,7 @@ export interface BookingFormData {
   email: string;
   address: string;
   suburb?: Suburb;
+  otherSuburbDescription?: string;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
   itemsToRepair: RepairItem[];
@@ -69,8 +70,6 @@ export interface BookingSlot {
   time: string;
 }
 
-// The shape of the webhook response can vary, so we use `any`
-// and perform runtime checks in the component.
 export type WebhookConfirmation = any;
 
 export interface BookingData extends BookingFormData {
@@ -82,3 +81,5 @@ export interface BookingData extends BookingFormData {
 export interface AvailabilitySlot {
   slotStart: string;
 }
+
+    

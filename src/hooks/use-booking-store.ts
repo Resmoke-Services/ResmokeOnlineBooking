@@ -15,6 +15,7 @@ interface BookingState extends BookingData {
   setEmail: (email: string) => void;
   setAddress: (address: string) => void;
   setSuburb: (suburb: Suburb) => void;
+  setOtherSuburbDescription: (description: string) => void;
   setPropertyType: (propertyType: PropertyType) => void;
   setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
@@ -32,6 +33,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   email: '',
   address: '',
   suburb: undefined,
+  otherSuburbDescription: '',
   propertyType: null,
   accessCodeRequired: null,
   itemsToRepair: [],
@@ -57,6 +59,7 @@ export const useBookingStore = create<BookingState>()(
       setEmail: (email) => set({ email }),
       setAddress: (address) => set({ address }),
       setSuburb: (suburb) => set({ suburb }),
+      setOtherSuburbDescription: (otherSuburbDescription) => set({ otherSuburbDescription }),
       setPropertyType: (propertyType) => set({ propertyType }),
       setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
@@ -67,8 +70,10 @@ export const useBookingStore = create<BookingState>()(
       resetBooking: () => set(initialState),
     }),
     {
-      name: 'resmoke-booking-storage', // name of the item in the storage (must be unique)
-      storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+      name: 'resmoke-booking-storage', 
+      storage: createJSONStorage(() => localStorage), 
     }
   )
 );
+
+    
