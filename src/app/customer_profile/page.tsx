@@ -70,7 +70,10 @@ const contactFormSchema = z.object({
     path: ["otherCityDescription"],
 });
 
-type ContactFormData = Pick<BookingFormData, 'name' | 'surname' | 'cellNumber' | 'email' | 'address' | 'city' | 'otherCityDescription' | 'suburb' | 'propertyType' | 'accessCodeRequired' | 'otherSuburbDescription'>
+type ContactFormData = Omit<BookingFormData, 'itemsToRepair' | 'problemDescriptions' | 'paymentMethods' | 'termsAgreement' | 'selectedDateTime' | 'webhookConfirmation' | 'user'> & {
+    city?: (typeof cities)[number];
+    suburb?: (typeof suburbs)[number];
+}
 
 export default function ContactPage() {
   const router = useRouter();
@@ -166,9 +169,9 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
-    setCity(data.city);
+    setCity(data.city!);
     setOtherCityDescription(data.otherCityDescription || '');
-    setSuburb(data.suburb);
+    setSuburb(data.suburb!);
     setOtherSuburbDescription(data.otherSuburbDescription || '');
     setPropertyType(data.propertyType);
     setAccessCodeRequired(data.accessCodeRequired);
@@ -477,8 +480,3 @@ export default function ContactPage() {
     </BookingFlowLayout>
   );
 }
-
-    
-    
-
-    
