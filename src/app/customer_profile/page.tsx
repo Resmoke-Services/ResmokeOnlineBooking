@@ -134,15 +134,11 @@ export default function ContactPage() {
         new window.google.maps.LatLng(-25.5, 28.5)
       );
       
-      const centurionLocation = new window.google.maps.LatLng(-25.8545, 28.1884);
-
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
           componentRestrictions: { country: "za" },
           bounds: gautengBounds,
-          location: centurionLocation,
-          radius: 20000,
           strictBounds: true,
           fields: ["formatted_address"],
           types: ["address"],
