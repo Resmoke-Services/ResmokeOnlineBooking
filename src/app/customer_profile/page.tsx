@@ -70,10 +70,7 @@ const contactFormSchema = z.object({
     path: ["otherCityDescription"],
 });
 
-type ContactFormData = Omit<BookingFormData, 'itemsToRepair' | 'problemDescriptions' | 'paymentMethods' | 'termsAgreement' | 'selectedDateTime' | 'webhookConfirmation' | 'user'> & {
-    city?: (typeof cities)[number];
-    suburb?: (typeof suburbs)[number];
-}
+type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export default function ContactPage() {
   const router = useRouter();
