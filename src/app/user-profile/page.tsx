@@ -20,8 +20,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import type { BookingFormData } from "@/lib/types";
-import { suburbs } from "@/lib/types";
+import type { CustomerProfileData } from "@/lib/types";
+import { suburbs, propertyTypes, accessCodeOptions } from "@/lib/types";
+import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -39,10 +40,10 @@ const contactFormSchema = z.object({
   suburb: z.enum(suburbs, {
     required_error: "You need to select a suburb.",
   }),
-  propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate", "Other"], {
+  propertyType: z.enum(propertyTypes, {
     required_error: "You need to select a property type.",
   }),
-  accessCodeRequired: z.enum(["Yes", "No"], {
+  accessCodeRequired: z.enum(accessCodeOptions, {
     required_error: "You need to select an option for access code.",
   }),
 });
@@ -69,24 +70,24 @@ export default function ContactPage() {
     setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
   }, []);
 
-  const form = useForm<BookingFormData>({
-    resolver: zodResolver(contactFormSchema),
+  const form = useForm<CustomerProfileData>({
+    resolver: zodResolver(customerProfileSchema),
     defaultValues: {
       name,
       surname,
       cellNumber,
       email,
       address,
-      suburb: suburb || undefined,
-      propertyType: propertyType || undefined,
-      accessCodeRequired: accessCodeRequired || undefined,
+      suburb: suburb,
+      propertyType: propertyType,
+      accessCodeRequired: accessCodeRequired,
     },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+    form.reset({ name, surname, cellNumber, email, address, suburb: suburb, propertyType: propertyType, accessCodeRequired: accessCodeRequired });
   }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
 
 
@@ -141,7 +142,7 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
-  async function onSubmit(data: BookingFormData) {
+  async function onSubmit(data: CustomerProfileData) {
     setIsSubmitting(true);
     
     // Update store with latest form data
@@ -393,5 +394,3 @@ export default function ContactPage() {
     </BookingFlowLayout>
   );
 }
-
-    
