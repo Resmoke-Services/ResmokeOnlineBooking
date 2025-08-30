@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,23 +29,6 @@ import { Loader2 } from "lucide-react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  surname: z.string().min(2, { message: "Surname must be at least 2 characters." }),
-  cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  address: z.string().min(5, { message: "Address must be at least 5 characters." }),
-  suburb: z.enum(suburbs, {
-    required_error: "You need to select a suburb.",
-  }),
-  propertyType: z.enum(propertyTypes, {
-    required_error: "You need to select a property type.",
-  }),
-  accessCodeRequired: z.enum(accessCodeOptions, {
-    required_error: "You need to select an option for access code.",
-  }),
-});
 
 export default function ContactPage() {
   const router = useRouter();
@@ -79,15 +61,15 @@ export default function ContactPage() {
       email,
       address,
       suburb: suburb,
-      propertyType: propertyType,
-      accessCodeRequired: accessCodeRequired,
+      propertyType: propertyType ?? undefined,
+      accessCodeRequired: accessCodeRequired ?? undefined,
     },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, suburb: suburb, propertyType: propertyType, accessCodeRequired: accessCodeRequired });
+    form.reset({ name, surname, cellNumber, email, address, suburb: suburb, propertyType: propertyType ?? undefined, accessCodeRequired: accessCodeRequired ?? undefined });
   }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
 
 

@@ -81,12 +81,12 @@ export interface CustomerProfileData {
   cellNumber: string;
   email: string;
   address: string;
-  city: City;
+  city?: City;
   otherCityDescription?: string;
-  suburb: Suburb;
+  suburb?: Suburb;
   otherSuburbDescription?: string;
-  propertyType: PropertyType;
-  accessCodeRequired: AccessCodeRequired;
+  propertyType?: PropertyType;
+  accessCodeRequired?: AccessCodeRequired;
 }
 
 export interface ItemToRepairData {
@@ -131,5 +131,3 @@ export interface BookingData {
   selectedDateTime: BookingSlot | null;
   webhookConfirmation: WebhookConfirmation | null;
 }
-
-    
