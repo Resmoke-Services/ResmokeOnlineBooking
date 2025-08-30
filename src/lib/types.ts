@@ -44,7 +44,7 @@ export const suburbs = [
 
 export type Suburb = (typeof suburbs)[number];
 
-export const repairItems = [
+export const repairItems: { id: string; label: string; note?: string }[] = [
     { id: 'DISHWASHER', label: 'DISHWASHER' },
     { id: 'MICROWAVE', label: 'MICROWAVE' },
     { id: 'OVEN', label: 'OVEN' },
