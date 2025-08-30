@@ -19,7 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import type { CustomerProfileData, Suburb } from "@/lib/types";
+import type { CustomerProfileData } from "@/lib/types";
 import { suburbs, propertyTypes, accessCodeOptions } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -30,14 +30,13 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
 
-// This type is now derived from the zod schema to ensure they are always in sync.
 type UserProfileFormData = z.infer<typeof customerProfileSchema>;
 
 export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired, setAvailability } = useBookingStore();
+  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired } = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
