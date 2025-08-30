@@ -196,7 +196,7 @@ export default function ContactPage() {
           errorDetails = errorJson.message || JSON.stringify(errorJson);
         } catch (e) {
           // If parsing JSON fails, use the status text.
-          errorDetails = `${errorDetails}: ${response.statusText}`;
+          errorDetails = `${response.status}: ${response.statusText}`;
         }
         throw new Error(errorDetails);
       }
