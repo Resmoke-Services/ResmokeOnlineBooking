@@ -151,9 +151,9 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
-    setSuburb(data.suburb!);
-    setPropertyType(data.propertyType!);
-    setAccessCodeRequired(data.accessCodeRequired!);
+    setSuburb(data.suburb);
+    setPropertyType(data.propertyType);
+    setAccessCodeRequired(data.accessCodeRequired);
 
     // Save/update their details in Firestore for any authenticated user
     if (user && firestore) {
