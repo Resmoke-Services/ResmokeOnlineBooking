@@ -3,7 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,8 +21,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import type { BookingFormData } from "@/lib/types";
-import { suburbs, cities } from "@/lib/types";
+import { suburbs, cities, propertyTypes, accessCodeOptions } from "@/lib/types";
+import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -31,46 +31,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
 
-
-const contactFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  surname: z.string().min(2, { message: "Surname must be at least 2 characters." }),
-  cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
-  email: z.string().email({ message: "Invalid email address." }),
-  address: z.string().min(5, { message: "Address must be at least 5 characters." }),
-  city: z.enum(cities, {
-    required_error: "You need to select a city.",
-  }),
-  otherCityDescription: z.string().optional(),
-  suburb: z.enum(suburbs, {
-    required_error: "You need to select a suburb.",
-  }),
-  otherSuburbDescription: z.string().optional(),
-  propertyType: z.enum(["House", "Complex", "Estate", "Complex in an Estate", "Other"], {
-    required_error: "You need to select a property type.",
-  }),
-  accessCodeRequired: z.enum(["Yes", "No"], {
-    required_error: "You need to select an option for access code.",
-  }),
-}).refine(data => {
-    if (data.suburb === 'Other' && (!data.otherSuburbDescription || data.otherSuburbDescription.trim().length < 3)) {
-        return false;
-    }
-    return true;
-}, {
-    message: "Please specify your suburb (min. 3 characters).",
-    path: ["otherSuburbDescription"],
-}).refine(data => {
-    if (data.city === 'Other' && (!data.otherCityDescription || data.otherCityDescription.trim().length < 3)) {
-        return false;
-    }
-    return true;
-}, {
-    message: "Please specify your city (min. 3 characters).",
-    path: ["otherCityDescription"],
-});
-
-type ContactFormData = z.infer<typeof contactFormSchema>;
+type CustomerProfileFormData = z.infer<typeof customerProfileSchema>;
 
 export default function ContactPage() {
   const router = useRouter();
@@ -93,9 +54,21 @@ export default function ContactPage() {
     setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
   }, []);
 
-  const form = useForm<ContactFormData>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, city: city || undefined, otherCityDescription, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
+  const form = useForm<CustomerProfileFormData>({
+    resolver: zodResolver(customerProfileSchema),
+    defaultValues: {
+      name,
+      surname,
+      cellNumber,
+      email,
+      address,
+      city: city || undefined,
+      otherCityDescription: otherCityDescription || '',
+      suburb: suburb || undefined,
+      otherSuburbDescription: otherSuburbDescription || '',
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    },
     mode: "onChange",
   });
 
@@ -103,7 +76,19 @@ export default function ContactPage() {
   const selectedCity = form.watch("city");
   
   useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, city: city || undefined, otherCityDescription, suburb: suburb || undefined, otherSuburbDescription, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined });
+    form.reset({
+      name,
+      surname,
+      cellNumber,
+      email,
+      address,
+      city: city || undefined,
+      otherCityDescription: otherCityDescription || '',
+      suburb: suburb || undefined,
+      otherSuburbDescription: otherSuburbDescription || '',
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    });
   }, [name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
 
   useEffect(() => {
@@ -154,7 +139,7 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
-  async function onSubmit(data: ContactFormData) {
+  async function onSubmit(data: CustomerProfileFormData) {
     setIsSubmitting(true);
     
     setName(data.name);
@@ -162,9 +147,9 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
-    setCity(data.city!);
+    setCity(data.city);
     setOtherCityDescription(data.otherCityDescription || '');
-    setSuburb(data.suburb!);
+    setSuburb(data.suburb);
     setOtherSuburbDescription(data.otherSuburbDescription || '');
     setPropertyType(data.propertyType);
     setAccessCodeRequired(data.accessCodeRequired);
@@ -380,46 +365,16 @@ export default function ContactPage() {
                         defaultValue={field.value}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                       >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="House" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            House
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Complex" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Complex
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Estate" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Estate
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Complex in an Estate" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Complex in an Estate
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Other" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Other
-                          </FormLabel>
-                        </FormItem>
+                        {propertyTypes.map(pt => (
+                            <FormItem key={pt} className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                                <RadioGroupItem value={pt} />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                                {pt}
+                            </FormLabel>
+                            </FormItem>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -438,22 +393,16 @@ export default function ContactPage() {
                         defaultValue={field.value}
                         className="flex flex-row space-x-8"
                       >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Yes" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Yes
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="No" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            No
-                          </FormLabel>
-                        </FormItem>
+                        {accessCodeOptions.map(aco => (
+                            <FormItem key={aco} className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                <RadioGroupItem value={aco} />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                {aco}
+                                </FormLabel>
+                            </FormItem>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -473,3 +422,5 @@ export default function ContactPage() {
     </BookingFlowLayout>
   );
 }
+
+    

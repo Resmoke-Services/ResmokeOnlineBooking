@@ -6,16 +6,12 @@ export interface UserProfile {
   isGuest: boolean;
 }
 
-export type PropertyType = "House" | "Complex" | "Estate" | "Complex in an Estate" | "Other";
-export type AccessCodeRequired = "Yes" | "No";
-
 export const cities = [
     "Centurion",
     "Pretoria",
     "Midrand",
     "Other",
 ] as const;
-
 export type City = (typeof cities)[number];
 
 export const suburbs = [
@@ -41,26 +37,37 @@ export const suburbs = [
   "Zwartkop",
   "Other",
 ] as const;
-
 export type Suburb = (typeof suburbs)[number];
 
-export const repairItems: { id: string; label: string; note?: string }[] = [
-    { id: 'DISHWASHER', label: 'DISHWASHER' },
-    { id: 'MICROWAVE', label: 'MICROWAVE' },
-    { id: 'OVEN', label: 'OVEN' },
-    { id: 'TUMBLE_DRYER', label: 'TUMBLE DRYER' },
-    { id: 'WASHING_MACHINE', label: 'WASHING MACHINE' },
+export const propertyTypes = ["House", "Complex", "Estate", "Complex in an Estate", "Other"] as const;
+export type PropertyType = (typeof propertyTypes)[number];
+
+export const accessCodeOptions = ["Yes", "No"] as const;
+export type AccessCodeRequired = (typeof accessCodeOptions)[number];
+
+export const repairItems = [
+    { id: 'DISHWASHER', label: 'DISHWASHER', note: undefined },
+    { id: 'MICROWAVE', label: 'MICROWAVE', note: undefined },
+    { id: 'OVEN', label: 'OVEN', note: undefined },
+    { id: 'TUMBLE_DRYER', label: 'TUMBLE DRYER', note: undefined },
+    { id: 'WASHING_MACHINE', label: 'WASHING MACHINE', note: undefined },
     { id: 'FRIDGE', label: 'FRIDGE', note: "We don't do Regas or Compressor Exchange" },
     { id: 'ICE_MACHINE', label: 'ICE MACHINE', note: 'We repair this item at our workshop only' },
     { id: 'TV', label: 'TV', note: 'We repair this item at our workshop only' },
     { id: 'GHD', label: 'GHD', note: 'We repair this item at our workshop only' },
     { id: 'CAR', label: 'CAR', note: 'Diagnostic Scan Onsite - Repairs at Workshop Only' },
-    { id: 'OTHER', label: 'Other' },
-];
-
+    { id: 'OTHER', label: 'Other', note: undefined },
+] as const;
 export type RepairItem = (typeof repairItems)[number]['id'];
+export type RepairItemObject = (typeof repairItems)[number];
 
-export type PaymentMethod = "Card" | "Cash" | "EFT";
+
+export const paymentMethods = [
+  { id: "Card", label: "Card (Card Machine)" },
+  { id: "Cash", label: "Cash" },
+  { id: "EFT", label: "EFT" },
+] as const;
+export type PaymentMethod = (typeof paymentMethods)[number]['id'];
 
 export interface TermsAgreement {
     paymentOnPremises: boolean;
@@ -68,22 +75,28 @@ export interface TermsAgreement {
     smsConsent: boolean;
 }
 
-export interface BookingFormData {
+export interface CustomerProfileData {
   name: string;
   surname: string;
   cellNumber: string;
   email: string;
   address: string;
-  city?: City;
+  city: City;
   otherCityDescription?: string;
   suburb: Suburb;
   otherSuburbDescription?: string;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
-  itemsToRepair: RepairItem[];
-  problemDescriptions: Record<string, string>;
+}
+
+export interface ItemToRepairData {
+  items: RepairItem[];
+  descriptions: Record<string, string>;
+}
+
+export interface PaymentAndTermsData {
   paymentMethods: PaymentMethod[];
-  termsAgreement: TermsAgreement | null;
+  termsAgreement: TermsAgreement;
 }
 
 export interface BookingSlot {
@@ -93,14 +106,30 @@ export interface BookingSlot {
 
 export type WebhookConfirmation = any;
 
-export interface BookingData extends BookingFormData {
-  selectedDateTime: BookingSlot | null;
-  webhookConfirmation: WebhookConfirmation | null;
-  user: UserProfile | null;
-}
-
 export interface AvailabilitySlot {
   slotStart: string;
+}
+
+// This is the complete data structure for the entire booking flow
+export interface BookingData {
+  user: UserProfile | null;
+  name: string;
+  surname: string;
+  cellNumber: string;
+  email: string;
+  address: string;
+  city?: City;
+  otherCityDescription: string;
+  suburb?: Suburb;
+  otherSuburbDescription: string;
+  propertyType: PropertyType | null;
+  accessCodeRequired: AccessCodeRequired | null;
+  itemsToRepair: RepairItem[];
+  problemDescriptions: Record<string, string>;
+  paymentMethods: PaymentMethod[];
+  termsAgreement: TermsAgreement | null;
+  selectedDateTime: BookingSlot | null;
+  webhookConfirmation: WebhookConfirmation | null;
 }
 
     

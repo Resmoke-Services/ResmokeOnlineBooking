@@ -1,13 +1,12 @@
 
 "use client";
 
-import type { BookingData, BookingSlot, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface BookingState extends BookingData {
   availability: AvailabilitySlot[];
-  user: UserProfile | null;
   setUser: (user: UserProfile | null) => void;
   setName: (name: string) => void;
   setSurname: (surname: string) => void;
@@ -87,5 +86,3 @@ export const useBookingStore = create<BookingState>()(
     }
   )
 );
-
-    

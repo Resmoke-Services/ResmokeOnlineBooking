@@ -3,7 +3,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,32 +21,10 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import type { AvailabilitySlot, PaymentMethod, TermsAgreement } from "@/lib/types";
+import { type AvailabilitySlot, type PaymentMethod, type TermsAgreement, paymentMethods } from "@/lib/types";
+import { paymentAndTermsSchema } from "@/lib/schemas";
 
-const paymentMethods: { id: PaymentMethod; label: string }[] = [
-  { id: "Card", label: "Card (Card Machine)" },
-  { id: "Cash", label: "Cash" },
-  { id: "EFT", label: "EFT" },
-];
-
-const paymentAndTermsSchema = z.object({
-  paymentMethod: z.array(z.string()).refine((value) => value.length > 0, {
-    message: "You must select at least one payment method.",
-  }),
-  terms: z.object({
-    paymentOnPremises: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the payment terms.",
-    }),
-    emailConsent: z.boolean().refine((val) => val === true, {
-      message: "You must agree to receive emails.",
-    }),
-    smsConsent: z.boolean().refine((val) => val === true, {
-      message: "You must agree to receive text messages.",
-    }),
-  }),
-});
-
-type FormData = z.infer<typeof paymentAndTermsSchema>;
+type PaymentAndTermsFormData = z.infer<typeof paymentAndTermsSchema>;
 
 export default function PaymentAndTermsPage() {
   const router = useRouter();
@@ -54,7 +32,7 @@ export default function PaymentAndTermsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
 
-  const form = useForm<FormData>({
+  const form = useForm<PaymentAndTermsFormData>({
     resolver: zodResolver(paymentAndTermsSchema),
     defaultValues: {
       paymentMethod: store.paymentMethods,
@@ -76,10 +54,10 @@ export default function PaymentAndTermsPage() {
     }
   }, [store.user, store.itemsToRepair, router]);
 
-  async function onSubmit(data: FormData) {
+  async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
     
-    store.setPaymentMethods(data.paymentMethod as PaymentMethod[]);
+    store.setPaymentMethods(data.paymentMethod);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
     const bookingDetails = {

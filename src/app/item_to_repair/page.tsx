@@ -2,8 +2,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray } from "react-hook-form";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
+import type { z } from "zod";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,42 +20,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { repairItems, type RepairItem } from "@/lib/types";
+import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ChevronLeft } from "lucide-react";
 
-const itemToRepairSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
-  descriptions: z.record(z.string()).optional(),
-}).refine((data) => {
-    if (data.items.includes("OTHER") && (!data.descriptions?.['OTHER'] || data.descriptions['OTHER'].trim().length < 6)) {
-        return false;
-    }
-    return true;
-}, {
-    message: "Please provide a description for the 'Other' item (min. 6 characters).",
-    path: ["descriptions.OTHER"],
-}).refine((data) => {
-    for (const item of data.items) {
-        if (!data.descriptions?.[item] || data.descriptions[item].trim().length < 6) {
-            return false;
-        }
-    }
-    return true;
-}, {
-    message: "Please describe the problem for each selected item (min. 6 characters).",
-    path: ["descriptions"],
-});
-
-type FormData = z.infer<typeof itemToRepairSchema>;
+type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
   const { user, itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
 
-  const form = useForm<FormData>({
+  const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
       items: itemsToRepair,
@@ -72,7 +48,7 @@ export default function ItemToRepairPage() {
     }
   }, [user, router]);
   
-  function onSubmit(data: FormData) {
+  function onSubmit(data: ItemToRepairFormData) {
     const finalItems = data.items as RepairItem[];
     const finalDescriptions: Record<string, string> = {};
     
