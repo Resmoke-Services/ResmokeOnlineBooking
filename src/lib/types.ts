@@ -56,7 +56,7 @@ export const repairItems: { id: string; label: string; note?: string }[] = [
     { id: 'GHD', label: 'GHD', note: 'We repair this item at our workshop only' },
     { id: 'CAR', label: 'CAR', note: 'Diagnostic Scan Onsite - Repairs at Workshop Only' },
     { id: 'OTHER', label: 'Other' },
-] as const;
+];
 
 export type RepairItem = (typeof repairItems)[number]['id'];
 
@@ -76,7 +76,7 @@ export interface BookingFormData {
   address: string;
   city?: City;
   otherCityDescription?: string;
-  suburb?: Suburb;
+  suburb: Suburb;
   otherSuburbDescription?: string;
   propertyType: PropertyType;
   accessCodeRequired: AccessCodeRequired;
