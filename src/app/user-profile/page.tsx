@@ -72,7 +72,16 @@ export default function ContactPage() {
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(contactFormSchema),
-    defaultValues: { name, surname, cellNumber, email, address, suburb: suburb || undefined, propertyType: propertyType || undefined, accessCodeRequired: accessCodeRequired || undefined },
+    defaultValues: {
+      name,
+      surname,
+      cellNumber,
+      email,
+      address,
+      suburb: suburb || undefined,
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    },
     mode: "onChange",
   });
   
@@ -112,17 +121,12 @@ export default function ContactPage() {
         new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
         new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
       );
-      
-      // Define a location bias for Centurion
-      const centurionLocation = new window.google.maps.LatLng(-25.8545, 28.1884);
 
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
           componentRestrictions: { country: "za" }, // Restrict to South Africa
           bounds: gautengBounds,
-          location: centurionLocation, // Prioritize this location
-          radius: 20000, // Bias results within a 20km radius of the location
           strictBounds: true, // Only show results within the defined gautengBounds
           fields: ["formatted_address"],
           types: ["address"],
@@ -147,9 +151,9 @@ export default function ContactPage() {
     setCellNumber(data.cellNumber);
     setEmail(data.email);
     setAddress(data.address);
-    setSuburb(data.suburb);
-    setPropertyType(data.propertyType);
-    setAccessCodeRequired(data.accessCodeRequired);
+    setSuburb(data.suburb!);
+    setPropertyType(data.propertyType!);
+    setAccessCodeRequired(data.accessCodeRequired!);
 
     // Save/update their details in Firestore for any authenticated user
     if (user && firestore) {
@@ -345,7 +349,7 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={field.value ?? undefined}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
@@ -403,7 +407,7 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        defaultValue={field.value ?? undefined}
                         className="flex flex-row space-x-8"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
