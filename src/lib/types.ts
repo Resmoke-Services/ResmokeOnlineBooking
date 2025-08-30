@@ -78,8 +78,8 @@ export interface BookingFormData {
   otherCityDescription?: string;
   suburb: Suburb;
   otherSuburbDescription?: string;
-  propertyType: PropertyType | null;
-  accessCodeRequired: AccessCodeRequired | null;
+  propertyType: PropertyType;
+  accessCodeRequired: AccessCodeRequired;
   itemsToRepair: RepairItem[];
   problemDescriptions: Record<string, string>;
   paymentMethods: PaymentMethod[];
