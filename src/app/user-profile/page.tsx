@@ -19,7 +19,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import type { CustomerProfileData } from "@/lib/types";
+import type { CustomerProfileData, Suburb } from "@/lib/types";
 import { suburbs, propertyTypes, accessCodeOptions } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -29,6 +29,9 @@ import { Loader2 } from "lucide-react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
+
+// This type is now derived from the zod schema to ensure they are always in sync.
+type UserProfileFormData = z.infer<typeof customerProfileSchema>;
 
 export default function ContactPage() {
   const router = useRouter();
@@ -52,24 +55,33 @@ export default function ContactPage() {
     setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
   }, []);
 
-  const form = useForm<CustomerProfileData>({
+  const form = useForm<UserProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
     defaultValues: {
-      name,
-      surname,
-      cellNumber,
-      email,
-      address,
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
       suburb: suburb,
-      propertyType: propertyType ?? undefined,
-      accessCodeRequired: accessCodeRequired ?? undefined,
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
     },
     mode: "onChange",
   });
   
   // Resets the form if data in the store changes (e.g., after login)
-  useEffect(() => {
-    form.reset({ name, surname, cellNumber, email, address, suburb: suburb, propertyType: propertyType ?? undefined, accessCodeRequired: accessCodeRequired ?? undefined });
+   useEffect(() => {
+    form.reset({
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
+      suburb: suburb,
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    });
   }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
 
 
@@ -124,7 +136,7 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
-  async function onSubmit(data: CustomerProfileData) {
+  async function onSubmit(data: UserProfileFormData) {
     setIsSubmitting(true);
     
     // Update store with latest form data
@@ -280,49 +292,19 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value ?? undefined}
+                        defaultValue={field.value}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                       >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="House" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            House
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Complex" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Complex
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Estate" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Estate
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Complex in an Estate" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Complex in an Estate
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Other" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Other
-                          </FormLabel>
-                        </FormItem>
+                        {propertyTypes.map(pt => (
+                           <FormItem key={pt} className="flex items-center space-x-3 space-y-0">
+                             <FormControl>
+                               <RadioGroupItem value={pt} />
+                             </FormControl>
+                             <FormLabel className="font-normal">
+                               {pt}
+                             </FormLabel>
+                           </FormItem>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />
@@ -338,25 +320,19 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value ?? undefined}
+                        defaultValue={field.value}
                         className="flex flex-row space-x-8"
                       >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Yes" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Yes
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="No" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            No
-                          </FormLabel>
-                        </FormItem>
+                        {accessCodeOptions.map(aco => (
+                           <FormItem key={aco} className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                <RadioGroupItem value={aco} />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                {aco}
+                                </FormLabel>
+                            </FormItem>
+                        ))}
                       </RadioGroup>
                     </FormControl>
                     <FormMessage />

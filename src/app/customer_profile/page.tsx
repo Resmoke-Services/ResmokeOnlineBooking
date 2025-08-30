@@ -57,11 +57,11 @@ export default function ContactPage() {
   const form = useForm<CustomerProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
     defaultValues: {
-      name,
-      surname,
-      cellNumber,
-      email,
-      address,
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
       city: city || undefined,
       otherCityDescription: otherCityDescription || '',
       suburb: suburb || undefined,
@@ -77,11 +77,11 @@ export default function ContactPage() {
   
   useEffect(() => {
     form.reset({
-      name,
-      surname,
-      cellNumber,
-      email,
-      address,
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
       city: city || undefined,
       otherCityDescription: otherCityDescription || '',
       suburb: suburb || undefined,

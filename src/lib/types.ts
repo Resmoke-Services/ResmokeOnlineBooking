@@ -81,12 +81,12 @@ export interface CustomerProfileData {
   cellNumber: string;
   email: string;
   address: string;
-  city?: City;
+  city: City;
   otherCityDescription?: string;
-  suburb?: Suburb;
+  suburb: Suburb;
   otherSuburbDescription?: string;
-  propertyType?: PropertyType;
-  accessCodeRequired?: AccessCodeRequired;
+  propertyType: PropertyType;
+  accessCodeRequired: AccessCodeRequired;
 }
 
 export interface ItemToRepairData {
@@ -118,9 +118,9 @@ export interface BookingData {
   cellNumber: string;
   email: string;
   address: string;
-  city?: City;
+  city: City | undefined;
   otherCityDescription: string;
-  suburb?: Suburb;
+  suburb: Suburb | undefined;
   otherSuburbDescription: string;
   propertyType: PropertyType | null;
   accessCodeRequired: AccessCodeRequired | null;
