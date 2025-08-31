@@ -78,7 +78,15 @@ const confirmationFlow = ai.defineFlow(
   async (input) => {
     const {output} = await prompt(input);
     if (!output) {
-      throw new Error('AI failed to generate a confirmation message in the expected format.');
+      // Fallback in case of an unexpected error from the AI model
+      return {
+        friendlyMessage: `Thank you for your booking, ${input.name}! Your appointment is confirmed for ${input.bookingDateTime}. We look forward to seeing you at ${input.address}.`,
+        nextSteps: [
+          "You will receive an email confirmation shortly.",
+          "Our technician will contact you when they are on their way.",
+          "If you have any questions, please contact our support team."
+        ],
+      };
     }
     return output;
   }

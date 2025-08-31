@@ -87,7 +87,8 @@ export default function ConfirmationPage() {
     const fetchConfirmationMessage = async () => {
       // Ensure we have booking details before proceeding
       if (!bookingDetails) {
-          setError("Could not retrieve booking details to generate a summary, but your booking is confirmed.");
+          // This case should be rare if isSuccess is true, but handle it defensively.
+          setError("Could not retrieve full booking details to generate a summary, but your booking is confirmed.");
           setIsLoading(false);
           return;
       }
@@ -96,26 +97,24 @@ export default function ConfirmationPage() {
       setError(null);
       try {
         const bookingStatus = bookingDetails.status || "Confirmed";
-        
         const bookingDate = getValidDate(bookingDetails, selectedDateTime);
-
-        if (bookingDate) {
-            const formattedDateTimeForAI = format(bookingDate, 'dd LLL yyyy HH:mm');
-            const response = await generateConfirmationMessage({
-              name,
-              address,
-              bookingDateTime: formattedDateTimeForAI,
-              bookingStatus: bookingStatus,
-              webhookMessage: typeof bookingDetails.message === 'string' ? bookingDetails.message : undefined,
-            });
-            setAiResponse(response);
-        } else {
-            console.warn("Could not determine a valid booking date for AI confirmation.");
-            setError("Could not generate AI summary, but your booking is confirmed.");
-        }
+        const formattedDateTimeForAI = bookingDate 
+          ? format(bookingDate, 'dd LLL yyyy HH:mm') 
+          : "Date and time to be confirmed";
+        
+        const response = await generateConfirmationMessage({
+          name,
+          address,
+          bookingDateTime: formattedDateTimeForAI,
+          bookingStatus: bookingStatus,
+          webhookMessage: typeof bookingDetails.message === 'string' ? bookingDetails.message : undefined,
+        });
+        setAiResponse(response);
       } catch (err) {
         console.error("Failed to generate AI confirmation:", err);
-        setError("Could not generate AI summary, but your booking is confirmed.");
+        // Even if AI fails, we don't block the user. The UI will show a default message.
+        // We can set a minor error to inform the user if desired.
+        setError("Could not generate a personalized summary, but your booking is confirmed.");
       } finally {
         setIsLoading(false);
       }
