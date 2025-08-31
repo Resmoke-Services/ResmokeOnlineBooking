@@ -28,7 +28,15 @@ const getTodayInTimeZone = (timeZone: string): string => {
 export default function SelectDateTimePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { name, surname, cellNumber, email, address, availability, setSelectedDateTime, setWebhookConfirmation } = useBookingStore();
+  const { 
+    availability, 
+    setSelectedDateTime, 
+    setWebhookConfirmation,
+    // All other store data to be sent
+    name, surname, cellNumber, email, address, city, otherCityDescription,
+    suburb, otherSuburbDescription, propertyType, accessCodeRequired,
+    itemsToRepair, problemDescriptions, paymentMethods, termsAgreement
+  } = useBookingStore();
   
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<{ time: string; slotStart: string } | null>(null);
@@ -80,6 +88,26 @@ export default function SelectDateTimePage() {
 
     setIsSubmitting(true);
 
+    // Consolidate all data for the webhook
+    const fullBookingDetails = {
+      name,
+      surname,
+      cellNumber,
+      email,
+      address,
+      city,
+      otherCityDescription,
+      suburb,
+      otherSuburbDescription,
+      propertyType,
+      accessCodeRequired,
+      itemsToRepair,
+      problemDescriptions,
+      paymentMethods,
+      termsAgreement,
+      slotStart: selectedTime.slotStart,
+    };
+
     try {
       const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
       if (!webhookUrl) {
@@ -90,14 +118,7 @@ export default function SelectDateTimePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          surname,
-          email,
-          cellNumber,
-          address,
-          slotStart: selectedTime.slotStart,
-        }),
+        body: JSON.stringify(fullBookingDetails),
       });
 
       if (!response.ok) {
