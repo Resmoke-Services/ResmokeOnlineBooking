@@ -28,7 +28,15 @@ const getTodayInTimeZone = (timeZone: string): string => {
 export default function SelectDateTimePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { name, surname, cellNumber, email, address, availability, setSelectedDateTime, setWebhookConfirmation } = useBookingStore();
+  const { 
+    availability, 
+    setSelectedDateTime, 
+    setWebhookConfirmation,
+    // All other store data to be sent
+    name, surname, cellNumber, email, address, city, otherCityDescription,
+    suburb, otherSuburbDescription, propertyType, accessCodeRequired,
+    itemsToRepair, problemDescriptions, paymentMethods, termsAgreement
+  } = useBookingStore();
   
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState<{ time: string; slotStart: string } | null>(null);
@@ -80,6 +88,26 @@ export default function SelectDateTimePage() {
 
     setIsSubmitting(true);
 
+    // Consolidate all data for the webhook
+    const fullBookingDetails = {
+      name,
+      surname,
+      cellNumber,
+      email,
+      address,
+      city,
+      otherCityDescription,
+      suburb,
+      otherSuburbDescription,
+      propertyType,
+      accessCodeRequired,
+      itemsToRepair,
+      problemDescriptions,
+      paymentMethods,
+      termsAgreement,
+      slotStart: selectedTime.slotStart,
+    };
+
     try {
       const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
       if (!webhookUrl) {
@@ -90,14 +118,7 @@ export default function SelectDateTimePage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name,
-          surname,
-          email,
-          cellNumber,
-          address,
-          slotStart: selectedTime.slotStart,
-        }),
+        body: JSON.stringify(fullBookingDetails),
       });
 
       if (!response.ok) {
@@ -166,7 +187,7 @@ export default function SelectDateTimePage() {
            <CardDescription className="text-base">We're sorry, but there are no booking slots available at this time. Please try again later.</CardDescription>
         </CardHeader>
         <CardContent>
-           <Button onClick={() => router.push('/customer_profile')}>
+           <Button onClick={() => router.push('/payment_and_terms')}>
              <ChevronLeft className="mr-2 h-4 w-4" /> Go Back
            </Button>
         </CardContent>
@@ -224,7 +245,7 @@ export default function SelectDateTimePage() {
       </Card>
 
       <div className="mt-8 flex justify-between items-center">
-        <Button variant="outline" onClick={() => router.push('/customer_profile')}> <ChevronLeft className="mr-2 h-4 w-4" /> Back</Button>
+        <Button variant="outline" onClick={() => router.back()}> <ChevronLeft className="mr-2 h-4 w-4" /> Back</Button>
         <Button onClick={handleConfirm} disabled={!selectedDate || !selectedTime || isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? "Confirming..." : "Confirm Booking"}

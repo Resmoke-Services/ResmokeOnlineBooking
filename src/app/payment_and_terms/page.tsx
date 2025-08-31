@@ -60,22 +60,11 @@ export default function PaymentAndTermsPage() {
     store.setPaymentMethods(data.paymentMethod);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    const bookingDetails = {
-      name: store.name,
-      surname: store.surname,
-      cellNumber: store.cellNumber,
-      email: store.email,
-      address: store.address,
-      city: store.city,
-      otherCityDescription: store.otherCityDescription,
-      suburb: store.suburb,
-      otherSuburbDescription: store.otherSuburbDescription,
-      propertyType: store.propertyType,
-      accessCodeRequired: store.accessCodeRequired,
-      itemsToRepair: store.itemsToRepair,
-      problemDescriptions: store.problemDescriptions,
-      paymentMethods: data.paymentMethod,
-      termsAgreement: data.terms,
+    // This object is for fetching availability, not the final booking
+    const availabilityRequestDetails = {
+      // You might need to send some details to get relevant slots
+      // e.g., service type, location, etc.
+      // For now, we assume it's a general request.
     };
 
     try {
@@ -88,7 +77,7 @@ export default function PaymentAndTermsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(bookingDetails),
+        body: JSON.stringify(availabilityRequestDetails),
       });
 
       if (!response.ok) {
