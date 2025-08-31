@@ -60,15 +60,28 @@ export default function PaymentAndTermsPage() {
     store.setPaymentMethods(data.paymentMethod);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    // This object is for fetching availability, not the final booking
+    // Consolidate all data for the availability webhook
     const availabilityRequestDetails = {
-      // You might need to send some details to get relevant slots
-      // e.g., service type, location, etc.
-      // For now, we assume it's a general request.
+      name: store.name,
+      surname: store.surname,
+      cellNumber: store.cellNumber,
+      email: store.email,
+      address: store.address,
+      city: store.city,
+      otherCityDescription: store.otherCityDescription,
+      suburb: store.suburb,
+      otherSuburbDescription: store.otherSuburbDescription,
+      propertyType: store.propertyType,
+      accessCodeRequired: store.accessCodeRequired,
+      itemsToRepair: store.itemsToRepair,
+      problemDescriptions: store.problemDescriptions,
+      paymentMethods: data.paymentMethod, // use fresh data from form
+      termsAgreement: data.terms, // use fresh data from form
+      servicePath: store.servicePath,
     };
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
       if (!webhookUrl) {
         throw new Error("Webhook URL is not configured. Please contact support.");
       }

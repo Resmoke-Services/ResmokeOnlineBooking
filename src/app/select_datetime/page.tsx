@@ -110,7 +110,7 @@ export default function SelectDateTimePage() {
     };
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
       if (!webhookUrl) {
         throw new Error("Webhook URL is not configured. Please contact support.");
       }
