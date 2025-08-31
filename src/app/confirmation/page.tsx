@@ -126,7 +126,7 @@ export default function ConfirmationPage() {
 
   const handleFinish = () => {
     resetBooking();
-    router.push("/");
+    window.location.href = "https://www.resmoke.co.za";
   };
   
   if (isLoading) {
