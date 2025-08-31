@@ -21,8 +21,9 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import { type AvailabilitySlot, type PaymentMethod, type TermsAgreement, paymentMethods } from "@/lib/types";
+import { type PaymentMethod, type TermsAgreement, paymentMethods } from "@/lib/types";
 import { paymentAndTermsSchema } from "@/lib/schemas";
+import { getAvailableSlots } from "@/app/actions/booking-actions";
 
 type PaymentAndTermsFormData = z.infer<typeof paymentAndTermsSchema>;
 
@@ -81,45 +82,9 @@ export default function PaymentAndTermsPage() {
     };
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
-      if (!webhookUrl) {
-        throw new Error("Webhook URL is not configured. Please contact support.");
-      }
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(availabilityRequestDetails),
-      });
-
-      if (!response.ok) {
-        let errorDetails = `Error: ${response.status}`;
-        try {
-          const errorJson = await response.json();
-          errorDetails = errorJson.message || JSON.stringify(errorJson);
-        } catch (e) {
-          errorDetails = `${errorDetails}: ${response.statusText}`;
-        }
-        throw new Error(errorDetails);
-      }
-      
-      const responseText = await response.text();
-      let availabilityData: AvailabilitySlot[] = [];
-
-      if (responseText) {
-        try {
-          availabilityData = JSON.parse(responseText);
-        } catch (e) {
-          throw new Error("Failed to parse availability data from server.");
-        }
-      } else {
-        console.log("Received empty but successful response for availability. Assuming no slots.");
-      }
-
-      store.setAvailability(availabilityData);
-      router.push("/select_datetime");
-
+        const availabilityData = await getAvailableSlots(availabilityRequestDetails);
+        store.setAvailability(availabilityData);
+        router.push("/select_datetime");
     } catch (error: any) {
       console.error("Failed to fetch availability:", error);
       toast({

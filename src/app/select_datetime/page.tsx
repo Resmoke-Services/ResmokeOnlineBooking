@@ -11,6 +11,7 @@ import BookingFlowLayout from '@/components/booking-flow-layout';
 import { ChevronLeft, ChevronRight, CalendarOff, Loader2 } from 'lucide-react';
 import { isValid, parseISO } from 'date-fns';
 import { useToast } from "@/hooks/use-toast";
+import { confirmBooking } from '@/app/actions/booking-actions';
 
 const TIME_ZONE = 'Africa/Johannesburg';
 
@@ -110,43 +111,7 @@ export default function SelectDateTimePage() {
     };
 
     try {
-      const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
-      if (!webhookUrl) {
-        throw new Error("Webhook URL is not configured. Please contact support.");
-      }
-      const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(fullBookingDetails),
-      });
-
-      if (!response.ok) {
-        let errorDetails = `Error: ${response.status}`;
-        try {
-          const errorJson = await response.json();
-          errorDetails = errorJson.message || JSON.stringify(errorJson);
-        } catch (e) {
-          errorDetails = `${errorDetails}: ${response.statusText}`;
-        }
-        throw new Error(errorDetails);
-      }
-      
-      const responseText = await response.text();
-      let result;
-
-      if (responseText) {
-          try {
-              result = JSON.parse(responseText);
-          } catch (e) {
-              throw new Error("Failed to parse confirmation data from server.");
-          }
-      } else {
-          // Handle empty but successful response
-          console.log("Received empty but successful response for booking. Proceeding with confirmation.");
-          result = { status: 'Confirmed', message: 'Booking confirmed successfully.' };
-      }
+      const result = await confirmBooking(fullBookingDetails);
       
       setWebhookConfirmation(result);
       
