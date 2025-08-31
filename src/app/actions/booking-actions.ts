@@ -40,7 +40,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 }
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
-  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL;
+  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
   if (!webhookUrl) {
     throw new Error("Booking confirmation webhook URL is not configured. Please contact support.");
   }
