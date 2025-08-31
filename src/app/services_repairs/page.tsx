@@ -1,11 +1,6 @@
-
-"use client";
-
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from 'lucide-react';
 import { BookingHeader } from "@/components/booking-header";
 
 interface ServiceCategoryCardProps {

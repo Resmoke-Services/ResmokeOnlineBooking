@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import { GeistSans } from 'geist/font/sans';
 
 export const metadata: Metadata = {
   title: 'Resmoke Online Booking',
@@ -18,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
+    <html lang="en" className={GeistSans.className}>
+      <body>
         {children}
         <Toaster />
       </body>
