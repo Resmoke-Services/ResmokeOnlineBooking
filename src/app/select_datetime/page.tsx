@@ -35,7 +35,7 @@ export default function SelectDateTimePage() {
     // All other store data to be sent
     name, surname, cellNumber, email, address, city, otherCityDescription,
     suburb, otherSuburbDescription, propertyType, accessCodeRequired,
-    itemsToRepair, problemDescriptions, paymentMethods, termsAgreement
+    itemsToRepair, problemDescriptions, paymentMethods, termsAgreement, servicePath
   } = useBookingStore();
   
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
@@ -106,6 +106,7 @@ export default function SelectDateTimePage() {
       paymentMethods,
       termsAgreement,
       slotStart: selectedTime.slotStart,
+      servicePath,
     };
 
     try {

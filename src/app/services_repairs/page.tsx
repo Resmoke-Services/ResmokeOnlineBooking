@@ -1,7 +1,9 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
 import { BookingHeader } from "@/components/booking-header";
+import ServiceSelectionTracker from "@/components/service-selection-tracker";
 
 interface ServiceCategoryCardProps {
   title: string;
@@ -90,6 +92,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
 export default function ServicesPage() {
   return (
      <div className="min-h-screen flex flex-col bg-background text-foreground">
+        <ServiceSelectionTracker selections={["REPAIRS"]} />
         <BookingHeader />
 
         <main className="flex-grow">

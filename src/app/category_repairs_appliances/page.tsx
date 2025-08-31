@@ -1,8 +1,10 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
+import ServiceSelectionTracker from '@/components/service-selection-tracker';
 
 const serviceOptions = [
   {
@@ -102,6 +104,7 @@ const serviceOptions = [
 export default function ServicePage() {
   return (
     <BookingFlowLayout>
+      <ServiceSelectionTracker selections={["REPAIRS", "APPLIANCES"]} />
       <div className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">APPLIANCE REPAIRS</h1>
         <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>

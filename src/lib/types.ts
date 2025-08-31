@@ -130,4 +130,5 @@ export interface BookingData {
   termsAgreement: TermsAgreement | null;
   selectedDateTime: BookingSlot | null;
   webhookConfirmation: WebhookConfirmation | null;
+  servicePath: string[];
 }

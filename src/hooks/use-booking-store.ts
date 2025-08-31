@@ -17,8 +17,8 @@ interface BookingState extends BookingData {
   setOtherCityDescription: (description: string) => void;
   setSuburb: (suburb: Suburb) => void;
   setOtherSuburbDescription: (description: string) => void;
-  setPropertyType: (propertyType: PropertyType | undefined) => void;
-  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | undefined) => void;
+  setPropertyType: (propertyType: PropertyType | null) => void;
+  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | null) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
@@ -26,6 +26,7 @@ interface BookingState extends BookingData {
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
+  setServicePath: (path: string[]) => void;
   resetBooking: () => void;
 }
 
@@ -47,6 +48,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   termsAgreement: null,
   selectedDateTime: null,
   webhookConfirmation: null,
+  servicePath: [],
 };
 
 const initialState = {
@@ -78,6 +80,7 @@ export const useBookingStore = create<BookingState>()(
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
+      setServicePath: (servicePath) => set({ servicePath }),
       resetBooking: () => set(initialState),
     }),
     {

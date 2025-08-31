@@ -1,7 +1,9 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ServiceCard } from '@/components/service-card';
 import { BookingHeader } from '@/components/booking-header';
+import ServiceSelectionTracker from '@/components/service-selection-tracker';
 
 const services = [
   {
@@ -33,6 +35,7 @@ const services = [
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <ServiceSelectionTracker selections={[]} />
       <BookingHeader />
 
       <main className="flex-1">
