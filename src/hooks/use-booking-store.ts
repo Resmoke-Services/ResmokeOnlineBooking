@@ -17,8 +17,8 @@ interface BookingState extends BookingData {
   setOtherCityDescription: (description: string) => void;
   setSuburb: (suburb: Suburb) => void;
   setOtherSuburbDescription: (description: string) => void;
-  setPropertyType: (propertyType: PropertyType) => void;
-  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired) => void;
+  setPropertyType: (propertyType: PropertyType | undefined) => void;
+  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | undefined) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
@@ -39,8 +39,8 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   otherCityDescription: '',
   suburb: undefined,
   otherSuburbDescription: '',
-  propertyType: null,
-  accessCodeRequired: null,
+  propertyType: undefined,
+  accessCodeRequired: undefined,
   itemsToRepair: [],
   problemDescriptions: {},
   paymentMethods: [],
