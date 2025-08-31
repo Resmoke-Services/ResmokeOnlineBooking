@@ -1,6 +1,7 @@
 
 "use server";
 
+import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
