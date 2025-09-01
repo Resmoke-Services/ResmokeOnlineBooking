@@ -3,10 +3,14 @@ import { z } from "zod";
 import { cities, suburbs, propertyTypes, accessCodeOptions, paymentMethods } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
 
+// Regex to validate South African phone numbers
+// Supports: 0XXXXXXXXX, +27XXXXXXXXX (with or without space after +27)
+const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
+
 export const customerProfileSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   surname: z.string().min(2, { message: "Surname must be at least 2 characters." }),
-  cellNumber: z.string().regex(/^(\+?\d{1,3}[- ]?)?\d{9,11}$/, { message: "Invalid cell number format." }),
+  cellNumber: z.string().regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number." }),
   email: z.string().email({ message: "Invalid email address." }),
   address: z.string().min(5, { message: "Address must be at least 5 characters." }),
   city: z.enum(cities, {

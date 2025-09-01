@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { suburbs, cities, propertyTypes, accessCodeOptions } from "@/lib/types";
+import { suburbs, cities, propertyTypes, accessCodeOptions, type City, type Suburb } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
@@ -125,7 +125,7 @@ export default function ContactPage() {
           componentRestrictions: { country: "za" },
           bounds: gautengBounds,
           strictBounds: true,
-          fields: ["formatted_address"],
+          fields: ["formatted_address", "address_components"],
           types: ["address"],
         }
       );
@@ -134,6 +134,20 @@ export default function ContactPage() {
         const place = autocomplete.getPlace();
         if (place && place.formatted_address) {
           form.setValue("address", place.formatted_address, { shouldValidate: true });
+          
+          const addressText = place.formatted_address.toLowerCase();
+
+          // Pre-select city
+          const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
+          if (foundCity) {
+            form.setValue("city", foundCity as City, { shouldValidate: true });
+          }
+
+          // Pre-select suburb
+          const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
+          if (foundSuburb) {
+            form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
+          }
         }
       });
     }
@@ -228,7 +242,7 @@ export default function ContactPage() {
                   <FormItem>
                     <FormLabel>Cell Number</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="e.g., 0821234567" {...field} />
+                      <Input type="tel" placeholder="e.g., 0821234567 or +27821234567" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -276,7 +290,7 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                       >
                         {cities.map((city) => (
@@ -319,7 +333,7 @@ export default function ContactPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Suburb</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select suburb" />
@@ -362,7 +376,7 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                       >
                         {propertyTypes.map(pt => (
@@ -390,7 +404,7 @@ export default function ContactPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
+                        value={field.value}
                         className="flex flex-row space-x-8"
                       >
                         {accessCodeOptions.map(aco => (
