@@ -42,18 +42,7 @@ export default function ContactPage() {
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      router.replace('/user_profile');
-    }
-  }, [user, router]);
-
-  useEffect(() => {
-    setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
-  }, []);
-
+  
   const form = useForm<CustomerProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
     defaultValues: {
@@ -92,7 +81,8 @@ export default function ContactPage() {
   }, [name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
 
   useEffect(() => {
-    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+    if (apiKey) {
       const loader = new Loader({
         apiKey: apiKey,
         version: "weekly",
@@ -109,8 +99,10 @@ export default function ContactPage() {
           description: "Could not load Google Maps. Please enter your address manually.",
         });
       });
+    } else {
+        console.warn("Google Maps API key is not configured.");
     }
-  }, [apiKey, toast]);
+  }, [toast]);
 
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
@@ -191,10 +183,6 @@ export default function ContactPage() {
     }
     
     router.push("/item_to_repair");
-  }
-
-  if (!user) {
-    return <BookingFlowLayout><div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div></BookingFlowLayout>
   }
 
   return (
