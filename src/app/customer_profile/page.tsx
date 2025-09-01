@@ -106,17 +106,18 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
-      const gautengBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
-        new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
+      // Tighter bounds around Centurion, Pretoria, and Midrand
+      const priorityBounds = new window.google.maps.LatLngBounds(
+        new window.google.maps.LatLng(-26.05, 28.05), // Southwest corner (Midrand area)
+        new window.google.maps.LatLng(-25.65, 28.35)  // Northeast corner (Pretoria area)
       );
       
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
         {
           componentRestrictions: { country: "za" },
-          bounds: gautengBounds,
-          strictBounds: true, // This ensures results are strictly within the Gauteng bounds
+          bounds: priorityBounds,
+          strictBounds: true,
           fields: ["formatted_address", "address_components"],
           types: ["address"],
         }
