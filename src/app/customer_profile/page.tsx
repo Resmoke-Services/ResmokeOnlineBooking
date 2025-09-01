@@ -126,20 +126,25 @@ export default function ContactPage() {
       autocomplete.addListener("place_changed", () => {
         const place = autocomplete.getPlace();
         if (place && place.formatted_address) {
-          form.setValue("address", place.formatted_address, { shouldValidate: true });
+          const fullAddress = place.formatted_address;
+          form.setValue("address", fullAddress, { shouldValidate: true });
           
-          const addressText = place.formatted_address.toLowerCase();
+          const addressText = fullAddress.toLowerCase();
 
           // Pre-select city
           const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
           if (foundCity) {
             form.setValue("city", foundCity as City, { shouldValidate: true });
+          } else {
+            form.setValue("city", undefined);
           }
 
           // Pre-select suburb
           const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
           if (foundSuburb) {
             form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
+          } else {
+             form.setValue("suburb", undefined);
           }
         }
       });
