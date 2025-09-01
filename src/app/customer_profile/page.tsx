@@ -82,7 +82,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (apiKey) {
+    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
       const loader = new Loader({
         apiKey: apiKey,
         version: "weekly",
@@ -107,8 +107,8 @@ export default function ContactPage() {
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
       const gautengBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-26.75, 27.7),
-        new window.google.maps.LatLng(-25.5, 28.5)
+        new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
+        new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
       );
       
       const autocomplete = new window.google.maps.places.Autocomplete(
@@ -116,7 +116,7 @@ export default function ContactPage() {
         {
           componentRestrictions: { country: "za" },
           bounds: gautengBounds,
-          strictBounds: true,
+          strictBounds: true, // This ensures results are strictly within the Gauteng bounds
           fields: ["formatted_address", "address_components"],
           types: ["address"],
         }
