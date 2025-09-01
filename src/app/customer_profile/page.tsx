@@ -242,7 +242,7 @@ export default function ContactPage() {
                   <FormItem>
                     <FormLabel>Cell Number</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="e.g., 0821234567 or +27821234567" {...field} />
+                      <Input type="tel" placeholder="e.g., +27821234567" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
