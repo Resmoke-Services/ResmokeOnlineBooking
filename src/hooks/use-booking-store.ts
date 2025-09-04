@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, PropertyFunction, RentalUnitRole } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -19,6 +19,10 @@ interface BookingState extends BookingData {
   setOtherSuburbDescription: (description: string) => void;
   setPropertyType: (propertyType: PropertyType | null) => void;
   setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | null) => void;
+  setPropertyFunction: (propertyFunction: PropertyFunction | null) => void;
+  setRentalUnitRole: (rentalUnitRole: RentalUnitRole | null) => void;
+  setCompanyName: (companyName: string) => void;
+  setCompanyAddress: (companyAddress: string) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
@@ -42,6 +46,10 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   otherSuburbDescription: '',
   propertyType: null,
   accessCodeRequired: null,
+  propertyFunction: null,
+  rentalUnitRole: null,
+  companyName: '',
+  companyAddress: '',
   itemsToRepair: [],
   problemDescriptions: {},
   paymentMethods: [],
@@ -73,6 +81,10 @@ export const useBookingStore = create<BookingState>()(
       setOtherSuburbDescription: (otherSuburbDescription) => set({ otherSuburbDescription }),
       setPropertyType: (propertyType) => set({ propertyType }),
       setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
+      setPropertyFunction: (propertyFunction) => set({ propertyFunction }),
+      setRentalUnitRole: (rentalUnitRole) => set({ rentalUnitRole }),
+      setCompanyName: (companyName) => set({ companyName }),
+      setCompanyAddress: (companyAddress) => set({ companyAddress }),
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
       setProblemDescriptions: (problemDescriptions) => set({ problemDescriptions }),
       setPaymentMethods: (paymentMethods) => set({ paymentMethods }),

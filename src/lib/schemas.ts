@@ -1,9 +1,8 @@
 
 import { z } from "zod";
-import { cities, suburbs, propertyTypes, accessCodeOptions, paymentMethods } from "@/lib/types";
+import { cities, suburbs, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
 
-// Regex to validate South African phone numbers in 0... or +27 format
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
 
 export const customerProfileSchema = z.object({
@@ -28,6 +27,12 @@ export const customerProfileSchema = z.object({
   accessCodeRequired: z.enum(accessCodeOptions, {
     required_error: "You need to select an option for access code.",
   }),
+  propertyFunction: z.enum(propertyFunctions, {
+    required_error: "You need to select a property function.",
+  }),
+  rentalUnitRole: z.enum(rentalUnitRoles).optional(),
+  companyName: z.string().optional(),
+  companyAddress: z.string().optional(),
 }).refine(data => {
     if (data.suburb === 'Other' && (!data.otherSuburbDescription || data.otherSuburbDescription.trim().length < 3)) {
         return false;
@@ -44,6 +49,30 @@ export const customerProfileSchema = z.object({
 }, {
     message: "Please specify your city (min. 3 characters).",
     path: ["otherCityDescription"],
+}).refine(data => {
+    if (data.propertyFunction === 'Rental Unit' && !data.rentalUnitRole) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Please select your role for the rental unit.",
+    path: ["rentalUnitRole"],
+}).refine(data => {
+    if (data.propertyFunction === 'Company' && (!data.companyName || data.companyName.trim().length < 2)) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Company name must be at least 2 characters.",
+    path: ["companyName"],
+}).refine(data => {
+    if (data.propertyFunction === 'Company' && (!data.companyAddress || data.companyAddress.trim().length < 5)) {
+        return false;
+    }
+    return true;
+}, {
+    message: "Company address must be at least 5 characters.",
+    path: ["companyAddress"],
 });
 
 export const itemToRepairSchema = z.object({

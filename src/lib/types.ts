@@ -45,6 +45,12 @@ export type PropertyType = (typeof propertyTypes)[number];
 export const accessCodeOptions = ["Yes", "No"] as const;
 export type AccessCodeRequired = (typeof accessCodeOptions)[number];
 
+export const propertyFunctions = ["Private", "Rental Unit", "Company"] as const;
+export type PropertyFunction = (typeof propertyFunctions)[number];
+
+export const rentalUnitRoles = ["I'm the Owner", "I'm the Tenant", "I'm the Estate Agent"] as const;
+export type RentalUnitRole = (typeof rentalUnitRoles)[number];
+
 export const repairItems = [
     { id: 'DISHWASHER', label: 'DISHWASHER', note: undefined },
     { id: 'MICROWAVE', label: 'MICROWAVE', note: undefined },
@@ -87,6 +93,10 @@ export interface CustomerProfileData {
   otherSuburbDescription?: string;
   propertyType: PropertyType | undefined;
   accessCodeRequired: AccessCodeRequired | undefined;
+  propertyFunction: PropertyFunction | undefined;
+  rentalUnitRole: RentalUnitRole | undefined;
+  companyName?: string;
+  companyAddress?: string;
 }
 
 export interface ItemToRepairData {
@@ -124,6 +134,10 @@ export interface BookingData {
   otherSuburbDescription: string;
   propertyType: PropertyType | null;
   accessCodeRequired: AccessCodeRequired | null;
+  propertyFunction: PropertyFunction | null;
+  rentalUnitRole: RentalUnitRole | null;
+  companyName: string;
+  companyAddress: string;
   itemsToRepair: RepairItem[];
   problemDescriptions: Record<string, string>;
   paymentMethods: PaymentMethod[];

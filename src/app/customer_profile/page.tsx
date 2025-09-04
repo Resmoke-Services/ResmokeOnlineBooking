@@ -21,7 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { suburbs, cities, propertyTypes, accessCodeOptions, type City, type Suburb } from "@/lib/types";
+import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, type City, type Suburb } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
@@ -37,7 +37,7 @@ export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setCity, setOtherCityDescription, setSuburb, setOtherSuburbDescription, setPropertyType, setAccessCodeRequired } = useBookingStore();
+  const store = useBookingStore();
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
@@ -46,39 +46,48 @@ export default function ContactPage() {
   const form = useForm<CustomerProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
     defaultValues: {
-      name: name || "",
-      surname: surname || "",
-      cellNumber: cellNumber || "",
-      email: email || "",
-      address: address || "",
-      city: city || undefined,
-      otherCityDescription: otherCityDescription || '',
-      suburb: suburb || undefined,
-      otherSuburbDescription: otherSuburbDescription || '',
-      propertyType: propertyType || undefined,
-      accessCodeRequired: accessCodeRequired || undefined,
+      name: store.name || "",
+      surname: store.surname || "",
+      cellNumber: store.cellNumber || "",
+      email: store.email || "",
+      address: store.address || "",
+      city: store.city || undefined,
+      otherCityDescription: store.otherCityDescription || '',
+      suburb: store.suburb || undefined,
+      otherSuburbDescription: store.otherSuburbDescription || '',
+      propertyType: store.propertyType || undefined,
+      accessCodeRequired: store.accessCodeRequired || undefined,
+      propertyFunction: store.propertyFunction || undefined,
+      rentalUnitRole: store.rentalUnitRole || undefined,
+      companyName: store.companyName || '',
+      companyAddress: store.companyAddress || '',
     },
     mode: "onChange",
   });
 
   const selectedSuburb = form.watch("suburb");
   const selectedCity = form.watch("city");
+  const selectedPropertyFunction = form.watch("propertyFunction");
   
   useEffect(() => {
     form.reset({
-      name: name || "",
-      surname: surname || "",
-      cellNumber: cellNumber || "",
-      email: email || "",
-      address: address || "",
-      city: city || undefined,
-      otherCityDescription: otherCityDescription || '',
-      suburb: suburb || undefined,
-      otherSuburbDescription: otherSuburbDescription || '',
-      propertyType: propertyType || undefined,
-      accessCodeRequired: accessCodeRequired || undefined,
+      name: store.name || "",
+      surname: store.surname || "",
+      cellNumber: store.cellNumber || "",
+      email: store.email || "",
+      address: store.address || "",
+      city: store.city || undefined,
+      otherCityDescription: store.otherCityDescription || '',
+      suburb: store.suburb || undefined,
+      otherSuburbDescription: store.otherSuburbDescription || '',
+      propertyType: store.propertyType || undefined,
+      accessCodeRequired: store.accessCodeRequired || undefined,
+      propertyFunction: store.propertyFunction || undefined,
+      rentalUnitRole: store.rentalUnitRole || undefined,
+      companyName: store.companyName || '',
+      companyAddress: store.companyAddress || '',
     });
-  }, [name, surname, cellNumber, email, address, city, otherCityDescription, suburb, otherSuburbDescription, propertyType, accessCodeRequired, form]);
+  }, [store, form]);
 
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -106,10 +115,9 @@ export default function ContactPage() {
 
   useEffect(() => {
     if (isGoogleMapsLoaded && addressInputRef.current) {
-      // Tighter bounds around Centurion, Pretoria, and Midrand
       const priorityBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-26.05, 28.05), // Southwest corner (Midrand area)
-        new window.google.maps.LatLng(-25.65, 28.35)  // Northeast corner (Pretoria area)
+        new window.google.maps.LatLng(-26.05, 28.05),
+        new window.google.maps.LatLng(-25.65, 28.35)
       );
       
       const autocomplete = new window.google.maps.places.Autocomplete(
@@ -130,8 +138,6 @@ export default function ContactPage() {
           form.setValue("address", fullAddress, { shouldValidate: true });
           
           const addressText = fullAddress.toLowerCase();
-
-          // Pre-select city
           const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
           if (foundCity) {
             form.setValue("city", foundCity as City, { shouldValidate: true });
@@ -139,7 +145,6 @@ export default function ContactPage() {
             form.setValue("city", undefined, { shouldValidate: true });
           }
 
-          // Pre-select suburb
           const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
           if (foundSuburb) {
             form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
@@ -162,21 +167,25 @@ export default function ContactPage() {
   async function onSubmit(data: CustomerProfileFormData) {
     setIsSubmitting(true);
     
-    setName(data.name);
-    setSurname(data.surname);
-    setCellNumber(data.cellNumber);
-    setEmail(data.email);
-    setAddress(data.address);
-    setCity(data.city);
-    setOtherCityDescription(data.otherCityDescription || '');
-    setSuburb(data.suburb);
-    setOtherSuburbDescription(data.otherSuburbDescription || '');
-    setPropertyType(data.propertyType);
-    setAccessCodeRequired(data.accessCodeRequired);
+    store.setName(data.name);
+    store.setSurname(data.surname);
+    store.setCellNumber(data.cellNumber);
+    store.setEmail(data.email);
+    store.setAddress(data.address);
+    store.setCity(data.city);
+    store.setOtherCityDescription(data.otherCityDescription || '');
+    store.setSuburb(data.suburb);
+    store.setOtherSuburbDescription(data.otherSuburbDescription || '');
+    store.setPropertyType(data.propertyType);
+    store.setAccessCodeRequired(data.accessCodeRequired);
+    store.setPropertyFunction(data.propertyFunction);
+    store.setRentalUnitRole(data.rentalUnitRole);
+    store.setCompanyName(data.companyName || '');
+    store.setCompanyAddress(data.companyAddress || '');
 
-    if (user && firestore) {
+    if (store.user && firestore) {
       try {
-        const userRef = doc(firestore, 'users', user.uid);
+        const userRef = doc(firestore, 'users', store.user.uid);
         await setDoc(userRef, {
           name: data.name,
           surname: data.surname,
@@ -188,6 +197,10 @@ export default function ContactPage() {
           otherSuburbDescription: data.otherSuburbDescription,
           propertyType: data.propertyType,
           accessCodeRequired: data.accessCodeRequired,
+          propertyFunction: data.propertyFunction,
+          rentalUnitRole: data.rentalUnitRole,
+          companyName: data.companyName,
+          companyAddress: data.companyAddress,
           email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true });
@@ -262,7 +275,7 @@ export default function ContactPage() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} readOnly={!user?.isGuest} />
+                      <Input type="email" placeholder="your.email@example.com" {...field} readOnly={!store.user?.isGuest} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -403,6 +416,94 @@ export default function ContactPage() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="propertyFunction"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Property Function</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {propertyFunctions.map(pf => (
+                          <FormItem key={pf} className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value={pf} />
+                            </FormControl>
+                            <FormLabel className="font-normal">{pf}</FormLabel>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {selectedPropertyFunction === 'Rental Unit' && (
+                <FormField
+                  control={form.control}
+                  name="rentalUnitRole"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3 pl-4 border-l-2 ml-1">
+                      <FormLabel>For this rental unit:</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="flex flex-wrap gap-x-8 gap-y-2"
+                        >
+                          {rentalUnitRoles.map(rur => (
+                            <FormItem key={rur} className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value={rur} />
+                              </FormControl>
+                              <FormLabel className="font-normal">{rur}</FormLabel>
+                            </FormItem>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
+              {selectedPropertyFunction === 'Company' && (
+                <div className="space-y-6 pl-4 border-l-2 ml-1">
+                  <FormField
+                    control={form.control}
+                    name="companyName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter company name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="companyAddress"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Address</FormLabel>
+                        <FormControl>
+                           <Textarea placeholder="Enter company address" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
               <FormField
                 control={form.control}
                 name="accessCodeRequired"
