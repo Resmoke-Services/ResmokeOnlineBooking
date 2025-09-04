@@ -183,13 +183,6 @@ export default function ConfirmationPage() {
           <CardDescription className="text-lg px-6">{confirmationMessage}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 text-base">
-          {error && (
-            <Alert variant="default">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Note</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
           <div className="space-y-3 rounded-lg border p-4">
              <h3 className="font-semibold text-xl mb-3">Your Details</h3>
              <div className="flex items-center gap-3"><User className="w-5 h-5 text-muted-foreground" /> <span>{name} {surname}</span></div>
