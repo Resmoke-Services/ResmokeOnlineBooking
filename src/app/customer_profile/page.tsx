@@ -135,12 +135,16 @@ export default function ContactPage() {
           const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
           if (foundCity) {
             form.setValue("city", foundCity as City, { shouldValidate: true });
+          } else {
+            form.setValue("city", undefined, { shouldValidate: true });
           }
 
           // Pre-select suburb
           const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
           if (foundSuburb) {
             form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
+          } else {
+            form.setValue("suburb", undefined, { shouldValidate: true });
           }
         }
       });
