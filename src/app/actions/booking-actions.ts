@@ -7,7 +7,14 @@ import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
   if (!webhookUrl) {
-    throw new Error("Availability webhook URL is not configured. Please contact support.");
+    // Return a mock response for development if the URL is not set.
+    console.warn("Availability webhook URL is not configured. Returning mock data.");
+    const now = new Date();
+    return [
+      { slotStart: new Date(now.setDate(now.getDate() + 1)).toISOString() },
+      { slotStart: new Date(now.setHours(now.getHours() + 2)).toISOString() },
+      { slotStart: new Date(now.setDate(now.getDate() + 1)).toISOString() },
+    ];
   }
 
   try {
@@ -41,8 +48,14 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
   const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
-  if (!webhookUrl) {
-    throw new Error("Booking confirmation webhook URL is not configured. Please contact support.");
+   if (!webhookUrl) {
+    // Return a mock response for development if the URL is not set.
+    console.warn("Booking confirmation webhook URL is not configured. Returning mock data.");
+    return {
+      status: 'Confirmed',
+      message: 'Booking confirmed successfully (Mock Response).',
+      dateTime: details.slotStart,
+    };
   }
 
   try {
