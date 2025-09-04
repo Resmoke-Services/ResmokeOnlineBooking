@@ -202,7 +202,7 @@ export default function ContactPage() {
     store.setPropertyType(data.propertyType);
     store.setAccessCodeRequired(data.accessCodeRequired);
     store.setPropertyFunction(data.propertyFunction);
-    store.setRentalUnitRole(data.rentalUnitRole);
+    store.setRentalUnitRole(data.rentalUnitRole || null);
     store.setCompanyName(data.companyName || '');
     store.setCompanyAddress(data.companyAddress || '');
 
