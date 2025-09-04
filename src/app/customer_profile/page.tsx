@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, type City, type Suburb } from "@/lib/types";
@@ -41,6 +40,7 @@ export default function ContactPage() {
   const firestore = useFirestore();
   
   const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const companyAddressInputRef = useRef<HTMLInputElement | null>(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
   
   const form = useForm<CustomerProfileFormData>({
@@ -114,45 +114,62 @@ export default function ContactPage() {
   }, [toast]);
 
   useEffect(() => {
-    if (isGoogleMapsLoaded && addressInputRef.current) {
+    if (isGoogleMapsLoaded) {
       const priorityBounds = new window.google.maps.LatLngBounds(
         new window.google.maps.LatLng(-26.05, 28.05),
         new window.google.maps.LatLng(-25.65, 28.35)
       );
-      
-      const autocomplete = new window.google.maps.places.Autocomplete(
-        addressInputRef.current,
-        {
+
+      const autocompleteOptions = {
           componentRestrictions: { country: "za" },
           bounds: priorityBounds,
           strictBounds: true,
           fields: ["formatted_address", "address_components"],
           types: ["address"],
-        }
-      );
+      };
 
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        if (place && place.formatted_address) {
-          const fullAddress = place.formatted_address;
-          form.setValue("address", fullAddress, { shouldValidate: true });
-          
-          const addressText = fullAddress.toLowerCase();
-          const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
-          if (foundCity) {
-            form.setValue("city", foundCity as City, { shouldValidate: true });
-          } else {
-            form.setValue("city", undefined, { shouldValidate: true });
-          }
+      if (addressInputRef.current) {
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          addressInputRef.current,
+          autocompleteOptions
+        );
 
-          const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
-          if (foundSuburb) {
-            form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
-          } else {
-            form.setValue("suburb", undefined, { shouldValidate: true });
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          if (place && place.formatted_address) {
+            const fullAddress = place.formatted_address;
+            form.setValue("address", fullAddress, { shouldValidate: true });
+            
+            const addressText = fullAddress.toLowerCase();
+            const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
+            if (foundCity) {
+              form.setValue("city", foundCity as City, { shouldValidate: true });
+            } else {
+              form.setValue("city", "Other", { shouldValidate: true });
+            }
+
+            const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
+            if (foundSuburb) {
+              form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
+            } else {
+              form.setValue("suburb", "Other", { shouldValidate: true });
+            }
           }
-        }
-      });
+        });
+      }
+
+      if (companyAddressInputRef.current) {
+        const companyAutocomplete = new window.google.maps.places.Autocomplete(
+            companyAddressInputRef.current,
+            autocompleteOptions
+        );
+        companyAutocomplete.addListener("place_changed", () => {
+            const place = companyAutocomplete.getPlace();
+            if (place && place.formatted_address) {
+                form.setValue("companyAddress", place.formatted_address, { shouldValidate: true });
+            }
+        });
+      }
     }
   }, [isGoogleMapsLoaded, form]);
 
@@ -338,7 +355,7 @@ export default function ContactPage() {
                     <FormItem>
                       <FormLabel>Please Specify Your City</FormLabel>
                       <FormControl>
-                        <Textarea
+                        <Input
                           placeholder="Please enter your city name"
                           {...field}
                         />
@@ -378,7 +395,7 @@ export default function ContactPage() {
                     <FormItem>
                       <FormLabel>Please Specify Your Suburb</FormLabel>
                       <FormControl>
-                        <Textarea
+                        <Input
                           placeholder="Please enter your suburb name"
                           {...field}
                         />
@@ -495,7 +512,15 @@ export default function ContactPage() {
                       <FormItem>
                         <FormLabel>Company Address</FormLabel>
                         <FormControl>
-                           <Textarea placeholder="Enter company address" {...field} />
+                           <Input
+                             placeholder="Start typing company address..."
+                             {...field}
+                             ref={(el) => {
+                               field.ref(el);
+                               companyAddressInputRef.current = el;
+                             }}
+                             autoComplete="off"
+                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
