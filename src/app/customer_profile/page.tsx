@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, type City, type Suburb } from "@/lib/types";
+import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, billingOptions, type City, type Suburb } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
@@ -61,6 +61,7 @@ export default function ContactPage() {
       rentalUnitRole: store.rentalUnitRole || undefined,
       companyName: store.companyName || '',
       companyAddress: store.companyAddress || '',
+      billingInformation: store.billingInformation || undefined,
     },
     mode: "onChange",
   });
@@ -86,6 +87,7 @@ export default function ContactPage() {
       rentalUnitRole: store.rentalUnitRole || undefined,
       companyName: store.companyName || '',
       companyAddress: store.companyAddress || '',
+      billingInformation: store.billingInformation || undefined,
     });
   }, [store, form]);
 
@@ -144,11 +146,22 @@ export default function ContactPage() {
           form.setValue("address", fullAddress, { shouldValidate: true });
           
           const addressText = fullAddress.toLowerCase();
+          
+          // Pre-select city
           const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
-          form.setValue("city", foundCity, { shouldValidate: true });
+          if (foundCity) {
+            form.setValue("city", foundCity as City, { shouldValidate: true });
+          } else {
+             form.setValue("city", 'Other', { shouldValidate: true });
+          }
 
+          // Pre-select suburb
           const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
-          form.setValue("suburb", foundSuburb, { shouldValidate: true });
+          if (foundSuburb) {
+            form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
+          } else {
+            form.setValue("suburb", "Other", { shouldValidate: true });
+          }
         }
       });
     }
@@ -194,6 +207,7 @@ export default function ContactPage() {
     store.setRentalUnitRole(data.rentalUnitRole);
     store.setCompanyName(data.companyName || '');
     store.setCompanyAddress(data.companyAddress || '');
+    store.setBillingInformation(data.billingInformation);
 
     if (store.user && firestore) {
       try {
@@ -213,6 +227,7 @@ export default function ContactPage() {
           rentalUnitRole: data.rentalUnitRole,
           companyName: data.companyName,
           companyAddress: data.companyAddress,
+          billingInformation: data.billingInformation,
           email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true });
@@ -552,6 +567,34 @@ export default function ContactPage() {
                   </FormItem>
                 )}
               />
+              
+              <FormField
+                control={form.control}
+                name="billingInformation"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Billing Information</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {billingOptions.map(bo => (
+                          <FormItem key={bo} className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value={bo} />
+                            </FormControl>
+                            <FormLabel className="font-normal">{bo}</FormLabel>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
@@ -565,3 +608,5 @@ export default function ContactPage() {
     </BookingFlowLayout>
   );
 }
+
+    

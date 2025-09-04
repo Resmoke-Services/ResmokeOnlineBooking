@@ -51,6 +51,9 @@ export type PropertyFunction = (typeof propertyFunctions)[number];
 export const rentalUnitRoles = ["I'm the Owner", "I'm the Tenant", "I'm the Estate Agent"] as const;
 export type RentalUnitRole = (typeof rentalUnitRoles)[number];
 
+export const billingOptions = ["Personal", "Owner", "Company"] as const;
+export type BillingInformation = (typeof billingOptions)[number];
+
 export const repairItems = [
     { id: 'DISHWASHER', label: 'DISHWASHER', note: undefined },
     { id: 'MICROWAVE', label: 'MICROWAVE', note: undefined },
@@ -97,6 +100,7 @@ export interface CustomerProfileData {
   rentalUnitRole: RentalUnitRole | undefined;
   companyName?: string;
   companyAddress?: string;
+  billingInformation: BillingInformation | undefined;
 }
 
 export interface ItemToRepairData {
@@ -138,6 +142,7 @@ export interface BookingData {
   rentalUnitRole: RentalUnitRole | null;
   companyName: string;
   companyAddress: string;
+  billingInformation: BillingInformation | null;
   itemsToRepair: RepairItem[];
   problemDescriptions: Record<string, string>;
   paymentMethods: PaymentMethod[];
@@ -146,3 +151,5 @@ export interface BookingData {
   webhookConfirmation: WebhookConfirmation | null;
   servicePath: string[];
 }
+
+    

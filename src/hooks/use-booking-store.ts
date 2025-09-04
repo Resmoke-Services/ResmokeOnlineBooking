@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, PropertyFunction, RentalUnitRole } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, PropertyFunction, RentalUnitRole, BillingInformation } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -31,6 +31,7 @@ interface BookingState extends BookingData {
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
   setServicePath: (path: string[]) => void;
+  setBillingInformation: (billingInformation: BillingInformation | null) => void;
   resetBooking: () => void;
 }
 
@@ -57,6 +58,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   selectedDateTime: null,
   webhookConfirmation: null,
   servicePath: [],
+  billingInformation: null,
 };
 
 const initialState = {
@@ -93,6 +95,7 @@ export const useBookingStore = create<BookingState>()(
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
       setServicePath: (servicePath) => set({ servicePath }),
+      setBillingInformation: (billingInformation) => set({ billingInformation }),
       resetBooking: () => set(initialState),
     }),
     {
@@ -101,3 +104,5 @@ export const useBookingStore = create<BookingState>()(
     }
   )
 );
+
+    

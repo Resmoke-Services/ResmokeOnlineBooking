@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { cities, suburbs, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles } from "@/lib/types";
+import { cities, suburbs, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, billingOptions } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
@@ -33,6 +33,9 @@ export const customerProfileSchema = z.object({
   rentalUnitRole: z.enum(rentalUnitRoles).optional(),
   companyName: z.string().optional(),
   companyAddress: z.string().optional(),
+  billingInformation: z.enum(billingOptions, {
+    required_error: "You need to select a billing information option.",
+  }),
 }).refine(data => {
     if (data.suburb === 'Other' && (!data.otherSuburbDescription || data.otherSuburbDescription.trim().length < 3)) {
         return false;
@@ -116,3 +119,5 @@ export const paymentAndTermsSchema = z.object({
     }),
   }),
 });
+
+    
