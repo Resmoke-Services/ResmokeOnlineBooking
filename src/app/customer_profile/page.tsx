@@ -114,59 +114,58 @@ export default function ContactPage() {
   }, [toast]);
 
   useEffect(() => {
-    if (isGoogleMapsLoaded) {
-      const priorityBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-25.92, 28.10), // Centurion SW
-        new window.google.maps.LatLng(-25.70, 28.30)  // Pretoria NE
+    if (!isGoogleMapsLoaded) return;
+
+    const priorityBounds = new window.google.maps.LatLngBounds(
+      new window.google.maps.LatLng(-25.92, 28.10), // Centurion SW
+      new window.google.maps.LatLng(-25.70, 28.30)  // Pretoria NE
+    );
+
+    const autocompleteOptions = {
+        componentRestrictions: { country: "za" },
+        bounds: priorityBounds,
+        strictBounds: false, // Allow results outside but prioritize inside
+        fields: ["formatted_address", "address_components"],
+        types: ["address"],
+    };
+
+    let addressAutocomplete: google.maps.places.Autocomplete | null = null;
+    let companyAddressAutocomplete: google.maps.places.Autocomplete | null = null;
+    
+    if (addressInputRef.current) {
+      addressAutocomplete = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        autocompleteOptions
       );
+      addressAutocomplete.addListener("place_changed", () => {
+        const place = addressAutocomplete!.getPlace();
+        if (place && place.formatted_address) {
+          const fullAddress = place.formatted_address;
+          form.setValue("address", fullAddress, { shouldValidate: true });
+          
+          const addressText = fullAddress.toLowerCase();
+          const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
+          form.setValue("city", foundCity, { shouldValidate: true });
 
-      const autocompleteOptions = {
-          componentRestrictions: { country: "za" },
-          bounds: priorityBounds,
-          strictBounds: true,
-          fields: ["formatted_address", "address_components"],
-          types: ["address"],
-      };
-
-      if (addressInputRef.current) {
-        const autocomplete = new window.google.maps.places.Autocomplete(
-          addressInputRef.current,
-          autocompleteOptions
-        );
-
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          if (place && place.formatted_address) {
-            const fullAddress = place.formatted_address;
-            form.setValue("address", fullAddress, { shouldValidate: true });
-            
-            const addressText = fullAddress.toLowerCase();
-            const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
-            if (foundCity) {
-              form.setValue("city", foundCity as City, { shouldValidate: true });
-            }
-
-            const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
-            if (foundSuburb) {
-              form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
-            }
-          }
-        });
-      }
-
-      if (companyAddressInputRef.current) {
-        const companyAutocomplete = new window.google.maps.places.Autocomplete(
-            companyAddressInputRef.current,
-            autocompleteOptions
-        );
-        companyAutocomplete.addListener("place_changed", () => {
-            const place = companyAutocomplete.getPlace();
-            if (place && place.formatted_address) {
-                form.setValue("companyAddress", place.formatted_address, { shouldValidate: true });
-            }
-        });
-      }
+          const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
+          form.setValue("suburb", foundSuburb, { shouldValidate: true });
+        }
+      });
     }
+
+    if (companyAddressInputRef.current) {
+      companyAddressAutocomplete = new window.google.maps.places.Autocomplete(
+        companyAddressInputRef.current,
+        autocompleteOptions
+      );
+      companyAddressAutocomplete.addListener("place_changed", () => {
+        const place = companyAddressAutocomplete!.getPlace();
+        if (place && place.formatted_address) {
+          form.setValue("companyAddress", place.formatted_address, { shouldValidate: true });
+        }
+      });
+    }
+
   }, [isGoogleMapsLoaded, form]);
 
   const handlePhoneNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
