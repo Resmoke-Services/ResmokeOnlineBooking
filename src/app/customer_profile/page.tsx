@@ -116,8 +116,8 @@ export default function ContactPage() {
   useEffect(() => {
     if (isGoogleMapsLoaded) {
       const priorityBounds = new window.google.maps.LatLngBounds(
-        new window.google.maps.LatLng(-26.05, 28.05),
-        new window.google.maps.LatLng(-25.65, 28.35)
+        new window.google.maps.LatLng(-25.92, 28.10), // Centurion SW
+        new window.google.maps.LatLng(-25.70, 28.30)  // Pretoria NE
       );
 
       const autocompleteOptions = {
@@ -144,15 +144,11 @@ export default function ContactPage() {
             const foundCity = cities.find(c => addressText.includes(c.toLowerCase()));
             if (foundCity) {
               form.setValue("city", foundCity as City, { shouldValidate: true });
-            } else {
-              form.setValue("city", "Other", { shouldValidate: true });
             }
 
             const foundSuburb = suburbs.find(s => addressText.includes(s.toLowerCase()));
             if (foundSuburb) {
               form.setValue("suburb", foundSuburb as Suburb, { shouldValidate: true });
-            } else {
-              form.setValue("suburb", "Other", { shouldValidate: true });
             }
           }
         });
