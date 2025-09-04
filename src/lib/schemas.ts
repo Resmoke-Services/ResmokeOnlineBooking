@@ -33,9 +33,6 @@ export const customerProfileSchema = z.object({
   rentalUnitRole: z.enum(rentalUnitRoles).optional(),
   companyName: z.string().optional(),
   companyAddress: z.string().optional(),
-  billingInformation: z.enum(billingOptions, {
-    required_error: "You need to select a billing information option.",
-  }),
 }).refine(data => {
     if (data.suburb === 'Other' && (!data.otherSuburbDescription || data.otherSuburbDescription.trim().length < 3)) {
         return false;
@@ -107,6 +104,9 @@ export const paymentAndTermsSchema = z.object({
   paymentMethod: z.array(z.string()).refine((value): value is PaymentMethodType[] => value.length > 0, {
     message: "You must select at least one payment method.",
   }),
+  billingInformation: z.enum(billingOptions, {
+    required_error: "You need to select a billing information option.",
+  }),
   terms: z.object({
     paymentOnPremises: z.boolean().refine((val) => val === true, {
       message: "You must agree to the payment terms.",
@@ -119,5 +119,3 @@ export const paymentAndTermsSchema = z.object({
     }),
   }),
 });
-
-    

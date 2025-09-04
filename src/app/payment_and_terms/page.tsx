@@ -14,6 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
@@ -21,7 +22,7 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import { type PaymentMethod, type TermsAgreement, paymentMethods } from "@/lib/types";
+import { type PaymentMethod, type TermsAgreement, paymentMethods, billingOptions } from "@/lib/types";
 import { paymentAndTermsSchema } from "@/lib/schemas";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
 
@@ -37,6 +38,7 @@ export default function PaymentAndTermsPage() {
     resolver: zodResolver(paymentAndTermsSchema),
     defaultValues: {
       paymentMethod: store.paymentMethods,
+      billingInformation: store.billingInformation || undefined,
       terms: {
         paymentOnPremises: store.termsAgreement?.paymentOnPremises || false,
         emailConsent: store.termsAgreement?.emailConsent || false,
@@ -59,6 +61,7 @@ export default function PaymentAndTermsPage() {
     setIsSubmitting(true);
     
     store.setPaymentMethods(data.paymentMethod);
+    store.setBillingInformation(data.billingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
     // Consolidate all data for the availability webhook
@@ -76,8 +79,9 @@ export default function PaymentAndTermsPage() {
       accessCodeRequired: store.accessCodeRequired,
       itemsToRepair: store.itemsToRepair,
       problemDescriptions: store.problemDescriptions,
-      paymentMethods: data.paymentMethod, // use fresh data from form
-      termsAgreement: data.terms, // use fresh data from form
+      paymentMethods: data.paymentMethod,
+      billingInformation: data.billingInformation,
+      termsAgreement: data.terms,
       servicePath: store.servicePath,
     };
 
@@ -106,7 +110,7 @@ export default function PaymentAndTermsPage() {
       <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="text-2xl">Payment & Terms</CardTitle>
-          <CardDescription>Please select your preferred payment method and agree to the terms.</CardDescription>
+          <CardDescription>Please select your preferred payment method, billing option, and agree to the terms.</CardDescription>
         </CardHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -143,6 +147,33 @@ export default function PaymentAndTermsPage() {
                         />
                       ))}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingInformation"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-base">Billing Information</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {billingOptions.map(bo => (
+                          <FormItem key={bo} className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value={bo} />
+                            </FormControl>
+                            <FormLabel className="font-normal">{bo}</FormLabel>
+                          </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
