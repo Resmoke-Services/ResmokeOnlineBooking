@@ -147,6 +147,14 @@ export default function ContactPage() {
     }
   }, [isGoogleMapsLoaded, form]);
 
+  const handlePhoneNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    let value = e.target.value.trim();
+    if (value.startsWith('0') && value.length === 10) {
+        value = `+27${value.substring(1)}`;
+        form.setValue('cellNumber', value, { shouldValidate: true });
+    }
+  };
+
   async function onSubmit(data: CustomerProfileFormData) {
     setIsSubmitting(true);
     
@@ -232,7 +240,12 @@ export default function ContactPage() {
                   <FormItem>
                     <FormLabel>Cell Number</FormLabel>
                     <FormControl>
-                      <Input type="tel" placeholder="e.g., +27821234567" {...field} />
+                      <Input
+                        type="tel"
+                        placeholder="e.g., +27821234567"
+                        {...field}
+                        onBlur={handlePhoneNumberBlur}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
