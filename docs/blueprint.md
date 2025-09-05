@@ -1,9 +1,9 @@
-# **App Name**: Resmoke Reservations
+# **App Name**: Resmoke Online Booking
 
 ## Core Features:
 
 - Contact Information Form: First page to collect user contact information (name, surname, cell number, email address) and their suburb using a dropdown menu.
-- Date & Time Selection: Second page to allow users to select an available date and time for their booking based on data from a POST webhook (https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke).
+- Date & Time Selection: Second page to allow users to select an available date and time for their booking based on data from a POST webhook.
 - Booking Confirmation & Notification: Third page displaying a booking confirmation with a notification popup once the booking is finalized.
 
 ## Style Guidelines:
