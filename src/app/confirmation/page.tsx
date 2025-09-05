@@ -12,8 +12,9 @@ import { format, parse, parseISO, isValid } from "date-fns";
 import { generateConfirmationMessage, type ConfirmationOutput } from "@/ai/flows/confirmation-flow";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import ConfirmationSkeleton from "@/components/confirmation-skeleton";
+import type { WebhookConfirmation } from "@/lib/types";
 
-function getValidDate(details: any, selectedDateTime: { date: string; time: string; } | null): Date | null {
+function getValidDate(details: WebhookConfirmation | null, selectedDateTime: { date: string; time: string; } | null): Date | null {
     // 1. Prioritize `dateTime` from the server confirmation
     if (details?.dateTime) {
         const parsed = parseISO(details.dateTime);
@@ -41,31 +42,15 @@ export default function ConfirmationPage() {
   const [error, setError] = useState<string | null>(null);
   const [bookingError, setBookingError] = useState<string | null>(null);
 
-  const { bookingDetails, isSuccess } = useMemo(() => {
+  const { isSuccess } = useMemo(() => {
     if (!webhookConfirmation) {
-      return { bookingDetails: null, isSuccess: false };
+      return { isSuccess: false };
     }
-
-    let parsed = webhookConfirmation;
-    // Handle cases where the actual response is nested
-    if (webhookConfirmation.BookingResponse) {
-      if (typeof webhookConfirmation.BookingResponse === 'string') {
-        try {
-          parsed = JSON.parse(webhookConfirmation.BookingResponse);
-        } catch (e) {
-          // If parsing fails, treat the string as the message
-          parsed = { message: webhookConfirmation.BookingResponse, status: 'Confirmed' };
-        }
-      } else {
-        parsed = webhookConfirmation.BookingResponse;
-      }
-    }
-    
     // Normalize status and check for success
-    const status = parsed?.status?.toLowerCase();
-    const success = (status === 'confirmed' || status === 'booked') || (!parsed.error && !parsed.Error);
+    const status = webhookConfirmation?.status?.toLowerCase();
+    const success = status === 'confirmed' || status === 'booked';
 
-    return { bookingDetails: parsed, isSuccess: success };
+    return { isSuccess: success };
   }, [webhookConfirmation]);
 
 
@@ -78,26 +63,18 @@ export default function ConfirmationPage() {
 
     // Handle booking failure
     if (!isSuccess) {
-        const errorMessage = bookingDetails?.error || bookingDetails?.Error || bookingDetails?.message || "The booking could not be confirmed by the server.";
+        const errorMessage = webhookConfirmation?.message || webhookConfirmation?.error || "The booking could not be confirmed by the server.";
         setBookingError(errorMessage);
         setIsLoading(false);
         return;
     }
 
     const fetchConfirmationMessage = async () => {
-      // Ensure we have booking details before proceeding
-      if (!bookingDetails) {
-          // This case should be rare if isSuccess is true, but handle it defensively.
-          setError("Could not retrieve full booking details to generate a summary, but your booking is confirmed.");
-          setIsLoading(false);
-          return;
-      }
-
       setIsLoading(true);
       setError(null);
       try {
-        const bookingStatus = bookingDetails.status || "Confirmed";
-        const bookingDate = getValidDate(bookingDetails, selectedDateTime);
+        const bookingStatus = webhookConfirmation.status || "Confirmed";
+        const bookingDate = getValidDate(webhookConfirmation, selectedDateTime);
         const formattedDateTimeForAI = bookingDate 
           ? format(bookingDate, 'dd LLL yyyy HH:mm') 
           : "Date and time to be confirmed";
@@ -107,13 +84,11 @@ export default function ConfirmationPage() {
           address,
           bookingDateTime: formattedDateTimeForAI,
           bookingStatus: bookingStatus,
-          webhookMessage: typeof bookingDetails.message === 'string' ? bookingDetails.message : undefined,
+          webhookMessage: typeof webhookConfirmation.message === 'string' ? webhookConfirmation.message : undefined,
         });
         setAiResponse(response);
       } catch (err) {
         console.error("Failed to generate AI confirmation:", err);
-        // Even if AI fails, we don't block the user. The UI will show a default message.
-        // We can set a minor error to inform the user if desired.
         setError("Could not generate a personalized summary, but your booking is confirmed.");
       } finally {
         setIsLoading(false);
@@ -121,7 +96,7 @@ export default function ConfirmationPage() {
     };
 
     fetchConfirmationMessage();
-  }, [name, address, router, bookingDetails, selectedDateTime, isSuccess, webhookConfirmation]);
+  }, [name, address, router, webhookConfirmation, selectedDateTime, isSuccess]);
 
   const handleFinish = () => {
     resetBooking();
@@ -148,14 +123,14 @@ export default function ConfirmationPage() {
                 </Alert>
             </CardContent>
             <CardFooter>
-                 <Button onClick={() => router.push('/customer_profile')}>Try Again</Button>
+                 <Button onClick={() => router.push('/payment_and_terms')}>Try Again</Button>
             </CardFooter>
         </Card>
       </BookingFlowLayout>
     );
   }
   
-  if (!isSuccess || !bookingDetails) {
+  if (!isSuccess || !webhookConfirmation) {
      return (
        <BookingFlowLayout>
          <Card>
@@ -166,12 +141,12 @@ export default function ConfirmationPage() {
      )
   }
 
-  const displayDate = getValidDate(bookingDetails, selectedDateTime);
+  const displayDate = getValidDate(webhookConfirmation, selectedDateTime);
 
-  const formattedDate = bookingDetails.Date || (displayDate ? format(displayDate, "EEEE, MMMM do, yyyy") : "Date not specified");
-  const formattedTime = bookingDetails.Time || (displayDate ? format(displayDate, "HH:mm") : "Time not specified");
+  const formattedDate = webhookConfirmation.Date || (displayDate ? format(displayDate, "EEEE, MMMM do, yyyy") : "Date not specified");
+  const formattedTime = webhookConfirmation.Time || (displayDate ? format(displayDate, "HH:mm") : "Time not specified");
 
-  const directMessage = (bookingDetails.message && typeof bookingDetails.message === 'string') ? bookingDetails.message : null;
+  const directMessage = (webhookConfirmation.message && typeof webhookConfirmation.message === 'string') ? webhookConfirmation.message : null;
   const confirmationMessage = directMessage || aiResponse?.friendlyMessage || "Thank you for your booking. We look forward to serving you.";
 
   return (

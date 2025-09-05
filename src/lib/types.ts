@@ -118,7 +118,16 @@ export interface BookingSlot {
   time: string;
 }
 
-export type WebhookConfirmation = any;
+export interface WebhookConfirmation {
+  status: 'Confirmed' | 'Booked' | 'Failed' | string;
+  message?: string;
+  dateTime?: string; // The original ISO string from the booking system
+  Date?: string;     // e.g., "2024-07-20"
+  Time?: string;     // e.g., "14:00"
+  error?: string;
+  [key: string]: any; // Allow other properties
+}
+
 
 export interface AvailabilitySlot {
   slotStart: string;
@@ -151,5 +160,3 @@ export interface BookingData {
   webhookConfirmation: WebhookConfirmation | null;
   servicePath: string[];
 }
-
-    
