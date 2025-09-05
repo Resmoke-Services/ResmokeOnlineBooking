@@ -21,8 +21,8 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Send the details directly as the JSON body
-      body: JSON.stringify(details),
+      // Wrap the details in a 'payload' object
+      body: JSON.stringify({ payload: details }),
     });
 
     if (!response.ok) {
@@ -63,8 +63,8 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Send the details directly as the JSON body
-      body: JSON.stringify(details),
+      // Wrap the details in a 'payload' object
+      body: JSON.stringify({ payload: details }),
     });
 
     if (!response.ok) {
