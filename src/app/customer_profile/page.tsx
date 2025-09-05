@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, type City, type Suburb } from "@/lib/types";
+import { suburbs, cities, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, type City, type Suburb, billingOptions, type BillingInformation } from "@/lib/types";
 import { customerProfileSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
@@ -61,6 +61,7 @@ export default function ContactPage() {
       rentalUnitRole: store.rentalUnitRole || undefined,
       companyName: store.companyName || '',
       companyAddress: store.companyAddress || '',
+      billingInformation: store.billingInformation || undefined,
     },
     mode: "onChange",
   });
@@ -86,6 +87,7 @@ export default function ContactPage() {
       rentalUnitRole: store.rentalUnitRole || undefined,
       companyName: store.companyName || '',
       companyAddress: store.companyAddress || '',
+      billingInformation: store.billingInformation || undefined,
     });
   }, [store, form]);
 
@@ -205,6 +207,7 @@ export default function ContactPage() {
     store.setRentalUnitRole(data.rentalUnitRole || null);
     store.setCompanyName(data.companyName || '');
     store.setCompanyAddress(data.companyAddress || '');
+    store.setBillingInformation(data.billingInformation);
 
     if (store.user && firestore) {
       try {
@@ -215,15 +218,16 @@ export default function ContactPage() {
           cellNumber: data.cellNumber,
           address: data.address,
           city: data.city,
-          otherCityDescription: data.otherCityDescription,
+          otherCityDescription: data.otherCityDescription || null,
           suburb: data.suburb,
-          otherSuburbDescription: data.otherSuburbDescription,
+          otherSuburbDescription: data.otherSuburbDescription || null,
           propertyType: data.propertyType,
           accessCodeRequired: data.accessCodeRequired,
           propertyFunction: data.propertyFunction,
-          rentalUnitRole: data.rentalUnitRole,
-          companyName: data.companyName,
-          companyAddress: data.companyAddress,
+          rentalUnitRole: data.rentalUnitRole || null,
+          companyName: data.companyName || null,
+          companyAddress: data.companyAddress || null,
+          billingInformation: data.billingInformation,
           email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true });
