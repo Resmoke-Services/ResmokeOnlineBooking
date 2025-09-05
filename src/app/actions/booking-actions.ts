@@ -5,7 +5,7 @@ import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
-  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
+  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS || "https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke";
   if (!webhookUrl) {
     // Return a mock response for development if the URL is not set.
     console.warn("Availability webhook URL is not configured. Returning mock data.");
@@ -48,7 +48,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 }
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
-  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
+  const webhookUrl = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION || "https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke";
    if (!webhookUrl) {
     // Return a mock response for development if the URL is not set.
     console.warn("Booking confirmation webhook URL is not configured. Returning mock data.");
