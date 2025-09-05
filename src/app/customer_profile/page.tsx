@@ -227,7 +227,7 @@ export default function ContactPage() {
           rentalUnitRole: data.rentalUnitRole || null,
           companyName: data.companyName || null,
           companyAddress: data.companyAddress || null,
-          billingInformation: data.billingInformation,
+          billingInformation: data.billingInformation || null,
           email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true });
