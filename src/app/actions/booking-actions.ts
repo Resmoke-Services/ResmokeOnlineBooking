@@ -21,17 +21,18 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Wrap the details in a 'payload' object
-      body: JSON.stringify({ payload: details }),
+      body: JSON.stringify(details), // Send the details as a flat JSON object
     });
 
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
+        // Attempt to parse the JSON error response from the webhook
         const errorJson = await response.json();
         errorDetails = errorJson.message || JSON.stringify(errorJson);
       } catch (e) {
-        errorDetails = `${errorDetails}: ${response.statusText}`;
+        // If the response is not JSON, use the raw text
+        errorDetails = `${errorDetails}: ${await response.text()}`;
       }
       throw new Error(errorDetails);
     }
@@ -43,6 +44,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
     return []; // Return empty array if response is empty
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] getAvailableSlots:", error);
+    // Re-throw the more detailed error message
     throw new Error(`Failed to fetch availability slots: ${error.message}`);
   }
 }
@@ -63,17 +65,18 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // Wrap the details in a 'payload' object
-      body: JSON.stringify({ payload: details }),
+      body: JSON.stringify(details), // Send the details as a flat JSON object
     });
 
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
+        // Attempt to parse the JSON error response from the webhook
         const errorJson = await response.json();
         errorDetails = errorJson.message || JSON.stringify(errorJson);
       } catch (e) {
-        errorDetails = `${errorDetails}: ${response.statusText}`;
+        // If the response is not JSON, use the raw text
+        errorDetails = `${errorDetails}: ${await response.text()}`;
       }
       throw new Error(errorDetails);
     }
@@ -86,6 +89,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     return { status: 'Confirmed', message: 'Booking confirmed successfully.' };
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
+    // Re-throw the more detailed error message
     throw new Error(`Failed to confirm booking: ${error.message}`);
   }
 }
