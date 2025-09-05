@@ -13,9 +13,9 @@ interface BookingState extends BookingData {
   setCellNumber: (cellNumber: string) => void;
   setEmail: (email: string) => void;
   setAddress: (address: string) => void;
-  setCity: (city: City) => void;
+  setCity: (city: City | undefined) => void;
   setOtherCityDescription: (description: string) => void;
-  setSuburb: (suburb: Suburb) => void;
+  setSuburb: (suburb: Suburb | undefined) => void;
   setOtherSuburbDescription: (description: string) => void;
   setPropertyType: (propertyType: PropertyType | null) => void;
   setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | null) => void;
@@ -26,12 +26,12 @@ interface BookingState extends BookingData {
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
+  setBillingInformation: (billingInformation: BillingInformation | null) => void;
   setTermsAgreement: (agreement: TermsAgreement) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
   setServicePath: (path: string[]) => void;
-  setBillingInformation: (billingInformation: BillingInformation | null) => void;
   resetBooking: () => void;
 }
 
@@ -54,11 +54,11 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   itemsToRepair: [],
   problemDescriptions: {},
   paymentMethods: [],
+  billingInformation: null,
   termsAgreement: null,
   selectedDateTime: null,
   webhookConfirmation: null,
   servicePath: [],
-  billingInformation: null,
 };
 
 const initialState = {
@@ -90,12 +90,12 @@ export const useBookingStore = create<BookingState>()(
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
       setProblemDescriptions: (problemDescriptions) => set({ problemDescriptions }),
       setPaymentMethods: (paymentMethods) => set({ paymentMethods }),
+      setBillingInformation: (billingInformation) => set({ billingInformation }),
       setTermsAgreement: (termsAgreement) => set({ termsAgreement }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
       setServicePath: (servicePath) => set({ servicePath }),
-      setBillingInformation: (billingInformation) => set({ billingInformation }),
       resetBooking: () => set(initialState),
     }),
     {
@@ -104,5 +104,3 @@ export const useBookingStore = create<BookingState>()(
     }
   )
 );
-
-    

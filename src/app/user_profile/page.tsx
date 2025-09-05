@@ -19,7 +19,7 @@ import { Loader2 } from 'lucide-react';
 export default function AuthPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, setUser, setName, setSurname, setCellNumber, setAddress, setPropertyType, setAccessCodeRequired, setEmail, resetBooking } = useBookingStore();
+  const { user, setUser, setName, setSurname, setCellNumber, setAddress, setPropertyType, setAccessCodeRequired, setEmail, resetBooking, setCity, setOtherCityDescription, setSuburb, setOtherSuburbDescription, setPropertyFunction, setRentalUnitRole, setCompanyName, setCompanyAddress, setBillingInformation } = useBookingStore();
   const firestore = useFirestore();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -66,8 +66,17 @@ export default function AuthPage() {
           setSurname(data.surname || userData.displayName.split(' ')[1] || '');
           setCellNumber(data.cellNumber || '');
           setAddress(data.address || '');
-          setPropertyType(data.propertyType || undefined);
-          setAccessCodeRequired(data.accessCodeRequired || undefined);
+          setCity(data.city || undefined);
+          setOtherCityDescription(data.otherCityDescription || '');
+          setSuburb(data.suburb || undefined);
+          setOtherSuburbDescription(data.otherSuburbDescription || '');
+          setPropertyType(data.propertyType || null);
+          setAccessCodeRequired(data.accessCodeRequired || null);
+          setPropertyFunction(data.propertyFunction || null);
+          setRentalUnitRole(data.rentalUnitRole || null);
+          setCompanyName(data.companyName || '');
+          setCompanyAddress(data.companyAddress || '');
+          setBillingInformation(data.billingInformation || null);
         } else {
           // If the user is new, set their name from Google and reset other fields
           const nameParts = firebaseUser.displayName?.split(' ') || ['User'];
@@ -81,7 +90,7 @@ export default function AuthPage() {
             name: newName,
             surname: newSurname,
             createdAt: new Date(),
-          });
+          }, { merge: true });
           setName(newName);
           setSurname(newSurname);
         }

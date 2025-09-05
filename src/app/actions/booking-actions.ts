@@ -4,24 +4,15 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-const AVAILABILITY_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/available_time_slots";
-const CONFIRMATION_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/booking_confirmation";
-
-
-// Helper function to convert a JSON object to a URL-encoded string
-const toUrlEncoded = (obj: Record<string, any>): string => {
-  return Object.keys(obj)
-    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(typeof obj[k] === 'object' ? JSON.stringify(obj[k]) : obj[k]))
-    .join('&');
-};
-
+const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS!;
+const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION!;
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
     const response = await fetch(AVAILABILITY_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: toUrlEncoded(details),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(details),
     });
 
     if (!response.ok) {
@@ -51,8 +42,8 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
   try {
     const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: toUrlEncoded(details),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(details),
     });
 
     if (!response.ok) {
@@ -75,6 +66,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
         return { status: 'Confirmed', message: responseText };
       }
     }
+    // Return a consistent success object even if the response body is empty
     return { 
       status: 'Confirmed', 
       message: 'Booking confirmed successfully.',

@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -33,7 +34,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/user_profile"
+    href: "/customer_profile"
   }
 ];
 

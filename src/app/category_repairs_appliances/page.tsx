@@ -35,7 +35,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/user_profile"
+    href: "/customer_profile"
   },
   {
     type: 'workshop',
@@ -59,7 +59,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/user_profile"
+    href: "/customer_profile"
   },
   {
     type: 'collection_delivery',
@@ -97,7 +97,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/user_profile"
+    href: "/customer_profile"
   }
 ];
 
