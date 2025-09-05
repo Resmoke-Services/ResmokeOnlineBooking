@@ -8,29 +8,34 @@ const AVAILABILITY_WEBHOOK_URL = "https://primary-production-5528.up.railway.app
 const CONFIRMATION_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/booking_confirmation";
 
 
+// Helper function to convert a JSON object to a URL-encoded string
+const toUrlEncoded = (obj: Record<string, any>): string => {
+  return Object.keys(obj)
+    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(typeof obj[k] === 'object' ? JSON.stringify(obj[k]) : obj[k]))
+    .join('&');
+};
+
+
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
     const response = await fetch(AVAILABILITY_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(details),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: toUrlEncoded(details),
     });
 
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
-        // Try to get more specific error details from the webhook response
         const errorJson = await response.json();
         errorDetails = errorJson.message || JSON.stringify(errorJson);
       } catch (e) {
-        // Fallback if the response is not JSON or doesn't have a message
         errorDetails = `Error in workflow`;
       }
       throw new Error(errorDetails);
     }
 
     const responseText = await response.text();
-    // Handle cases where the webhook might return an empty body on success
     if (responseText) {
       return JSON.parse(responseText);
     }
@@ -46,8 +51,8 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
   try {
     const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(details),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: toUrlEncoded(details),
     });
 
     if (!response.ok) {
@@ -64,19 +69,16 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     const responseText = await response.text();
     if (responseText) {
       try {
-        // If the response is valid JSON, parse it
         const parsed = JSON.parse(responseText);
         return { status: 'Confirmed', ...parsed };
       } catch (e) {
-        // If it's just a string, use it as a message
         return { status: 'Confirmed', message: responseText };
       }
     }
-    // Default success response if the webhook returns an empty body
     return { 
       status: 'Confirmed', 
       message: 'Booking confirmed successfully.',
-      dateTime: details.slotStart, // Use the selected time as a fallback
+      dateTime: details.slotStart,
     };
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
