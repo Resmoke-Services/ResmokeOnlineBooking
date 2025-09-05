@@ -71,6 +71,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     if (responseText) {
       try {
         const parsed = JSON.parse(responseText);
+        // Ensure that the response is always a complete WebhookConfirmation object.
         return { status: 'Confirmed', ...parsed };
       } catch (e) {
         return { status: 'Confirmed', message: responseText };
