@@ -4,10 +4,13 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-const AVAILABILITY_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/available_time_slots";
-const CONFIRMATION_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/booking_confirmation";
+const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
+const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
+  if (!AVAILABILITY_WEBHOOK_URL) {
+    throw new Error("Availability webhook URL is not configured.");
+  }
   try {
     const response = await fetch(AVAILABILITY_WEBHOOK_URL, {
       method: 'POST',
@@ -41,6 +44,9 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 }
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
+  if (!CONFIRMATION_WEBHOOK_URL) {
+    throw new Error("Confirmation webhook URL is not configured.");
+  }
   try {
     const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
       method: 'POST',
