@@ -4,9 +4,8 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-// Hardcoded URLs to eliminate environment variable issues.
-const AVAILABILITY_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke";
-const CONFIRMATION_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook-test/bookings-resmoke";
+const AVAILABILITY_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/available_time_slots";
+const CONFIRMATION_WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/booking_confirmation";
 
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
