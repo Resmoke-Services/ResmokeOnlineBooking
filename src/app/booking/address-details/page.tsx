@@ -35,6 +35,30 @@ import type { PropertyType } from "@/lib/types";
 
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
+// Define a blank initial state to guarantee a clean form on load.
+const initialFormState: Partial<AddressDetailsFormData> = {
+    propertyType: undefined,
+    propertyFunction: undefined,
+    suburb: undefined,
+    city: undefined,
+    otherCityDescription: undefined,
+    houseNumber: undefined,
+    streetName: undefined,
+    unitNumber: undefined,
+    complexName: undefined,
+    streetNumber: undefined,
+    standNumber: undefined,
+    streetNameInEstate: undefined,
+    estateName: undefined,
+    officeName: undefined,
+    officeParkName: undefined,
+    holdingName: undefined,
+    farmName: undefined,
+    otherPropertyType: undefined,
+    accessCodeRequired: undefined,
+};
+
+
 export default function AddressDetailsPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -46,19 +70,18 @@ export default function AddressDetailsPage() {
     if (!store.user) {
       router.replace('/auth?next=/booking/address-details');
     }
-  }, [store.user, router]);
+    // Clear any lingering address data in the store when the component mounts
+    store.setAddressDetails({} as any);
+  }, [store.user, router, store.setAddressDetails]);
 
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
-    defaultValues: {
-      ...store.addressDetails,
-      propertyFunction: store.addressDetails.propertyFunction || 'Private',
-      accessCodeRequired: store.addressDetails.accessCodeRequired === true ? 'yes' : store.addressDetails.accessCodeRequired === false ? 'no' : undefined,
-    } as any, // Use `as any` to bypass initial type mismatch for discriminated union
+    defaultValues: initialFormState,
     mode: "onChange",
   });
   
   const propertyType = form.watch("propertyType");
+  const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
 
   async function onSubmit(data: AddressDetailsFormData) {
@@ -83,15 +106,15 @@ export default function AddressDetailsPage() {
                   onValueChange={(value) => {
                     field.onChange(value);
                     if (value !== 'Other') {
-                      form.setValue('otherCityDescription', undefined); // Clear other description if not needed
+                      form.setValue('otherCityDescription', undefined);
                     }
                   }} 
                   value={field.value}
-                  disabled={!propertyType}
+                  disabled={!propertyType || !propertyFunction}
                 >
                   <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select city / area" />
+                        <SelectValue placeholder="c) Select city / area" />
                       </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -112,7 +135,7 @@ export default function AddressDetailsPage() {
               <FormItem>
                   <FormLabel>Please Specify City</FormLabel>
                   <FormControl>
-                      <Input placeholder="e.g., Johannesburg" {...field} disabled={!propertyType} />
+                      <Input placeholder="e.g., Johannesburg" {...field} disabled={!propertyType || !propertyFunction || !city} />
                   </FormControl>
                   <FormMessage />
               </FormItem>
@@ -134,13 +157,12 @@ export default function AddressDetailsPage() {
                 <FormItem>
                     <FormLabel>Suburb</FormLabel>
                     <FormControl>
-                        <Input placeholder="e.g., Rooihuiskraal" {...field} disabled={!propertyType} />
+                        <Input placeholder="e.g., Rooihuiskraal" {...field} disabled={!propertyType || !propertyFunction || !city} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
                 )}
             />
-            {cityFields}
         </>
     );
     
@@ -156,7 +178,7 @@ export default function AddressDetailsPage() {
                   onValueChange={field.onChange}
                   value={field.value}
                   className="flex flex-row space-x-4"
-                  disabled={!propertyType}
+                  disabled={!propertyType || !propertyFunction || !city}
                 >
                   <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
@@ -183,10 +205,10 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="houseNumber" render={({ field }) => (
-                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                 </div>
@@ -195,16 +217,16 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      <FormField control={form.control} name="unitNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., Unit 45" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., Unit 45" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="complexName" render={({ field }) => (
-                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Willows" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Willows" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                      <FormField control={form.control} name="streetNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                     {accessCodeRadioGroup}
@@ -214,16 +236,16 @@ export default function AddressDetailsPage() {
              return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                      <FormField control={form.control} name="standNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input placeholder="e.g., 556" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input placeholder="e.g., 556" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                      <FormField control={form.control} name="houseNumber" render={({ field }) => (
-                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 42" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 42" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="estateName" render={({ field }) => (
-                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                     {accessCodeRadioGroup}
@@ -233,16 +255,16 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="unitNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., 7" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., 7" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="complexName" render={({ field }) => (
-                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Oaks" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Oaks" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="estateName" render={({ field }) => (
-                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                     {accessCodeRadioGroup}
@@ -252,16 +274,16 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="officeName" render={({ field }) => (
-                        <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input placeholder="e.g., Riverwalk Office" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input placeholder="e.g., Riverwalk Office" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="officeParkName" render={({ field }) => (
-                        <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input placeholder="e.g., Centurion Office Park" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input placeholder="e.g., Centurion Office Park" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                     {accessCodeRadioGroup}
@@ -271,10 +293,10 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="holdingName" render={({ field }) => (
-                        <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input placeholder="e.g., Plot 123" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input placeholder="e.g., Plot 123" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input placeholder="e.g., R55" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input placeholder="e.g., R55" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                 </div>
@@ -283,10 +305,10 @@ export default function AddressDetailsPage() {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="farmName" render={({ field }) => (
-                        <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input placeholder="e.g., Sunnydale Farm" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input placeholder="e.g., Sunnydale Farm" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input placeholder="e.g., R511" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input placeholder="e.g., R511" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                 </div>
@@ -295,13 +317,13 @@ export default function AddressDetailsPage() {
             return (
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField control={form.control} name="otherPropertyType" render={({ field }) => (
-                        <FormItem><FormLabel>Specify Property Type</FormLabel><FormControl><Input placeholder="e.g., Warehouse, School" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Specify Property Type</FormLabel><FormControl><Input placeholder="e.g., Warehouse, School" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                      <FormField control={form.control} name="streetNumber" render={({ field }) => (
-                        <FormItem><FormLabel>Street / Unit Number</FormLabel><FormControl><Input placeholder="e.g., 42B" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street / Unit Number</FormLabel><FormControl><Input placeholder="e.g., 42B" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="streetName" render={({ field }) => (
-                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Industrial Road" {...field} disabled={!propertyType} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Industrial Road" {...field} disabled={!propertyType || !propertyFunction || !city} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
                 </div>
@@ -321,24 +343,21 @@ export default function AddressDetailsPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <FormField
                         control={form.control}
                         name="propertyType"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>What type of property is it?</FormLabel>
+                            <FormLabel>Property Type</FormLabel>
                             <Select onValueChange={(value) => {
+                                // Reset the form but keep the newly selected propertyType
+                                form.reset({ propertyType: value as PropertyType });
                                 field.onChange(value);
-                                // Reset other fields when type changes to avoid validation errors on fields that are no longer visible
-                                form.reset({ 
-                                  propertyType: value as PropertyType, 
-                                  propertyFunction: form.getValues('propertyFunction'),
-                                });
                             }} value={field.value}>
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="Select property type" />
+                                <SelectValue placeholder="a) Select property type" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -360,7 +379,7 @@ export default function AddressDetailsPage() {
                             <Select onValueChange={field.onChange} value={field.value} disabled={!propertyType}>
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="Select property function" />
+                                <SelectValue placeholder="b) Select property function" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -373,9 +392,12 @@ export default function AddressDetailsPage() {
                         </FormItem>
                         )}
                     />
+                    <div className="md:col-span-2 lg:col-span-1">
+                        {cityFields}
+                    </div>
                 </div>
 
-                {propertyType && (
+                {propertyType && propertyFunction && city && (
                     <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
                         {renderFormFields(propertyType)}
                     </div>
