@@ -101,7 +101,7 @@ export default function AddressDetailsPage() {
           name="city"
           render={({ field }) => (
           <FormItem>
-              <FormLabel>c) City / Area</FormLabel>
+              <FormLabel>City</FormLabel>
                 <Select 
                   onValueChange={(value) => {
                     const currentValues = form.getValues();
@@ -353,7 +353,7 @@ export default function AddressDetailsPage() {
                         name="propertyType"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>a) Property Type</FormLabel>
+                            <FormLabel>Property Type</FormLabel>
                             <Select 
                               onValueChange={(value) => {
                                 form.reset({
@@ -384,7 +384,7 @@ export default function AddressDetailsPage() {
                         name="propertyFunction"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>b) Property Function</FormLabel>
+                            <FormLabel>Property Function</FormLabel>
                             <Select 
                               onValueChange={(value) => {
                                 const currentValues = form.getValues();
