@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'All major brands and models serviced.',
       (
@@ -26,8 +27,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_gate_motor_onsite_icon_01.PNG?alt=media&token=d6bec534-6b05-428f-9d73-37ceea48e8f6",

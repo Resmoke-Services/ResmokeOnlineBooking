@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'Limited Options (Contact us for enquiries).',
       (
@@ -26,8 +27,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_onsite_repairs_appliances_icon_03.PNG?alt=media&token=51b4634d-6e3f-4fe7-8c53-4755f869797b",
@@ -47,11 +47,11 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'No callout fee.',
       'Limited options (Contact us for more information).',
-      'Full payment shall be made prior to the release of any item from the workshop.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_mechanical_repairs_workshop_icon_01.PNG?alt=media&token=9c10eeb8-734a-49fb-9d9f-6526262190a7",

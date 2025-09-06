@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: 'Bring your vehicle to our workshop for a diagnostic scan.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Scan and clear fault codes.',
       'Scan for potential issues.',
       'Bi-directional testing.',
@@ -25,8 +26,7 @@ const serviceOptions = [
       'Full diagnostic report.',
       'Code or Program modules (Contact us for enquiries).',
       'All major brands and models supported.',
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_diagnostic_icon_10.PNG?alt=media&token=fe60872a-0426-4c4f-9b0e-132e4a89604e",
@@ -46,6 +46,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to do a diagnostic scan on your vehicle — the most convenient option without the need to travel.",
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Diagnostic scan at your home or office.',
       'Scan and clear fault codes.',
       'Scan for potential issues.',
@@ -62,8 +63,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_diagnostic_scan_onsite_icon_07.PNG?alt=media&token=cb27961c-cdd1-49df-9a70-58d214f80478",

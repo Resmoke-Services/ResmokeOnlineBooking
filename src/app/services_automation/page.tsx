@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to assist with your automation needs.",
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'Smart lighting setup.',
       'Gate & Garage door automation.',
@@ -28,8 +29,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_home_automation_icon_29.PNG?alt=media&token=39143628-552c-49bb-9a83-45f8a4e9498e",

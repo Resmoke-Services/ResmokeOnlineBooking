@@ -18,6 +18,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'All major brands and models serviced.',
       (
@@ -27,8 +28,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made immediately upon completion of services.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_onsite_repairs_appliances_icon_03.PNG?alt=media&token=51b4634d-6e3f-4fe7-8c53-4755f869797b",
@@ -48,11 +48,12 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'No callout fee.',
       'All major brands and models serviced.',
-      'Full payment shall be made prior to the release of any item from the workshop.',
-      'Card/Cash/EFT Payments accepted.'
+      'Strip and Quote Fee applies based on item selected.',
+      'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_appliances_icon_06.PNG?alt=media&token=a2b8f513-c1bf-45ff-9da8-a7687671b385",
@@ -72,25 +73,25 @@ const serviceOptions = [
     ),
     description: 'We will collect your Items from your home or office, perform the repairs at our workshop, and deliver them back to you.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Convenient pickup and return.',
       'Ideal for busy schedules.',
-      'Pickup & Delivery fee applies based on item size and location (Excludes Labour & Parts).',
       (
         <span>
-          Small Items (e.g., Microwave) – Hand-carryable appliances:<br />
+          Pickup & Delivery Fee - Small Hand-carryable Items (e.g., Microwave):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R350 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Outside Centurion Area)</span>
         </span>
       ),
       (
         <span>
-          Large Items (e.g., Dishwasher) – Bulky appliances requiring trolley/extra handling:<br />
+          Pickup & Delivery Fee - Large Items requiring trolley/extra handling (e.g., Dishwasher):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made prior to the release of any item from the workshop.',
-      'Card / Cash / EFT payments accepted.'
+      'Strip and Quote Fee applies based on item selected.',
+      'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_appliances_collection_icon_01.PNG?alt=media&token=201b9335-a8d6-4b92-bda6-f1ce4845bcc0",

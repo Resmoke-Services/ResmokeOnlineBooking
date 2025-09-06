@@ -27,7 +27,7 @@ interface BookingState extends BookingData {
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
   setBillingInformation: (billingInformation: BillingInformation | null) => void;
-  setTermsAgreement: (agreement: TermsAgreement) => void;
+  setTermsAgreement: (agreement: TermsAgreement | null) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;

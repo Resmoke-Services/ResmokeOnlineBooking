@@ -17,10 +17,10 @@ const serviceOptions = [
     ),
     description: 'Bring your Vehicle or Motorcycle to our workshop.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'Limited Options (Contact us for enquiries).',
-      'Full payment shall be made prior to the release of any Vehicle or Motorcycle from the workshop.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made prior to the release of any Vehicle or Motorcycle from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_automotive_workshop_icon_01.PNG?alt=media&token=0bb8bdae-03f2-4719-9f37-a9d10e6502f1",

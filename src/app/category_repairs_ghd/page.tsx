@@ -17,9 +17,9 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
-      'Full payment shall be made prior to the release of any item from the workshop.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_ghd_workshop_icon_19.PNG?alt=media&token=58e9cf5d-24cd-407d-99c9-183dddbbb87b",
@@ -39,6 +39,7 @@ const serviceOptions = [
     ),
     description: 'We will collect your GHD from your home or office, perform the repairs at our workshop, and deliver them back to you.',
     features: [
+      'Card/EFT/PayShap Payments accepted.',
       'Convenient pickup and return.',
       'Ideal for busy schedules',
       (
@@ -48,8 +49,7 @@ const serviceOptions = [
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R250+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Full payment shall be made prior to the release of any item from the workshop.',
-      'Card/Cash/EFT Payments accepted.'
+      'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
       src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_ghd_icon_03.PNG?alt=media&token=e1d2e7ce-dff0-4880-b0cb-afbda0578bfb",

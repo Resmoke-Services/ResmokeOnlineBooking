@@ -17,11 +17,11 @@ const serviceOptions = [
       ),
       description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
       features: [
+        'Card/EFT/PayShap Payments accepted.',
         'Drop off at our Centurion workshop.',
         'No callout fee.',
         'Limited Options (Contact us for enquiries).',
-        'Full payment shall be made prior to the release of any item from the workshop.',
-        'Card/Cash/EFT Payments accepted.'
+        'Full payment shall be made prior to the release of any item from the workshop.'
       ],
       image: {
         src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_electronic_repairs_workshop_icon_01.PNG?alt=media&token=2fc104eb-1348-45f1-85c4-69020a80d7fd",
