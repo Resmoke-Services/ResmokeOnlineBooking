@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -10,19 +10,17 @@ import { ShieldCheck, XCircle, Loader2 } from "lucide-react";
 
 export default function PrivacyNoticePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const nextUrl = searchParams.get("next") || "/customer_profile";
   const [isProcessing, setIsProcessing] = useState(false);
-
 
   const handleAccept = () => {
     setIsProcessing(true);
-    // Navigate to the auth page, passing the original 'next' URL along
-    router.push(`/auth?next=${encodeURIComponent(nextUrl)}`);
+    // Navigate to the auth page, which will then handle redirection
+    // to the new booking flow.
+    router.push(`/auth?next=/booking/select-type`);
   };
 
   const handleDecline = () => {
-    // Go back to the previous page (service selection)
+    // Go back to the previous page (service category selection)
     router.back();
   };
 

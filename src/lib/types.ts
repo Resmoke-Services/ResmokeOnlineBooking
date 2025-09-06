@@ -1,55 +1,11 @@
 
+
 export interface UserProfile {
   uid: string;
   email: string;
   displayName: string;
   isGuest: boolean;
 }
-
-export const cities = [
-    "Centurion",
-    "Pretoria",
-    "Midrand",
-    "Other",
-] as const;
-export type City = (typeof cities)[number];
-
-export const suburbs = [
-  "Amberfield",
-  "Celtisdal",
-  "Centurion CBD",
-  "Clubview",
-  "Die Hoewes",
-  "Doringkloof",
-  "Eldoraigne",
-  "Hennopspark",
-  "Heuweloord",
-  "Highveld",
-  "Irene",
-  "Lyttelton",
-  "Pierre van Ryneveld",
-  "Raslouw",
-  "Rooihuiskraal",
-  "Thatchfield",
-  "The Reeds",
-  "Valhalla",
-  "Wierdapark",
-  "Zwartkop",
-  "Other",
-] as const;
-export type Suburb = (typeof suburbs)[number];
-
-export const propertyTypes = ["House", "Complex", "Estate", "Complex in an Estate", "Other"] as const;
-export type PropertyType = (typeof propertyTypes)[number];
-
-export const accessCodeOptions = ["Yes", "No"] as const;
-export type AccessCodeRequired = (typeof accessCodeOptions)[number];
-
-export const propertyFunctions = ["Private", "Rental Unit", "Company"] as const;
-export type PropertyFunction = (typeof propertyFunctions)[number];
-
-export const rentalUnitRoles = ["I'm the Owner", "I'm the Tenant", "I'm the Estate Agent"] as const;
-export type RentalUnitRole = (typeof rentalUnitRoles)[number];
 
 export const billingOptions = ["Personal", "Owner", "Company"] as const;
 export type BillingInformation = (typeof billingOptions)[number];
@@ -83,35 +39,6 @@ export interface TermsAgreement {
     emailConsent: boolean;
 }
 
-export interface CustomerProfileData {
-  name: string;
-  surname: string;
-  cellNumber: string;
-  email: string;
-  address: string;
-  city: City | undefined;
-  otherCityDescription?: string;
-  suburb: Suburb | undefined;
-  otherSuburbDescription?: string;
-  propertyType: PropertyType | undefined;
-  accessCodeRequired: AccessCodeRequired | undefined;
-  propertyFunction: PropertyFunction | undefined;
-  rentalUnitRole: RentalUnitRole | undefined;
-  companyName?: string;
-  companyAddress?: string;
-  billingInformation: BillingInformation | undefined;
-}
-
-export interface ItemToRepairData {
-  items: RepairItem[];
-  descriptions: Record<string, string>;
-}
-
-export interface PaymentAndTermsData {
-  paymentMethods: PaymentMethod[];
-  termsAgreement: TermsAgreement;
-}
-
 export interface BookingSlot {
   date: string;
   time: string;
@@ -132,30 +59,49 @@ export interface AvailabilitySlot {
   slotStart: string;
 }
 
+export type BookingFor = 'personal' | 'landlord' | 'company' | 'friend';
+
 // This is the complete data structure for the entire booking flow
 export interface BookingData {
   user: UserProfile | null;
+  // Personal details (can be the user, or the contact person for company/friend)
   name: string;
   surname: string;
   cellNumber: string;
   email: string;
-  address: string;
-  city: City | undefined;
-  otherCityDescription: string;
-  suburb: Suburb | undefined;
-  otherSuburbDescription: string;
-  propertyType: PropertyType | null;
-  accessCodeRequired: AccessCodeRequired | null;
-  propertyFunction: PropertyFunction | null;
-  rentalUnitRole: RentalUnitRole | null;
+  address: string; // The address where the service will take place
+
+  // Type of booking
+  bookingFor: BookingFor;
+
+  // Landlord details
+  landlordName: string;
+  landlordSurname: string;
+  landlordCellNumber: string;
+  landlordEmail: string;
+  
+  // Owner details (for friend/family)
+  ownerName: string;
+  ownerSurname: string;
+  ownerCellNumber: string;
+  ownerEmail: string;
+
+  // Company details
   companyName: string;
+  companyPhone: string;
+  companyEmail: string;
   companyAddress: string;
-  billingInformation: BillingInformation | null;
+
+  // Repair details
   itemsToRepair: RepairItem[];
   problemDescriptions: Record<string, string>;
+  
+  // Payment and confirmation
   paymentMethods: PaymentMethod[];
   termsAgreement: TermsAgreement | null;
   selectedDateTime: BookingSlot | null;
   webhookConfirmation: WebhookConfirmation | null;
+  
+  // Internal tracking
   servicePath: string[];
 }

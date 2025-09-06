@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, PropertyType, AccessCodeRequired, Suburb, City, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, PropertyFunction, RentalUnitRole, BillingInformation } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -9,25 +9,15 @@ interface BookingState extends BookingData {
   availability: AvailabilitySlot[];
   setUser: (user: UserProfile | null) => void;
   setUserProfile: (profileData: Partial<BookingData>) => void;
-  setName: (name: string) => void;
-  setSurname: (surname: string) => void;
-  setCellNumber: (cellNumber: string) => void;
-  setEmail: (email: string) => void;
+  setBookingFor: (bookingFor: BookingFor) => void;
+  setPersonalDetails: (details: { name: string; surname: string; cellNumber: string; email: string }) => void;
   setAddress: (address: string) => void;
-  setCity: (city: City | undefined) => void;
-  setOtherCityDescription: (description: string) => void;
-  setSuburb: (suburb: Suburb | undefined) => void;
-  setOtherSuburbDescription: (description: string) => void;
-  setPropertyType: (propertyType: PropertyType | null) => void;
-  setAccessCodeRequired: (accessCodeRequired: AccessCodeRequired | null) => void;
-  setPropertyFunction: (propertyFunction: PropertyFunction | null) => void;
-  setRentalUnitRole: (rentalUnitRole: RentalUnitRole | null) => void;
-  setCompanyName: (companyName: string) => void;
-  setCompanyAddress: (companyAddress: string) => void;
+  setLandlordDetails: (details: { landlordName: string; landlordSurname: string; landlordCellNumber: string; landlordEmail: string; }) => void;
+  setOwnerDetails: (details: { ownerName: string; ownerSurname: string; ownerCellNumber: string; ownerEmail: string; }) => void;
+  setCompanyDetails: (details: { companyName: string; companyPhone: string; companyEmail: string; companyAddress: string; }) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
-  setBillingInformation: (billingInformation: BillingInformation | null) => void;
   setTermsAgreement: (agreement: TermsAgreement | null) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
@@ -42,20 +32,26 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   cellNumber: '',
   email: '',
   address: '',
-  city: undefined,
-  otherCityDescription: '',
-  suburb: undefined,
-  otherSuburbDescription: '',
-  propertyType: null,
-  accessCodeRequired: null,
-  propertyFunction: null,
-  rentalUnitRole: null,
+  bookingFor: 'personal', // Default value
+  // Landlord
+  landlordName: '',
+  landlordSurname: '',
+  landlordCellNumber: '',
+  landlordEmail: '',
+  // Owner (Friend/Family)
+  ownerName: '',
+  ownerSurname: '',
+  ownerCellNumber: '',
+  ownerEmail: '',
+  // Company
   companyName: '',
+  companyPhone: '',
+  companyEmail: '',
   companyAddress: '',
+
   itemsToRepair: [],
   problemDescriptions: {},
   paymentMethods: [],
-  billingInformation: null,
   termsAgreement: null,
   selectedDateTime: null,
   webhookConfirmation: null,
@@ -74,25 +70,15 @@ export const useBookingStore = create<BookingState>()(
       ...initialState,
       setUser: (user) => set({ user }),
       setUserProfile: (profileData) => set((state) => ({ ...state, ...profileData })),
-      setName: (name) => set({ name }),
-      setSurname: (surname) => set({ surname }),
-      setCellNumber: (cellNumber) => set({ cellNumber }),
-      setEmail: (email) => set({ email }),
+      setBookingFor: (bookingFor) => set({ bookingFor }),
+      setPersonalDetails: (details) => set({ ...details }),
       setAddress: (address) => set({ address }),
-      setCity: (city) => set({ city }),
-      setOtherCityDescription: (otherCityDescription) => set({ otherCityDescription }),
-      setSuburb: (suburb) => set({ suburb }),
-      setOtherSuburbDescription: (otherSuburbDescription) => set({ otherSuburbDescription }),
-      setPropertyType: (propertyType) => set({ propertyType }),
-      setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
-      setPropertyFunction: (propertyFunction) => set({ propertyFunction }),
-      setRentalUnitRole: (rentalUnitRole) => set({ rentalUnitRole }),
-      setCompanyName: (companyName) => set({ companyName }),
-      setCompanyAddress: (companyAddress) => set({ companyAddress }),
+      setLandlordDetails: (details) => set({ ...details }),
+      setOwnerDetails: (details) => set({ ...details }),
+      setCompanyDetails: (details) => set({ ...details }),
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
       setProblemDescriptions: (problemDescriptions) => set({ problemDescriptions }),
       setPaymentMethods: (paymentMethods) => set({ paymentMethods }),
-      setBillingInformation: (billingInformation) => set({ billingInformation }),
       setTermsAgreement: (termsAgreement) => set({ termsAgreement }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),
@@ -101,7 +87,7 @@ export const useBookingStore = create<BookingState>()(
       resetBooking: () => set(initialState),
     }),
     {
-      name: 'resmoke-booking-storage', 
+      name: 'resmoke-booking-storage-v2', 
       storage: createJSONStorage(() => localStorage), 
     }
   )
