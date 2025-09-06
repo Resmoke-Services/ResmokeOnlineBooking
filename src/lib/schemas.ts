@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { repairItems, paymentMethods, propertyTypes, propertyFunctions } from "@/lib/types";
+import { repairItems, paymentMethods, propertyTypes, propertyFunctions, cities } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType, PropertyType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
@@ -107,7 +107,8 @@ const baseAddressSchema = z.object({
     propertyType: z.enum(propertyTypes),
     propertyFunction: z.enum(propertyFunctions),
     suburb: z.string().min(2, "Suburb is required."),
-    city: z.string().min(2, "City / Area is required."),
+    city: z.enum(cities, { required_error: 'Please select a city.'}),
+    otherCityDescription: z.string().optional(),
 });
 
 // Discriminated union for address details based on propertyType
@@ -165,4 +166,12 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         streetNumber: z.string().min(1, "Street/Unit number is required."),
         streetName: z.string().min(2, "Street name is required."),
     }),
-]);
+]).refine(data => {
+    if (data.city === 'Other') {
+        return data.otherCityDescription && data.otherCityDescription.length > 2;
+    }
+    return true;
+}, {
+    message: "Please specify the city/area name (min 3 characters).",
+    path: ['otherCityDescription'],
+});

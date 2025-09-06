@@ -25,7 +25,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { propertyTypes, propertyFunctions } from "@/lib/types";
+import { propertyTypes, propertyFunctions, cities } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
@@ -59,6 +59,7 @@ export default function AddressDetailsPage() {
   });
   
   const propertyType = form.watch("propertyType");
+  const city = form.watch("city");
 
   async function onSubmit(data: AddressDetailsFormData) {
     setIsSubmitting(true);
@@ -69,6 +70,53 @@ export default function AddressDetailsPage() {
     store.setAddressDetails(processedData as any);
     router.push("/item_to_repair");
   }
+  
+  const cityFields = (
+    <>
+      <FormField
+          control={form.control}
+          name="city"
+          render={({ field }) => (
+          <FormItem>
+              <FormLabel>City / Area</FormLabel>
+                <Select onValueChange={(value) => {
+                    field.onChange(value);
+                    if (value !== 'Other') {
+                      form.setValue('otherCityDescription', undefined); // Clear other description if not needed
+                    }
+                }} value={field.value}>
+                  <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select city / area" />
+                      </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                      {cities.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              <FormMessage />
+          </FormItem>
+          )}
+      />
+      {city === 'Other' && (
+          <FormField
+              control={form.control}
+              name="otherCityDescription"
+              render={({ field }) => (
+              <FormItem>
+                  <FormLabel>Please Specify City</FormLabel>
+                  <FormControl>
+                      <Input placeholder="e.g., Johannesburg" {...field} />
+                  </FormControl>
+                  <FormMessage />
+              </FormItem>
+              )}
+          />
+      )}
+    </>
+  );
 
   const renderFormFields = (type: PropertyType | undefined) => {
     if (!type) return null;
@@ -88,19 +136,7 @@ export default function AddressDetailsPage() {
                 </FormItem>
                 )}
             />
-            <FormField
-                control={form.control}
-                name="city"
-                render={({ field }) => (
-                <FormItem>
-                    <FormLabel>City / Area</FormLabel>
-                    <FormControl>
-                        <Input placeholder="e.g., Centurion" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                </FormItem>
-                )}
-            />
+            {cityFields}
         </>
     );
     

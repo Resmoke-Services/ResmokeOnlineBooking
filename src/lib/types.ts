@@ -38,6 +38,9 @@ export type PropertyType = (typeof propertyTypes)[number];
 
 export const propertyFunctions = ['Private', 'Business'] as const;
 
+export const cities = ['Centurion', 'Midrand', 'Pretoria', 'Other'] as const;
+export type City = (typeof cities)[number];
+
 export interface TermsAgreement {
     paymentOnPremises: boolean;
     emailConsent: boolean;
@@ -92,7 +95,8 @@ export type AddressDetails = {
     otherPropertyType?: string;
     // Shared
     suburb?: string;
-    city?: string;
+    city?: City;
+    otherCityDescription?: string;
 };
 
 

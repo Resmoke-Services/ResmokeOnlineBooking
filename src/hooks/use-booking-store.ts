@@ -77,22 +77,24 @@ export const useBookingStore = create<BookingState>()(
       setPersonalDetails: (details) => set({ ...details }),
       setAddressDetails: (details: AddressDetails) => set((state) => {
         let formattedAddress = '';
+        const cityDisplay = details.city === 'Other' ? details.otherCityDescription : details.city;
+
         if (details.propertyType === 'Home') {
-            formattedAddress = `${details.houseNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `${details.houseNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Complex') {
-            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Estate') {
-            formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Complex in an Estate') {
-            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Office') {
-            formattedAddress = `${details.officeName}, ${details.officeParkName ? details.officeParkName + ', ' : ''}${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `${details.officeName}, ${details.officeParkName ? details.officeParkName + ', ' : ''}${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Small Holding') {
-            formattedAddress = `${details.holdingName}, ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `${details.holdingName}, ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Farm') {
-            formattedAddress = `${details.farmName}, ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `${details.farmName}, ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         } else if (details.propertyType === 'Other') {
-            formattedAddress = `${details.otherPropertyType}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+            formattedAddress = `${details.otherPropertyType}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
         }
         return { addressDetails: details, formattedAddress };
       }),
