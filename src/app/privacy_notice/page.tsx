@@ -11,14 +11,14 @@ import { ShieldCheck, XCircle, Loader2 } from "lucide-react";
 export default function PrivacyNoticePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get("next") || "/user_profile";
+  const nextUrl = searchParams.get("next") || "/customer_profile";
   const [isProcessing, setIsProcessing] = useState(false);
 
 
   const handleAccept = () => {
     setIsProcessing(true);
-    // Navigate to the next step in the booking process
-    router.push(nextUrl);
+    // Navigate to the auth page, passing the original 'next' URL along
+    router.push(`/auth?next=${encodeURIComponent(nextUrl)}`);
   };
 
   const handleDecline = () => {

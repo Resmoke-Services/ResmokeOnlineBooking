@@ -42,6 +42,13 @@ export default function ContactPage() {
   const addressInputRef = useRef<HTMLInputElement | null>(null);
   const companyAddressInputRef = useRef<HTMLInputElement | null>(null);
   const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Redirect if user is not authenticated
+    if (!store.user) {
+      router.replace('/auth');
+    }
+  }, [store.user, router]);
   
   const form = useForm<CustomerProfileFormData>({
     resolver: zodResolver(customerProfileSchema),
@@ -234,6 +241,10 @@ export default function ContactPage() {
     }
     
     router.push("/item_to_repair");
+  }
+
+  if (!store.user) {
+    return <BookingFlowLayout><div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div></BookingFlowLayout>
   }
 
   return (
