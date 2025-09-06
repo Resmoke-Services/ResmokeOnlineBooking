@@ -214,8 +214,8 @@ export default function SelectDateTimePage() {
         <Button variant="outline" onClick={() => router.back()}> <ChevronLeft className="mr-2 h-4 w-4" /> Back</Button>
         <Button onClick={handleConfirm} disabled={!selectedDate || !selectedTime || isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isSubmitting ? "Confirming..." : "Confirm Booking"}
-          <ChevronRight className="ml-2 h-4 w-4" />
+          {isSubmitting ? "Processing..." : "Confirm Booking"}
+          {!isSubmitting && <ChevronRight className="ml-2 h-4 w-4" />}
         </Button>
       </div>
     </BookingFlowLayout>
