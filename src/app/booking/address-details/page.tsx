@@ -36,25 +36,25 @@ import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
 // Define a blank initial state to guarantee a clean form on load.
-const initialFormState: Partial<AddressDetailsFormData> = {
+const initialFormState: AddressDetailsFormData = {
     propertyType: undefined,
     propertyFunction: undefined,
-    suburb: undefined,
+    suburb: '',
     city: undefined,
-    otherCityDescription: undefined,
-    houseNumber: undefined,
-    streetName: undefined,
-    unitNumber: undefined,
-    complexName: undefined,
-    streetNumber: undefined,
-    standNumber: undefined,
-    streetNameInEstate: undefined,
-    estateName: undefined,
-    officeName: undefined,
-    officeParkName: undefined,
-    holdingName: undefined,
-    farmName: undefined,
-    otherPropertyType: undefined,
+    otherCityDescription: '',
+    houseNumber: '',
+    streetName: '',
+    unitNumber: '',
+    complexName: '',
+    streetNumber: '',
+    standNumber: '',
+    streetNameInEstate: '',
+    estateName: '',
+    officeName: '',
+    officeParkName: '',
+    holdingName: '',
+    farmName: '',
+    otherPropertyType: '',
     accessCodeRequired: undefined,
 };
 
@@ -62,17 +62,17 @@ const initialFormState: Partial<AddressDetailsFormData> = {
 export default function AddressDetailsPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const store = useBookingStore();
+  const { user, setAddressDetails: setStoreAddressDetails } = useBookingStore();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!store.user) {
+    if (!user) {
       router.replace('/auth?next=/booking/address-details');
     }
     // Clear any lingering address data in the store when the component mounts
-    store.setAddressDetails({} as any);
-  }, [store.user, router, store.setAddressDetails]);
+    setStoreAddressDetails({} as any);
+  }, [user, router, setStoreAddressDetails]);
 
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
@@ -88,9 +88,9 @@ export default function AddressDetailsPage() {
     setIsSubmitting(true);
     const processedData = {
         ...data,
-        accessCodeRequired: (data as any).accessCodeRequired === 'yes',
+        accessCodeRequired: data.accessCodeRequired === 'yes',
     };
-    store.setAddressDetails(processedData as any);
+    setStoreAddressDetails(processedData as any);
     router.push("/item_to_repair");
   }
   
@@ -109,6 +109,7 @@ export default function AddressDetailsPage() {
                       ...initialFormState,
                       propertyType: currentValues.propertyType,
                       propertyFunction: currentValues.propertyFunction,
+                      city: value as City,
                     });
                     field.onChange(value);
                   }} 
@@ -355,7 +356,10 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select 
                               onValueChange={(value) => {
-                                form.reset({ ...initialFormState });
+                                form.reset({
+                                  ...initialFormState,
+                                  propertyType: value as PropertyType,
+                                });
                                 field.onChange(value);
                               }} 
                               value={field.value}
@@ -387,6 +391,7 @@ export default function AddressDetailsPage() {
                                 form.reset({
                                   ...initialFormState,
                                   propertyType: currentValues.propertyType,
+                                  propertyFunction: value as PropertyFunction,
                                 });
                                 field.onChange(value);
                               }} 
