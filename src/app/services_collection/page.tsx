@@ -33,7 +33,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/customer_profile"
+    href: "/privacy_notice"
   }
 ];
 
