@@ -22,14 +22,15 @@ import { useBookingStore } from "@/hooks/use-booking-store";
 import { repairItems, type RepairItem } from "@/lib/types";
 import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect } from "react";
-import { ChevronLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
   const { user, itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
@@ -49,6 +50,7 @@ export default function ItemToRepairPage() {
   }, [user, router]);
   
   function onSubmit(data: ItemToRepairFormData) {
+    setIsSubmitting(true);
     const finalItems = data.items as RepairItem[];
     const finalDescriptions: Record<string, string> = {};
     
@@ -158,8 +160,15 @@ export default function ItemToRepairPage() {
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-              <Button type="submit" disabled={!form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
-                Next
+              <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Next"
+                )}
               </Button>
             </CardFooter>
           </form>

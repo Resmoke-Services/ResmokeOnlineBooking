@@ -1,179 +1,359 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FcGoogle } from 'react-icons/fc';
-import { FaUserSecret } from 'react-icons/fa';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useBookingStore } from '@/hooks/use-booking-store';
-import { auth } from '@/lib/firebase';
-import { GoogleAuthProvider, signInAnonymously, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import StaticPageLayout from '@/components/static-page-layout';
-import { useToast } from '@/hooks/use-toast';
-import { useFirestore } from '@/hooks/use-firestore';
-import { Loader2 } from 'lucide-react';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { useBookingStore } from "@/hooks/use-booking-store";
+import type { CustomerProfileData } from "@/lib/types";
+import { suburbs, propertyTypes, accessCodeOptions } from "@/lib/types";
+import { customerProfileSchema } from "@/lib/schemas";
+import BookingFlowLayout from "@/components/booking-flow-layout";
+import { useEffect, useState, useRef } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import { Loader } from "@googlemaps/js-api-loader";
+import { doc, setDoc } from "firebase/firestore";
+import { useFirestore } from "@/hooks/use-firestore";
 
-export default function AuthPage() {
+type UserProfileFormData = z.infer<typeof customerProfileSchema>;
+
+export default function ContactPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { user, setUser, setName, setSurname, setCellNumber, setAddress, setPropertyType, setAccessCodeRequired, setEmail, resetBooking, setCity, setOtherCityDescription, setSuburb, setOtherSuburbDescription, setPropertyFunction, setRentalUnitRole, setCompanyName, setCompanyAddress, setBillingInformation } = useBookingStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, setName, setSurname, setCellNumber, setEmail, setAddress, setSuburb, setPropertyType, setAccessCodeRequired } = useBookingStore();
   const firestore = useFirestore();
-  const [isLoading, setIsLoading] = useState(true);
+  
+  const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
+  const [apiKey, setApiKey] = useState<string | null>(null);
 
   useEffect(() => {
-    // If the user object is already in the store, they don't need to be on this page.
-    if (user) {
-      router.replace('/customer_profile');
-    } else {
-      setIsLoading(false);
+    if (!user) {
+      router.replace('/auth');
     }
   }, [user, router]);
+
+  useEffect(() => {
+    // This ensures the env var is only read on the client side
+    setApiKey(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? null);
+  }, []);
+
+  const form = useForm<UserProfileFormData>({
+    resolver: zodResolver(customerProfileSchema),
+    defaultValues: {
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
+      suburb: suburb,
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    },
+    mode: "onChange",
+  });
   
-  const handleGoogleSignIn = async () => {
-    if (!firestore) {
-      toast({
-        variant: 'destructive',
-        title: 'Initialization Error',
-        description: 'Database is not ready. Please try again in a moment.',
+  // Resets the form if data in the store changes (e.g., after login)
+   useEffect(() => {
+    form.reset({
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
+      address: address || "",
+      suburb: suburb,
+      propertyType: propertyType || undefined,
+      accessCodeRequired: accessCodeRequired || undefined,
+    });
+  }, [name, surname, cellNumber, email, address, suburb, propertyType, accessCodeRequired, form]);
+
+
+  // Effect to load Google Maps script
+  useEffect(() => {
+    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
+      const loader = new Loader({
+        apiKey: apiKey,
+        version: "weekly",
+        libraries: ["places"],
       });
-      return;
+
+      loader.load().then(() => {
+        setIsGoogleMapsLoaded(true);
+      }).catch(e => {
+        console.error("Failed to load Google Maps Script", e);
+        toast({
+          variant: "default",
+          title: "Address autocomplete not available",
+          description: "Could not load Google Maps. Please enter your address manually.",
+        });
+      });
     }
-    setIsLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const firebaseUser = result.user;
+  }, [apiKey, toast]);
 
-      if (firebaseUser) {
-        const userRef = doc(firestore, 'users', firebaseUser.uid);
-        const userDoc = await getDoc(userRef);
-        
-        const userData = {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email || '',
-          displayName: firebaseUser.displayName || 'User',
-          isGuest: false,
-        };
-        setUser(userData);
-        setEmail(userData.email);
+  // Effect to attach Autocomplete to the input field
+  useEffect(() => {
+    if (isGoogleMapsLoaded && addressInputRef.current) {
+      // Define the bounds for Gauteng, South Africa
+      const gautengBounds = new window.google.maps.LatLngBounds(
+        new window.google.maps.LatLng(-26.75, 27.7), // Southwest corner of Gauteng
+        new window.google.maps.LatLng(-25.5, 28.5)  // Northeast corner of Gauteng
+      );
 
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setName(data.name || userData.displayName.split(' ')[0] || '');
-          setSurname(data.surname || userData.displayName.split(' ')[1] || '');
-          setCellNumber(data.cellNumber || '');
-          setAddress(data.address || '');
-          setCity(data.city || undefined);
-          setOtherCityDescription(data.otherCityDescription || '');
-          setSuburb(data.suburb || undefined);
-          setOtherSuburbDescription(data.otherSuburbDescription || '');
-          setPropertyType(data.propertyType || null);
-          setAccessCodeRequired(data.accessCodeRequired || null);
-          setPropertyFunction(data.propertyFunction || null);
-          setRentalUnitRole(data.rentalUnitRole || null);
-          setCompanyName(data.companyName || '');
-          setCompanyAddress(data.companyAddress || '');
-          setBillingInformation(data.billingInformation || null);
-        } else {
-          // If the user is new, set their name from Google and reset other fields
-          const nameParts = firebaseUser.displayName?.split(' ') || ['User'];
-          const newName = nameParts[0];
-          const newSurname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
-
-          await setDoc(userRef, {
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName: firebaseUser.displayName,
-            name: newName,
-            surname: newSurname,
-            createdAt: new Date(),
-          }, { merge: true });
-          setName(newName);
-          setSurname(newSurname);
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        addressInputRef.current,
+        {
+          componentRestrictions: { country: "za" }, // Restrict to South Africa
+          bounds: gautengBounds,
+          strictBounds: true, // Only show results within the defined gautengBounds
+          fields: ["formatted_address"],
+          types: ["address"],
         }
-        router.push('/customer_profile');
+      );
+
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        if (place && place.formatted_address) {
+          form.setValue("address", place.formatted_address, { shouldValidate: true });
+        }
+      });
+    }
+  }, [isGoogleMapsLoaded, form]);
+
+  async function onSubmit(data: UserProfileFormData) {
+    setIsSubmitting(true);
+    
+    // Update store with latest form data
+    setName(data.name);
+    setSurname(data.surname);
+    setCellNumber(data.cellNumber);
+    setEmail(data.email);
+    setAddress(data.address);
+    setSuburb(data.suburb);
+    setPropertyType(data.propertyType);
+    setAccessCodeRequired(data.accessCodeRequired);
+
+    // Save/update their details in Firestore for any authenticated user
+    if (user && firestore) {
+      try {
+        const userRef = doc(firestore, 'users', user.uid);
+        await setDoc(userRef, {
+          name: data.name,
+          surname: data.surname,
+          cellNumber: data.cellNumber,
+          address: data.address,
+          suburb: data.suburb,
+          propertyType: data.propertyType,
+          accessCodeRequired: data.accessCodeRequired,
+          email: data.email, // ensure email is saved
+          displayName: `${data.name} ${data.surname}`.trim(),
+        }, { merge: true }); // Use merge to avoid overwriting other fields like createdAt
+      } catch (error) {
+        console.error("Failed to save user details to Firestore:", error);
+        // We don't need to block the booking for this, but good to know.
       }
-    } catch (error: any) {
-      console.error('Google Sign-In Error:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Authentication Failed',
-        description: error.message || 'Could not sign in with Google. Please try again.',
-      });
-      setIsLoading(false);
     }
-  };
+    
+    router.push("/item_to_repair");
+  }
 
-
-  const handleGuestSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const result = await signInAnonymously(auth);
-      const user = result.user;
-      
-      // Reset all state before setting the new guest user
-      resetBooking();
-
-      setUser({
-          uid: user.uid,
-          displayName: 'Guest',
-          email: '',
-          isGuest: true,
-      });
-      
-      router.push('/customer_profile');
-    } catch (error: any) {
-       console.error("Anonymous Sign-In Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Guest Sign-in Failed",
-        description: error.message || "Could not sign in as a guest. Please try again.",
-      });
-      setIsLoading(false);
-    }
-  };
-  
-  if (isLoading) {
-    return (
-      <StaticPageLayout>
-        <div className="flex justify-center items-center py-12">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      </StaticPageLayout>
-    );
+  if (!user) {
+    return <BookingFlowLayout><div className="flex justify-center items-center h-64"><Loader2 className="h-8 w-8 animate-spin" /></div></BookingFlowLayout>
   }
 
   return (
-    <StaticPageLayout>
-      <div className="flex justify-center items-center py-12">
-        <Card className="w-full max-w-md shadow-xl">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Choose Your Path</CardTitle>
-            <CardDescription>Sign in to save your booking history or continue as a guest.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button
-              onClick={handleGoogleSignIn}
-              className="w-full text-lg py-6"
-              variant="outline"
-            >
-              <FcGoogle className="mr-3 h-6 w-6" />
-              Sign in with Google
-            </Button>
-            <Button
-              onClick={handleGuestSignIn}
-              className="w-full text-lg py-6"
-              variant="secondary"
-            >
-              <FaUserSecret className="mr-3 h-5 w-5" />
-              Continue as Guest
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </StaticPageLayout>
+    <BookingFlowLayout>
+      <Card className="shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-2xl">Customer Profile</CardTitle>
+          <CardDescription>Please provide your details to proceed with your booking.</CardDescription>
+        </CardHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="surname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Surname</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your surname" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="cellNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cell Number</FormLabel>
+                    <FormControl>
+                      <Input type="tel" placeholder="e.g., 0821234567" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input type="email" placeholder="your.email@example.com" {...field} readOnly={!user?.isGuest} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                       <Input
+                        placeholder="Start typing your address..."
+                        {...field}
+                        ref={(el) => {
+                          field.ref(el);
+                          addressInputRef.current = el;
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="suburb"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Suburb</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select suburb" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="max-h-60">
+                        {suburbs.map((sub) => (
+                          <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="propertyType"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Property Type</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {propertyTypes.map(pt => (
+                           <FormItem key={pt} className="flex items-center space-x-3 space-y-0">
+                             <FormControl>
+                               <RadioGroupItem value={pt} />
+                             </FormControl>
+                             <FormLabel className="font-normal">
+                               {pt}
+                             </FormLabel>
+                           </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="accessCodeRequired"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Access Code Required</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-row space-x-8"
+                      >
+                        {accessCodeOptions.map(aco => (
+                           <FormItem key={aco} className="flex items-center space-x-3 space-y-0">
+                                <FormControl>
+                                <RadioGroupItem value={aco} />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                {aco}
+                                </FormLabel>
+                            </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Next"
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
+    </BookingFlowLayout>
   );
 }

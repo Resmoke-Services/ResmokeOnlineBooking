@@ -112,8 +112,7 @@ export default function PaymentAndTermsPage() {
         title: "Submission Failed",
         description: error.message || "An unexpected error occurred. Please try again.",
       });
-    } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   }
 
@@ -227,8 +226,14 @@ export default function PaymentAndTermsPage() {
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
               <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
-                {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isSubmitting ? "Processing..." : "Next"}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Next"
+                )}
               </Button>
             </CardFooter>
           </form>
