@@ -1,5 +1,4 @@
 
-
 import { z } from "zod";
 import { repairItems, paymentMethods, propertyTypes, propertyFunctions } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType, PropertyType } from "@/lib/types";
@@ -123,7 +122,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         complexName: z.string().min(2, "Complex name is required."),
         streetNumber: z.string().min(1, "Street number is required."),
         streetName: z.string().min(2, "Street name is required."),
-        accessCodeRequired: z.boolean().default(false),
+        accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
     }),
     baseAddressSchema.extend({
         propertyType: z.literal("Estate"),
@@ -131,7 +130,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         houseNumber: z.string().min(1, "House number is required."),
         streetNameInEstate: z.string().min(2, "Street name is required."),
         estateName: z.string().min(2, "Estate name is required."),
-        accessCodeRequired: z.boolean().default(false),
+        accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
     }),
     baseAddressSchema.extend({
         propertyType: z.literal("Complex in an Estate"),
@@ -139,6 +138,6 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         complexName: z.string().min(2, "Complex name is required."),
         streetNameInEstate: z.string().min(2, "Street name is required."),
         estateName: z.string().min(2, "Estate name is required."),
-        accessCodeRequired: z.boolean().default(false),
+        accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
     }),
 ]);

@@ -22,13 +22,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { propertyTypes, propertyFunctions } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import type { PropertyType } from "@/lib/types";
@@ -53,7 +53,7 @@ export default function AddressDetailsPage() {
     defaultValues: {
       ...store.addressDetails,
       propertyFunction: store.addressDetails.propertyFunction || 'Private',
-      accessCodeRequired: store.addressDetails.accessCodeRequired || false,
+      accessCodeRequired: store.addressDetails.accessCodeRequired === true ? 'yes' : store.addressDetails.accessCodeRequired === false ? 'no' : undefined,
     },
     mode: "onChange",
   });
@@ -62,7 +62,12 @@ export default function AddressDetailsPage() {
 
   async function onSubmit(data: AddressDetailsFormData) {
     setIsSubmitting(true);
-    store.setAddressDetails(data);
+    // Manually handle the conversion for accessCodeRequired before setting state
+    const processedData = {
+        ...data,
+        accessCodeRequired: data.accessCodeRequired === 'yes',
+    };
+    store.setAddressDetails(processedData);
     router.push("/item_to_repair");
   }
 
@@ -100,25 +105,38 @@ export default function AddressDetailsPage() {
         </>
     );
     
-    const accessCodeSwitch = (
+    const accessCodeRadioGroup = (
         <FormField
-            control={form.control}
-            name="accessCodeRequired"
-            render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 md:col-span-2">
-                    <div className="space-y-0.5">
-                        <FormLabel className="text-base">Is an Access Code Required?</FormLabel>
-                    </div>
+          control={form.control}
+          name="accessCodeRequired"
+          render={({ field }) => (
+            <FormItem className="space-y-3 md:col-span-2">
+              <FormLabel>Access Code Required?</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  className="flex flex-row space-x-4"
+                >
+                  <FormItem className="flex items-center space-x-2 space-y-0">
                     <FormControl>
-                        <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        />
+                      <RadioGroupItem value="no" />
                     </FormControl>
-                </FormItem>
-            )}
+                    <FormLabel className="font-normal">No</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-2 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="yes" />
+                    </FormControl>
+                    <FormLabel className="font-normal">Yes</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-    );
+      );
 
     switch (type) {
         case 'Home':
@@ -149,7 +167,7 @@ export default function AddressDetailsPage() {
                         <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
-                    {accessCodeSwitch}
+                    {accessCodeRadioGroup}
                 </div>
             );
         case 'Estate':
@@ -168,7 +186,7 @@ export default function AddressDetailsPage() {
                         <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
-                    {accessCodeSwitch}
+                    {accessCodeRadioGroup}
                 </div>
             );
         case 'Complex in an Estate':
@@ -187,7 +205,7 @@ export default function AddressDetailsPage() {
                         <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {commonFields}
-                    {accessCodeSwitch}
+                    {accessCodeRadioGroup}
                 </div>
             );
         default:
