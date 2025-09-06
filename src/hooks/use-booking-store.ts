@@ -8,6 +8,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 interface BookingState extends BookingData {
   availability: AvailabilitySlot[];
   setUser: (user: UserProfile | null) => void;
+  setUserProfile: (profileData: Partial<BookingData>) => void;
   setName: (name: string) => void;
   setSurname: (surname: string) => void;
   setCellNumber: (cellNumber: string) => void;
@@ -72,6 +73,7 @@ export const useBookingStore = create<BookingState>()(
     (set) => ({
       ...initialState,
       setUser: (user) => set({ user }),
+      setUserProfile: (profileData) => set((state) => ({ ...state, ...profileData })),
       setName: (name) => set({ name }),
       setSurname: (surname) => set({ surname }),
       setCellNumber: (cellNumber) => set({ cellNumber }),
