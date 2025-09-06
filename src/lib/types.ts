@@ -73,15 +73,14 @@ export type RepairItemObject = (typeof repairItems)[number];
 
 export const paymentMethods = [
   { id: "Card", label: "Card (Card Machine)" },
-  { id: "Cash", label: "Cash" },
   { id: "EFT", label: "EFT" },
+  { id: "PayShap", label: "PayShap" },
 ] as const;
 export type PaymentMethod = (typeof paymentMethods)[number]['id'];
 
 export interface TermsAgreement {
     paymentOnPremises: boolean;
     emailConsent: boolean;
-    smsConsent: boolean;
 }
 
 export interface CustomerProfileData {
