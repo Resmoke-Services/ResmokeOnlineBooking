@@ -19,10 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { personalBookingSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState, useRef } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
 
@@ -30,14 +28,10 @@ type PersonalBookingFormData = z.infer<typeof personalBookingSchema>;
 
 export default function PersonalDetailsPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
   const firestore = useFirestore();
   
-  const addressInputRef = useRef<HTMLInputElement | null>(null);
-  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
-
   useEffect(() => {
     if (!store.user) {
       router.replace('/auth');
@@ -51,7 +45,6 @@ export default function PersonalDetailsPage() {
       surname: store.surname || "",
       cellNumber: store.cellNumber || "",
       email: store.email || "",
-      address: store.address || "",
     },
     mode: "onChange",
   });
@@ -62,52 +55,8 @@ export default function PersonalDetailsPage() {
       surname: store.surname || "",
       cellNumber: store.cellNumber || "",
       email: store.email || "",
-      address: store.address || "",
     });
   }, [store, form]);
-
-  useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
-      const loader = new Loader({
-        apiKey: apiKey,
-        version: "weekly",
-        libraries: ["places"],
-      });
-
-      loader.load().then(() => {
-        setIsGoogleMapsLoaded(true);
-      }).catch(e => {
-        console.error("Failed to load Google Maps Script", e);
-        toast({
-          variant: "default",
-          title: "Address autocomplete not available",
-          description: "Could not load Google Maps. Please enter your address manually.",
-        });
-      });
-    } else {
-        console.warn("Google Maps API key is not configured.");
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    if (!isGoogleMapsLoaded || !addressInputRef.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      addressInputRef.current,
-      {
-        componentRestrictions: { country: "za" },
-        fields: ["formatted_address"],
-        types: ["address"],
-      }
-    );
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (place && place.formatted_address) {
-        form.setValue("address", place.formatted_address, { shouldValidate: true });
-      }
-    });
-  }, [isGoogleMapsLoaded, form]);
 
   const handlePhoneNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     let value = e.target.value.trim();
@@ -126,7 +75,6 @@ export default function PersonalDetailsPage() {
         cellNumber: data.cellNumber,
         email: data.email,
     });
-    store.setAddress(data.address);
     
     if (store.user && !store.user.isGuest && firestore) {
       try {
@@ -135,7 +83,6 @@ export default function PersonalDetailsPage() {
           name: data.name,
           surname: data.surname,
           cellNumber: data.cellNumber,
-          address: data.address,
           email: data.email,
           displayName: `${data.name} ${data.surname}`.trim(),
         }, { merge: true });
@@ -144,7 +91,7 @@ export default function PersonalDetailsPage() {
       }
     }
     
-    router.push("/item_to_repair");
+    router.push("/booking/address-details");
   }
 
   return (
@@ -211,27 +158,6 @@ export default function PersonalDetailsPage() {
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
                       <Input type="email" placeholder="your.email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Physical Address</FormLabel>
-                    <FormControl>
-                       <Input
-                        placeholder="Start typing your address..."
-                        {...field}
-                        ref={(el) => {
-                          field.ref(el);
-                          addressInputRef.current = el;
-                        }}
-                        autoComplete="off"
-                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

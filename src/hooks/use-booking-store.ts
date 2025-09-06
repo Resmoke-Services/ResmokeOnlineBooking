@@ -12,6 +12,11 @@ interface BookingState extends BookingData {
   setBookingFor: (bookingFor: BookingFor) => void;
   setPersonalDetails: (details: { name: string; surname: string; cellNumber: string; email: string }) => void;
   setAddress: (address: string) => void;
+  setSuburb: (suburb: string) => void;
+  setCity: (city: string) => void;
+  setPropertyType: (propertyType: string) => void;
+  setPropertyFunction: (propertyFunction: string) => void;
+  setAccessCodeRequired: (required: boolean) => void;
   setLandlordDetails: (details: { landlordName: string; landlordSurname: string; landlordCellNumber: string; landlordEmail: string; }) => void;
   setOwnerDetails: (details: { ownerName: string; ownerSurname: string; ownerCellNumber: string; ownerEmail: string; }) => void;
   setCompanyDetails: (details: { companyName: string; companyPhone: string; companyEmail: string; companyAddress: string; }) => void;
@@ -33,6 +38,11 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   cellNumber: '',
   email: '',
   address: '',
+  city: '',
+  suburb: '',
+  propertyType: '',
+  propertyFunction: 'Private',
+  accessCodeRequired: false,
   bookingFor: 'personal', // Default value
   // Landlord
   landlordName: '',
@@ -75,6 +85,11 @@ export const useBookingStore = create<BookingState>()(
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
       setAddress: (address) => set({ address }),
+      setSuburb: (suburb) => set({ suburb }),
+      setCity: (city) => set({ city }),
+      setPropertyType: (propertyType) => set({ propertyType }),
+      setPropertyFunction: (propertyFunction) => set({ propertyFunction }),
+      setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
       setLandlordDetails: (details) => set({ ...details }),
       setOwnerDetails: (details) => set({ ...details }),
       setCompanyDetails: (details) => set({ ...details }),

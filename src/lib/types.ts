@@ -1,5 +1,4 @@
 
-
 export interface UserProfile {
   uid: string;
   email: string;
@@ -7,7 +6,7 @@ export interface UserProfile {
   isGuest: boolean;
 }
 
-export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null | undefined;
+export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null;
 
 export const repairItems = [
     { id: 'DISHWASHER', label: 'DISHWASHER', note: undefined },
@@ -32,6 +31,9 @@ export const paymentMethods = [
   { id: "PayShap", label: "PayShap" },
 ] as const;
 export type PaymentMethod = (typeof paymentMethods)[number]['id'];
+
+export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate', 'Business', 'Farm', 'Other'] as const;
+export const propertyFunctions = ['Private', 'Business'] as const;
 
 export interface TermsAgreement {
     paymentOnPremises: boolean;
@@ -68,7 +70,14 @@ export interface BookingData {
   surname: string;
   cellNumber: string;
   email: string;
-  address: string; // The address where the service will take place
+  
+  // Service address details
+  address: string; 
+  city: string;
+  suburb: string;
+  propertyType: string;
+  propertyFunction: string;
+  accessCodeRequired: boolean;
 
   // Type of booking
   bookingFor: BookingFor;

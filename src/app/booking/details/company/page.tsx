@@ -19,10 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { companyBookingSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState, useRef } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Loader } from "@googlemaps/js-api-loader";
 import { doc, setDoc } from "firebase/firestore";
 import { useFirestore } from "@/hooks/use-firestore";
 
@@ -30,13 +28,9 @@ type CompanyBookingFormData = z.infer<typeof companyBookingSchema>;
 
 export default function CompanyDetailsPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
   const firestore = useFirestore();
-  
-  const companyAddressInputRef = useRef<HTMLInputElement | null>(null);
-  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
 
   useEffect(() => {
     if (!store.user) {
@@ -50,7 +44,6 @@ export default function CompanyDetailsPage() {
       companyName: store.companyName || "",
       companyPhone: store.companyPhone || "",
       companyEmail: store.companyEmail || "",
-      companyAddress: store.companyAddress || "",
       contactName: store.name || "",
       contactSurname: store.surname || "",
       contactCellNumber: store.cellNumber || "",
@@ -58,49 +51,6 @@ export default function CompanyDetailsPage() {
     },
     mode: "onChange",
   });
-
-  useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
-      const loader = new Loader({
-        apiKey: apiKey,
-        version: "weekly",
-        libraries: ["places"],
-      });
-
-      loader.load().then(() => {
-        setIsGoogleMapsLoaded(true);
-      }).catch(e => {
-        console.error("Failed to load Google Maps Script", e);
-        toast({
-          variant: "default",
-          title: "Address autocomplete not available",
-          description: "Could not load Google Maps. Please enter your address manually.",
-        });
-      });
-    } else {
-        console.warn("Google Maps API key is not configured.");
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    if (!isGoogleMapsLoaded || !companyAddressInputRef.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      companyAddressInputRef.current,
-      {
-        componentRestrictions: { country: "za" },
-        fields: ["formatted_address"],
-        types: ["address"],
-      }
-    );
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (place && place.formatted_address) {
-        form.setValue("companyAddress", place.formatted_address, { shouldValidate: true });
-      }
-    });
-  }, [isGoogleMapsLoaded, form]);
 
   const handlePhoneNumberBlur = (fieldName: keyof CompanyBookingFormData) => (e: React.FocusEvent<HTMLInputElement>) => {
     let value = e.target.value.trim();
@@ -117,7 +67,7 @@ export default function CompanyDetailsPage() {
         companyName: data.companyName,
         companyPhone: data.companyPhone,
         companyEmail: data.companyEmail,
-        companyAddress: data.companyAddress,
+        companyAddress: '', // This will be set in the next step
     });
     store.setPersonalDetails({
         name: data.contactName,
@@ -141,7 +91,7 @@ export default function CompanyDetailsPage() {
       }
     }
     
-    router.push("/item_to_repair");
+    router.push("/booking/address-details");
   }
 
   return (
@@ -195,27 +145,6 @@ export default function CompanyDetailsPage() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="companyAddress"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company Address</FormLabel>
-                      <FormControl>
-                       <Input
-                        placeholder="Start typing company address..."
-                        {...field}
-                        ref={(el) => {
-                          field.ref(el);
-                          companyAddressInputRef.current = el;
-                        }}
-                        autoComplete="off"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               </fieldset>
 
               <fieldset className="space-y-4 rounded-lg border p-4">

@@ -1,7 +1,7 @@
 
 import { z } from "zod";
-import { repairItems, paymentMethods } from "@/lib/types";
-import type { PaymentMethod as PaymentMethodType, BillingInformation as BillingInformationType } from "@/lib/types";
+import { repairItems, paymentMethods, propertyTypes, propertyFunctions } from "@/lib/types";
+import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
 const zaLandlineRegex = /^(?:\+27|0)[0-9]{9}$/; // More generic for landlines/other numbers
@@ -15,7 +15,19 @@ export const personalBookingSchema = z.object({
     .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number (e.g., 0821234567)." })
     .transform(phoneTransform),
   email: z.string().email({ message: "Invalid email address." }),
-  address: z.string().min(10, { message: "Address must be at least 10 characters." }),
+});
+
+export const addressDetailsSchema = z.object({
+  address: z.string().min(10, { message: "Please select a valid address." }),
+  propertyType: z.enum(propertyTypes as [string, ...string[]], {
+    required_error: "Please select a property type.",
+  }),
+  propertyFunction: z.enum(propertyFunctions as [string, ...string[]], {
+      required_error: "Please select a property function.",
+  }),
+  suburb: z.string().min(2, { message: "Suburb could not be determined from the address." }),
+  city: z.string().min(2, { message: "City could not be determined from the address." }),
+  accessCodeRequired: z.boolean().default(false),
 });
 
 const userDetailsSchema = {
@@ -41,7 +53,6 @@ export const companyBookingSchema = z.object({
     companyName: z.string().min(2, { message: "Company name must be at least 2 characters." }),
     companyPhone: z.string().regex(zaLandlineRegex, { message: "Please enter a valid South African phone number." }).transform(phoneTransform),
     companyEmail: z.string().email({ message: "Please enter a valid company email address." }),
-    companyAddress: z.string().min(10, { message: "Company address must be at least 10 characters." }),
     contactName: z.string().min(2, { message: "Contact name must be at least 2 characters." }),
     contactSurname: z.string().min(2, { message: "Contact surname must be at least 2 characters." }),
     contactCellNumber: z.string()
