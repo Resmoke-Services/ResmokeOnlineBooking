@@ -109,7 +109,6 @@ export default function AddressDetailsPage() {
                       ...initialFormState,
                       propertyType: currentValues.propertyType,
                       propertyFunction: currentValues.propertyFunction,
-                      city: value as City,
                     });
                     field.onChange(value);
                   }} 
@@ -356,7 +355,7 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select 
                               onValueChange={(value) => {
-                                form.reset({ ...initialFormState, propertyType: value as PropertyType });
+                                form.reset({ ...initialFormState });
                                 field.onChange(value);
                               }} 
                               value={field.value}
@@ -388,7 +387,6 @@ export default function AddressDetailsPage() {
                                 form.reset({
                                   ...initialFormState,
                                   propertyType: currentValues.propertyType,
-                                  propertyFunction: value as PropertyFunction,
                                 });
                                 field.onChange(value);
                               }} 
@@ -442,3 +440,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
