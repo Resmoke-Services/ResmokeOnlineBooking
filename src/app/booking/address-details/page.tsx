@@ -332,9 +332,8 @@ export default function AddressDetailsPage() {
                                 field.onChange(value);
                                 // Reset other fields when type changes to avoid validation errors on fields that are no longer visible
                                 form.reset({ 
-                                  propertyType: value, 
+                                  propertyType: value as PropertyType, 
                                   propertyFunction: form.getValues('propertyFunction'),
-                                  city: undefined, // Clear city to force re-selection
                                 });
                             }} value={field.value}>
                             <FormControl>
@@ -403,5 +402,3 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
-
-    
