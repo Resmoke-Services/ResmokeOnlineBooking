@@ -14,8 +14,9 @@ interface ServiceCategoryCardProps {
 }
 
 function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href }: ServiceCategoryCardProps) {
+  const privacyHref = `/privacy_notice?next=${encodeURIComponent(href)}`;
   return (
-    <Link href={href} className="block group">
+    <Link href={privacyHref} className="block group">
       <Card className="overflow-hidden h-full flex flex-col bg-card/50 transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 border-2 border-transparent hover:border-primary/50">
         <div className="relative w-full aspect-video bg-black/20">
           <Image

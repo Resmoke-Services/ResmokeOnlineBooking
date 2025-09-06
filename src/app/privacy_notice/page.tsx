@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -9,10 +9,13 @@ import { ShieldCheck, XCircle } from "lucide-react";
 
 export default function PrivacyNoticePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextUrl = searchParams.get("next") || "/user_profile";
+
 
   const handleAccept = () => {
     // Navigate to the next step in the booking process
-    router.push("/user_profile");
+    router.push(nextUrl);
   };
 
   const handleDecline = () => {

@@ -28,7 +28,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/privacy_notice"
+    href: "/user_profile"
   }
 ];
 
