@@ -17,14 +17,14 @@ export const personalBookingSchema = z.object({
   email: z.string().email({ message: "Invalid email address." }),
 });
 
-const userDetailsSchema = {
-    name: z.string().min(2, { message: "Your name must be at least 2 characters." }),
-    surname: z.string().min(2, { message: "Your surname must be at least 2 characters." }),
-    cellNumber: z.string()
+const userDetailsSchema = z.object({
+    userName: z.string().min(2, { message: "Your name must be at least 2 characters." }),
+    userSurname: z.string().min(2, { message: "Your surname must be at least 2 characters." }),
+    userCellNumber: z.string()
       .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number." })
       .transform(phoneTransform),
-    email: z.string().email({ message: "Please enter a valid email address." }),
-};
+    userEmail: z.string().email({ message: "Please enter a valid email address." }),
+});
 
 export const landlordBookingSchema = z.object({
   landlordName: z.string().min(2, { message: "Landlord's name must be at least 2 characters." }),
@@ -33,7 +33,7 @@ export const landlordBookingSchema = z.object({
     .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number." })
     .transform(phoneTransform),
   landlordEmail: z.string().email({ message: "Please enter a valid email address for the landlord." }),
-  ...userDetailsSchema
+  ...userDetailsSchema.shape,
 });
 
 export const companyBookingSchema = z.object({
@@ -55,7 +55,7 @@ export const friendBookingSchema = z.object({
     .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number." })
     .transform(phoneTransform),
   ownerEmail: z.string().email({ message: "Please enter a valid email address for your friend/family." }),
-  ...userDetailsSchema
+  ...userDetailsSchema.shape,
 });
 
 
@@ -104,6 +104,7 @@ export const paymentAndTermsSchema = z.object({
 
 // Base schema with fields common to most property types
 const baseAddressSchema = z.object({
+    propertyType: z.enum(propertyTypes),
     propertyFunction: z.enum(propertyFunctions),
     suburb: z.string().min(2, "Suburb is required."),
     city: z.string().min(2, "City / Area is required."),
@@ -139,5 +140,29 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         streetNameInEstate: z.string().min(2, "Street name is required."),
         estateName: z.string().min(2, "Estate name is required."),
         accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Office"),
+        officeName: z.string().min(2, "Office/Building name is required."),
+        officeParkName: z.string().optional(),
+        streetNumber: z.string().min(1, "Street number is required."),
+        streetName: z.string().min(2, "Street name is required."),
+        accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Small Holding"),
+        holdingName: z.string().min(2, "Holding name/number is required."),
+        streetName: z.string().min(2, "Street/Road name is required."),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Farm"),
+        farmName: z.string().min(2, "Farm name/number is required."),
+        streetName: z.string().min(2, "Road name is required."),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Other"),
+        otherPropertyType: z.string().min(3, "Please specify the property type."),
+        streetNumber: z.string().min(1, "Street/Unit number is required."),
+        streetName: z.string().min(2, "Street name is required."),
     }),
 ]);

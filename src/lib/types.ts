@@ -33,7 +33,7 @@ export const paymentMethods = [
 ] as const;
 export type PaymentMethod = (typeof paymentMethods)[number]['id'];
 
-export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate'] as const;
+export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate', 'Office', 'Small Holding', 'Farm', 'Other'] as const;
 export type PropertyType = (typeof propertyTypes)[number];
 
 export const propertyFunctions = ['Private', 'Business'] as const;
@@ -81,6 +81,15 @@ export type AddressDetails = {
     standNumber?: string;
     streetNameInEstate?: string;
     estateName?: string;
+    // Office
+    officeName?: string;
+    officeParkName?: string;
+    // Small Holding
+    holdingName?: string;
+    // Farm
+    farmName?: string;
+    // Other
+    otherPropertyType?: string;
     // Shared
     suburb?: string;
     city?: string;

@@ -44,7 +44,7 @@ export default function AddressDetailsPage() {
 
   useEffect(() => {
     if (!store.user) {
-      router.replace('/auth');
+      router.replace('/auth?next=/booking/address-details');
     }
   }, [store.user, router]);
 
@@ -54,7 +54,7 @@ export default function AddressDetailsPage() {
       ...store.addressDetails,
       propertyFunction: store.addressDetails.propertyFunction || 'Private',
       accessCodeRequired: store.addressDetails.accessCodeRequired === true ? 'yes' : store.addressDetails.accessCodeRequired === false ? 'no' : undefined,
-    },
+    } as any, // Use `as any` to bypass initial type mismatch for discriminated union
     mode: "onChange",
   });
   
@@ -62,12 +62,11 @@ export default function AddressDetailsPage() {
 
   async function onSubmit(data: AddressDetailsFormData) {
     setIsSubmitting(true);
-    // Manually handle the conversion for accessCodeRequired before setting state
     const processedData = {
         ...data,
-        accessCodeRequired: data.accessCodeRequired === 'yes',
+        accessCodeRequired: (data as any).accessCodeRequired === 'yes',
     };
-    store.setAddressDetails(processedData);
+    store.setAddressDetails(processedData as any);
     router.push("/item_to_repair");
   }
 
@@ -208,6 +207,64 @@ export default function AddressDetailsPage() {
                     {accessCodeRadioGroup}
                 </div>
             );
+        case 'Office':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="officeName" render={({ field }) => (
+                        <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input placeholder="e.g., Riverwalk Office" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="officeParkName" render={({ field }) => (
+                        <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input placeholder="e.g., Centurion Office Park" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                    {accessCodeRadioGroup}
+                </div>
+            );
+        case 'Small Holding':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="holdingName" render={({ field }) => (
+                        <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input placeholder="e.g., Plot 123" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input placeholder="e.g., R55" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                </div>
+            );
+        case 'Farm':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="farmName" render={({ field }) => (
+                        <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input placeholder="e.g., Sunnydale Farm" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input placeholder="e.g., R511" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                </div>
+            );
+        case 'Other':
+            return (
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="otherPropertyType" render={({ field }) => (
+                        <FormItem><FormLabel>Specify Property Type</FormLabel><FormControl><Input placeholder="e.g., Warehouse, School" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                     <FormField control={form.control} name="streetNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Street / Unit Number</FormLabel><FormControl><Input placeholder="e.g., 42B" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Industrial Road" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                </div>
+            )
         default:
             return null;
     }
@@ -230,7 +287,11 @@ export default function AddressDetailsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>What type of property is it?</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select onValueChange={(value) => {
+                                field.onChange(value);
+                                // Reset other fields when type changes to avoid validation errors on fields that are no longer visible
+                                form.reset({ propertyType: value, propertyFunction: form.getValues('propertyFunction') });
+                            }} value={field.value}>
                             <FormControl>
                                 <SelectTrigger>
                                 <SelectValue placeholder="Select property type" />

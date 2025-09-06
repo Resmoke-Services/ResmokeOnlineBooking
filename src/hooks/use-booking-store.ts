@@ -85,6 +85,14 @@ export const useBookingStore = create<BookingState>()(
             formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
         } else if (details.propertyType === 'Complex in an Estate') {
             formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Office') {
+            formattedAddress = `${details.officeName}, ${details.officeParkName ? details.officeParkName + ', ' : ''}${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Small Holding') {
+            formattedAddress = `${details.holdingName}, ${details.streetName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Farm') {
+            formattedAddress = `${details.farmName}, ${details.streetName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Other') {
+            formattedAddress = `${details.otherPropertyType}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
         }
         return { addressDetails: details, formattedAddress };
       }),
