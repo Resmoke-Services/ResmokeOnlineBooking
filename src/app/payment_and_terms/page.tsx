@@ -197,23 +197,7 @@ export default function PaymentAndTermsPage() {
                                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                             </FormControl>
                             <div className="space-y-1 leading-none">
-                                <FormLabel>I agree to receive email messages in relation to this booking.</FormLabel>
-                                 <FormMessage />
-                            </div>
-                        </FormItem>
-                    )}
-                />
-                 <FormField
-                    control={form.control}
-                    name="terms.smsConsent"
-                    render={({field}) => (
-                        <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4">
-                             <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <FormLabel>I agree to receive text messages in relation to this booking.</FormLabel>
-                                <p className="text-xs text-muted-foreground">Message frequency may vary. Standard Message and Data Rates may apply. Reply STOP to opt out. Reply Help for help. Your mobile information will not be sold or shared with third parties for promotional or marketing purposes.</p>
+                                <FormLabel>I agree to receive Text and Email messages in relation to this booking.</FormLabel>
                                  <FormMessage />
                             </div>
                         </FormItem>

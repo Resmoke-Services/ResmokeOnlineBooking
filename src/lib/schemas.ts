@@ -114,8 +114,5 @@ export const paymentAndTermsSchema = z.object({
     emailConsent: z.boolean().refine((val) => val === true, {
       message: "You must agree to receive emails.",
     }),
-    smsConsent: z.boolean().refine((val) => val === true, {
-      message: "You must agree to receive text messages.",
-    }),
   }),
 });
