@@ -90,7 +90,7 @@ export default function PaymentAndTermsPage() {
     setIsSubmitting(true);
     
     store.setPaymentMethods([data.paymentMethod]);
-    store.setBillingInformation(data.billingInformation || null);
+    store.setBillingInformation(data.billingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
     // Consolidate all data for the availability webhook
