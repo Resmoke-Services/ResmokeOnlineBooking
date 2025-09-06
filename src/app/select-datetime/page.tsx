@@ -150,7 +150,7 @@ export default function SelectDateTimePage() {
         <CardHeader className="items-center">
             <CalendarOff className="w-16 h-16 text-destructive mb-4" />
            <CardTitle className="text-2xl">No Slots Available</CardTitle>
-           <CardDescription className="text-base">We're sorry, but there are no booking slots available at this time. Please try again later.</CardDescription>
+           <CardDescription className="text-base">We're sorry, but there are no booking slots available at this time. Please try again later or send a WhatsApp to +27817889504</CardDescription>
         </CardHeader>
         <CardContent>
            <Button onClick={() => router.push('/payment_and_terms')}>
@@ -215,7 +215,7 @@ export default function SelectDateTimePage() {
         <Button onClick={handleConfirm} disabled={!selectedDate || !selectedTime || isSubmitting} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
           {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isSubmitting ? "Confirming..." : "Confirm Booking"}
-          <ChevronRight className="ml-2 h-4 w-4" />
+          {!isSubmitting && <ChevronRight className="ml-2 h-4 w-4" />}
         </Button>
       </div>
     </BookingFlowLayout>
