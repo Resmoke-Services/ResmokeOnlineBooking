@@ -17,12 +17,13 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'All major brands and models serviced.',
       (
         <span>
-          Callout fee applies based on location (Excludes Labour & Parts):<br />
+          Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>

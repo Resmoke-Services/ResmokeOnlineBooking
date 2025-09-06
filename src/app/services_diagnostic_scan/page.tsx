@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: 'Bring your vehicle to our workshop for a diagnostic scan.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Scan and clear fault codes.',
       'Scan for potential issues.',
@@ -46,6 +47,7 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to do a diagnostic scan on your vehicle — the most convenient option without the need to travel.",
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Diagnostic scan at your home or office.',
       'Scan and clear fault codes.',

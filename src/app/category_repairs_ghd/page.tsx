@@ -17,8 +17,16 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
+      (
+        <span>
+          General repair cost:<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R850 (Typical)</span><br />
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R1500+ (Extensive)</span><br />
+          </span>
+    ),
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
@@ -39,12 +47,20 @@ const serviceOptions = [
     ),
     description: 'We will collect your GHD from your home or office, perform the repairs at our workshop, and deliver them back to you.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Convenient pickup and return.',
       'Ideal for busy schedules',
       (
         <span>
-          Fee:<br />
+          General repair cost:<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R850 (Typical)</span><br />
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R1500+ (Extensive)</span><br />
+          </span>
+      ),
+      (
+        <span>
+          Collection & Delivery Fee:<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">Free (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R250+ (Outside Centurion Area)</span>
         </span>

@@ -17,7 +17,8 @@ const serviceOptions = [
       ),
       description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
       features: [
-        'Card/EFT/PayShap Payments accepted.',
+        'All repairs include a comprehensive warranty on both parts and labour.',
+      'Card/EFT/PayShap Payments accepted.',
         'Drop off at our Centurion workshop.',
         'No callout fee.',
         'Limited Options (Contact us for enquiries).',
@@ -43,7 +44,7 @@ const serviceOptions = [
       features: [
         'Convenient pickup and return.',
         'Ideal for busy schedules.',
-        'Pickup & Delivery fee applies based on item size and location (Excludes Labour & Parts).',
+        'Pickup & Delivery fee applies based on item size and location (Excludes Parts, Labour & Additional Fees).',
         (
           <span>
             Small Items (e.g., Game Controller) – Non fragile electronics:<br />

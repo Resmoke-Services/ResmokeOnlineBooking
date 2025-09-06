@@ -18,16 +18,19 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'All major brands and models serviced.',
       (
         <span>
-          Callout fee applies based on location (Excludes Labour & Parts):<br />
+          Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
-        </span>
-      ),
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span><br /><br />
+          Cost Breakdown Example: R550 (Callout Fee) + R750 (Parts) + R650 (Labour) = R1950.<br /><br />
+          </span>
+    ),
+      '"While you are here" or non-prebooked items will be charged an additional "While you are here" fee of R250 per item.',
       'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
@@ -48,11 +51,20 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'No callout fee.',
       'All major brands and models serviced.',
       'Strip and Quote Fee applies based on item selected.',
+      (
+        <span>
+          Strip and Quote Fee applies based on item selected (Excludes Parts, Labour & Additional Fees):<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R250 (Typical)</span><br />
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Extensive)</span><br /><br />
+          Cost Breakdown Example: R250 (Strip & Quote Fee) + R750 (Parts) + R650 (Labour) = R1650.<br /><br />
+          </span>
+      ),
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
@@ -73,24 +85,32 @@ const serviceOptions = [
     ),
     description: 'We will collect your Items from your home or office, perform the repairs at our workshop, and deliver them back to you.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Convenient pickup and return.',
       'Ideal for busy schedules.',
       (
         <span>
-          Pickup & Delivery Fee - Small Hand-carryable Items (e.g., Microwave):<br />
+          Collection & Delivery Fee - Small Hand-carryable Items (e.g., Microwave):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R350 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Outside Centurion Area)</span>
         </span>
       ),
       (
         <span>
-          Pickup & Delivery Fee - Large Items requiring trolley/extra handling (e.g., Dishwasher):<br />
+          Collection & Delivery Fee - Large Items requiring trolley/extra handling (e.g., Dishwasher):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      'Strip and Quote Fee applies based on item selected.',
+      (
+        <span>
+          Strip and Quote Fee applies based on item selected (Excludes Parts, Labour & Additional Fees):<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R250 (Typical)</span><br />
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Extensive)</span><br /><br />
+          Cost Breakdown Example: R350 (Collection & Delivery Fee) + R250 (Strip & Quote Fee) + R750 (Parts) + R650 (Labour) = R2000.<br /><br />
+          </span>
+      ),
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {

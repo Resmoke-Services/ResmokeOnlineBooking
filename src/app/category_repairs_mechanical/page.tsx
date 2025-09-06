@@ -17,12 +17,13 @@ const serviceOptions = [
     ),
     description: "Our technician comes directly to your home or office to diagnose and repair your items — the most convenient option without the need to travel.",
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'Limited Options (Contact us for enquiries).',
       (
         <span>
-          Callout fee applies based on location (Excludes Labour & Parts):<br />
+          Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
@@ -47,6 +48,7 @@ const serviceOptions = [
     ),
     description: 'You can bring your items to our workshop. This is a great cost-effective option with no callout fees.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'No callout fee.',
@@ -73,7 +75,7 @@ const serviceOptions = [
     features: [
       'Convenient pickup and return.',
       'Ideal for busy schedules.',
-      'Pickup & Delivery fee applies based on item size and location (Excludes Labour & Parts).',
+      'Pickup & Delivery fee applies based on item size and location (Excludes Parts, Labour & Additional Fees).',
       (
         <span>
           Small Items (e.g., Motors) – Hand-carryable mechanical items:<br />

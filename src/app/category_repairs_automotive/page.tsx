@@ -17,6 +17,7 @@ const serviceOptions = [
     ),
     description: 'Bring your Vehicle or Motorcycle to our workshop.',
     features: [
+      'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'Limited Options (Contact us for enquiries).',
