@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { cities, suburbs, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, billingOptions } from "@/lib/types";
+import { cities, suburbs, propertyTypes, accessCodeOptions, propertyFunctions, rentalUnitRoles, billingOptions, paymentMethods } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
@@ -101,8 +101,8 @@ export const itemToRepairSchema = z.object({
 });
 
 export const paymentAndTermsSchema = z.object({
-  paymentMethod: z.array(z.string()).refine((value): value is PaymentMethodType[] => value.length > 0, {
-    message: "You must select at least one payment method.",
+  paymentMethod: z.enum(paymentMethods.map(p => p.id) as [PaymentMethodType, ...PaymentMethodType[]], {
+    required_error: "You must select a payment method.",
   }),
   billingInformation: z.enum(billingOptions, {
     required_error: "You need to select a billing information option.",

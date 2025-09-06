@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -37,7 +38,7 @@ export default function PaymentAndTermsPage() {
   const form = useForm<PaymentAndTermsFormData>({
     resolver: zodResolver(paymentAndTermsSchema),
     defaultValues: {
-      paymentMethod: store.paymentMethods,
+      paymentMethod: store.paymentMethods.length > 0 ? store.paymentMethods[0] : undefined,
       billingInformation: store.billingInformation || undefined,
       terms: {
         paymentOnPremises: store.termsAgreement?.paymentOnPremises || false,
@@ -60,7 +61,7 @@ export default function PaymentAndTermsPage() {
   async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
     
-    store.setPaymentMethods(data.paymentMethod);
+    store.setPaymentMethods([data.paymentMethod]);
     store.setBillingInformation(data.billingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
@@ -79,7 +80,7 @@ export default function PaymentAndTermsPage() {
       accessCodeRequired: store.accessCodeRequired,
       itemsToRepair: store.itemsToRepair,
       problemDescriptions: store.problemDescriptions,
-      paymentMethods: data.paymentMethod,
+      paymentMethods: [data.paymentMethod],
       billingInformation: data.billingInformation,
       termsAgreement: data.terms,
       servicePath: store.servicePath,
@@ -118,35 +119,23 @@ export default function PaymentAndTermsPage() {
               <FormField
                 control={form.control}
                 name="paymentMethod"
-                render={() => (
+                render={({ field }) => (
                   <FormItem>
-                    <div className="mb-4">
-                      <FormLabel className="text-base">Preferred Payment Option</FormLabel>
-                    </div>
-                    <div className="flex flex-wrap gap-x-8 gap-y-4">
-                      {paymentMethods.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="paymentMethod"
-                          render={({ field }) => (
-                            <FormItem key={item.id} className="flex flex-row items-start space-x-3 space-y-0">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(item.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([...(field.value || []), item.id])
-                                      : field.onChange(field.value?.filter((value) => value !== item.id));
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">{item.label}</FormLabel>
-                            </FormItem>
-                          )}
-                        />
-                      ))}
-                    </div>
+                    <FormLabel className="text-base">Preferred Payment Option</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                       <FormControl>
+                         <SelectTrigger>
+                           <SelectValue placeholder="Select a payment method" />
+                         </SelectTrigger>
+                       </FormControl>
+                       <SelectContent>
+                         {paymentMethods.map((method) => (
+                           <SelectItem key={method.id} value={method.id}>
+                             {method.label}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
                     <FormMessage />
                   </FormItem>
                 )}
