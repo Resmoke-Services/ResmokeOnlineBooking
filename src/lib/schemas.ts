@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { repairItems, paymentMethods, billingOptions } from "@/lib/types";
+import { repairItems, paymentMethods } from "@/lib/types";
 import type { PaymentMethod as PaymentMethodType, BillingInformation as BillingInformationType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
@@ -19,12 +19,12 @@ export const personalBookingSchema = z.object({
 });
 
 const userDetailsSchema = {
-    userName: z.string().min(2, { message: "Your name must be at least 2 characters." }),
-    userSurname: z.string().min(2, { message: "Your surname must be at least 2 characters." }),
-    userCellNumber: z.string()
+    name: z.string().min(2, { message: "Your name must be at least 2 characters." }),
+    surname: z.string().min(2, { message: "Your surname must be at least 2 characters." }),
+    cellNumber: z.string()
       .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number." })
       .transform(phoneTransform),
-    userEmail: z.string().email({ message: "Please enter a valid email address." }),
+    email: z.string().email({ message: "Please enter a valid email address." }),
 };
 
 export const landlordBookingSchema = z.object({
@@ -90,9 +90,9 @@ export const paymentAndTermsSchema = z.object({
   paymentMethod: z.enum(paymentMethods.map(p => p.id) as [PaymentMethodType, ...PaymentMethodType[]], {
     required_error: "You must select a payment method.",
   }),
-   billingInformation: z.enum(billingOptions as [BillingInformationType, ...BillingInformationType[]], {
+   billingInformation: z.string({
     required_error: "You must select a billing option.",
-  }),
+   }).min(1, { message: "You must select a billing option." }),
   terms: z.object({
     paymentOnPremises: z.boolean().refine((val) => val === true, {
       message: "You must agree to the payment terms.",

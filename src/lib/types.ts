@@ -7,8 +7,7 @@ export interface UserProfile {
   isGuest: boolean;
 }
 
-export const billingOptions = ["Personal", "Owner", "Company"] as const;
-export type BillingInformation = (typeof billingOptions)[number];
+export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null | undefined;
 
 export const repairItems = [
     { id: 'DISHWASHER', label: 'DISHWASHER', note: undefined },
