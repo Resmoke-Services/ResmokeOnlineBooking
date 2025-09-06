@@ -31,7 +31,7 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import type { PropertyType } from "@/lib/types";
+import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
@@ -104,10 +104,14 @@ export default function AddressDetailsPage() {
               <FormLabel>City / Area</FormLabel>
                 <Select 
                   onValueChange={(value) => {
+                    const currentValues = form.getValues();
+                    form.reset({
+                      ...initialFormState,
+                      propertyType: currentValues.propertyType,
+                      propertyFunction: currentValues.propertyFunction,
+                      city: value as City,
+                    });
                     field.onChange(value);
-                    if (value !== 'Other') {
-                      form.setValue('otherCityDescription', undefined);
-                    }
                   }} 
                   value={field.value}
                   disabled={!propertyType || !propertyFunction}
@@ -350,11 +354,13 @@ export default function AddressDetailsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Property Type</FormLabel>
-                            <Select onValueChange={(value) => {
-                                // Reset the form but keep the newly selected propertyType
-                                form.reset({ propertyType: value as PropertyType });
+                            <Select 
+                              onValueChange={(value) => {
+                                form.reset({ ...initialFormState, propertyType: value as PropertyType });
                                 field.onChange(value);
-                            }} value={field.value}>
+                              }} 
+                              value={field.value}
+                            >
                             <FormControl>
                                 <SelectTrigger>
                                 <SelectValue placeholder="a) Select property type" />
@@ -376,7 +382,19 @@ export default function AddressDetailsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Property Function</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value} disabled={!propertyType}>
+                            <Select 
+                              onValueChange={(value) => {
+                                const currentValues = form.getValues();
+                                form.reset({
+                                  ...initialFormState,
+                                  propertyType: currentValues.propertyType,
+                                  propertyFunction: value as PropertyFunction,
+                                });
+                                field.onChange(value);
+                              }} 
+                              value={field.value} 
+                              disabled={!propertyType}
+                            >
                             <FormControl>
                                 <SelectTrigger>
                                 <SelectValue placeholder="b) Select property function" />
