@@ -42,11 +42,27 @@ export default function PaymentAndTermsPage() {
       terms: {
         paymentOnPremises: store.termsAgreement?.paymentOnPremises || false,
         emailConsent: store.termsAgreement?.emailConsent || false,
-        smsConsent: store.termsAgreement?.smsConsent || false,
       },
     },
     mode: 'onChange',
   });
+  
+  useEffect(() => {
+    // Clear previous selections when the page loads
+    store.setPaymentMethods([]);
+    store.setBillingInformation(null);
+    store.setTermsAgreement(null);
+    form.reset({
+      paymentMethod: undefined,
+      billingInformation: undefined,
+      terms: {
+        paymentOnPremises: false,
+        emailConsent: false,
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   useEffect(() => {
     if (!store.user) {
