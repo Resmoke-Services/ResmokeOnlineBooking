@@ -1,7 +1,8 @@
 
+
 import { z } from "zod";
 import { repairItems, paymentMethods, propertyTypes, propertyFunctions } from "@/lib/types";
-import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
+import type { PaymentMethod as PaymentMethodType, PropertyType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
 const zaLandlineRegex = /^(?:\+27|0)[0-9]{9}$/; // More generic for landlines/other numbers
@@ -15,19 +16,6 @@ export const personalBookingSchema = z.object({
     .regex(zaPhoneNumberRegex, { message: "Please enter a valid South African cell number (e.g., 0821234567)." })
     .transform(phoneTransform),
   email: z.string().email({ message: "Invalid email address." }),
-});
-
-export const addressDetailsSchema = z.object({
-  address: z.string().min(10, { message: "Please select a valid address." }),
-  propertyType: z.enum(propertyTypes as [string, ...string[]], {
-    required_error: "Please select a property type.",
-  }),
-  propertyFunction: z.enum(propertyFunctions as [string, ...string[]], {
-      required_error: "Please select a property function.",
-  }),
-  suburb: z.string().min(2, { message: "Suburb could not be determined from the address." }),
-  city: z.string().min(2, { message: "City could not be determined from the address." }),
-  accessCodeRequired: z.boolean().default(false),
 });
 
 const userDetailsSchema = {
@@ -113,3 +101,44 @@ export const paymentAndTermsSchema = z.object({
     }),
   }),
 });
+
+
+// Base schema with fields common to most property types
+const baseAddressSchema = z.object({
+    propertyFunction: z.enum(propertyFunctions),
+    suburb: z.string().min(2, "Suburb is required."),
+    city: z.string().min(2, "City / Area is required."),
+});
+
+// Discriminated union for address details based on propertyType
+export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
+    baseAddressSchema.extend({
+        propertyType: z.literal("Home"),
+        houseNumber: z.string().min(1, "House number is required."),
+        streetName: z.string().min(2, "Street name is required."),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Complex"),
+        unitNumber: z.string().min(1, "Unit/House number is required."),
+        complexName: z.string().min(2, "Complex name is required."),
+        streetNumber: z.string().min(1, "Street number is required."),
+        streetName: z.string().min(2, "Street name is required."),
+        accessCodeRequired: z.boolean().default(false),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Estate"),
+        standNumber: z.string().min(1, "Stand number is required."),
+        houseNumber: z.string().min(1, "House number is required."),
+        streetNameInEstate: z.string().min(2, "Street name is required."),
+        estateName: z.string().min(2, "Estate name is required."),
+        accessCodeRequired: z.boolean().default(false),
+    }),
+    baseAddressSchema.extend({
+        propertyType: z.literal("Complex in an Estate"),
+        unitNumber: z.string().min(1, "Unit/House number is required."),
+        complexName: z.string().min(2, "Complex name is required."),
+        streetNameInEstate: z.string().min(2, "Street name is required."),
+        estateName: z.string().min(2, "Estate name is required."),
+        accessCodeRequired: z.boolean().default(false),
+    }),
+]);

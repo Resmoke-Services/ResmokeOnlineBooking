@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,48 +31,15 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import { Loader } from "@googlemaps/js-api-loader";
-import type { AddressComponent } from "@googlemaps/google-maps-services-js";
+import type { PropertyType } from "@/lib/types";
 
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
-
-function parseGoogleAddress(addressComponents: AddressComponent[]) {
-    let suburb = '';
-    let city = '';
-
-    for (const component of addressComponents) {
-        if (component.types.includes('sublocality') || component.types.includes('sublocality_level_1')) {
-            suburb = component.long_name;
-        }
-        if (component.types.includes('locality')) {
-            city = component.long_name;
-        }
-    }
-    return { suburb, city };
-}
-
-function inferPropertyType(addressComponents: AddressComponent[]): string {
-    const types = new Set(addressComponents.flatMap(c => c.types));
-    if (types.has('premise') && types.has('neighborhood')) {
-        return 'Complex in an Estate';
-    }
-    if (types.has('neighborhood')) {
-        return 'Estate';
-    }
-    if (types.has('premise')) {
-        return 'Complex';
-    }
-    return 'Home';
-}
 
 export default function AddressDetailsPage() {
   const router = useRouter();
   const { toast } = useToast();
   const store = useBookingStore();
   
-  const addressInputRef = useRef<HTMLInputElement | null>(null);
-  const [isGoogleMapsLoaded, setIsGoogleMapsLoaded] = useState(false);
-  const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -83,79 +51,149 @@ export default function AddressDetailsPage() {
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
     defaultValues: {
-      address: store.address || "",
-      propertyType: store.propertyType || undefined,
-      propertyFunction: store.propertyFunction || 'Private',
-      suburb: store.suburb || "",
-      city: store.city || "",
-      accessCodeRequired: store.accessCodeRequired || false,
+      ...store.addressDetails,
+      propertyFunction: store.addressDetails.propertyFunction || 'Private',
+      accessCodeRequired: store.addressDetails.accessCodeRequired || false,
     },
     mode: "onChange",
   });
   
   const propertyType = form.watch("propertyType");
 
-  useEffect(() => {
-    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-    if (apiKey && apiKey !== "your_google_maps_api_key_here") {
-      const loader = new Loader({
-        apiKey: apiKey,
-        version: "weekly",
-        libraries: ["places"],
-      });
-
-      loader.load().then(() => setIsGoogleMapsLoaded(true)).catch(e => {
-        console.error("Failed to load Google Maps Script", e);
-        toast({
-          variant: "default",
-          title: "Address autocomplete not available",
-        });
-      });
-    } else {
-        console.warn("Google Maps API key is not configured.");
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    if (!isGoogleMapsLoaded || !addressInputRef.current) return;
-
-    const autocomplete = new window.google.maps.places.Autocomplete(
-      addressInputRef.current,
-      {
-        componentRestrictions: { country: "za" },
-        fields: ["formatted_address", "address_components"],
-      }
-    );
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (place && place.formatted_address && place.address_components) {
-        form.setValue("address", place.formatted_address, { shouldValidate: true });
-
-        const { suburb, city } = parseGoogleAddress(place.address_components as any);
-        const inferredType = inferPropertyType(place.address_components as any);
-        
-        form.setValue("suburb", suburb, { shouldValidate: true });
-        form.setValue("city", city, { shouldValidate: true });
-        form.setValue("propertyType", inferredType, { shouldValidate: true });
-        
-        setIsAddressSelected(true);
-      }
-    });
-  }, [isGoogleMapsLoaded, form]);
-
   async function onSubmit(data: AddressDetailsFormData) {
     setIsSubmitting(true);
-    store.setAddress(data.address);
-    store.setPropertyType(data.propertyType);
-    store.setPropertyFunction(data.propertyFunction);
-    store.setSuburb(data.suburb);
-    store.setCity(data.city);
-    store.setAccessCodeRequired(data.accessCodeRequired);
-
+    store.setAddressDetails(data);
     router.push("/item_to_repair");
   }
 
-  const showAccessCodeSwitch = propertyType === 'Complex' || propertyType === 'Estate' || propertyType === 'Complex in an Estate';
+  const renderFormFields = (type: PropertyType | undefined) => {
+    if (!type) return null;
+
+    const commonFields = (
+        <>
+            <FormField
+                control={form.control}
+                name="suburb"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Suburb</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g., Rooihuiskraal" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name="city"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>City / Area</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g., Centurion" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+        </>
+    );
+    
+    const accessCodeSwitch = (
+        <FormField
+            control={form.control}
+            name="accessCodeRequired"
+            render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 md:col-span-2">
+                    <div className="space-y-0.5">
+                        <FormLabel className="text-base">Is an Access Code Required?</FormLabel>
+                    </div>
+                    <FormControl>
+                        <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    );
+
+    switch (type) {
+        case 'Home':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="houseNumber" render={({ field }) => (
+                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                </div>
+            );
+        case 'Complex':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <FormField control={form.control} name="unitNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., Unit 45" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="complexName" render={({ field }) => (
+                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Willows" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                     <FormField control={form.control} name="streetNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetName" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input placeholder="e.g., Main Street" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                    {accessCodeSwitch}
+                </div>
+            );
+        case 'Estate':
+             return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <FormField control={form.control} name="standNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input placeholder="e.g., 556" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                     <FormField control={form.control} name="houseNumber" render={({ field }) => (
+                        <FormItem><FormLabel>House Number</FormLabel><FormControl><Input placeholder="e.g., 42" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="estateName" render={({ field }) => (
+                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                    {accessCodeSwitch}
+                </div>
+            );
+        case 'Complex in an Estate':
+            return (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField control={form.control} name="unitNumber" render={({ field }) => (
+                        <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., 7" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="complexName" render={({ field }) => (
+                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Oaks" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
+                        <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="estateName" render={({ field }) => (
+                        <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input placeholder="e.g., Blue Valley Estate" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    {commonFields}
+                    {accessCodeSwitch}
+                </div>
+            );
+        default:
+            return null;
+    }
+  }
 
   return (
     <BookingFlowLayout>
@@ -167,135 +205,64 @@ export default function AddressDetailsPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardContent className="space-y-6">
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Find Address</FormLabel>
-                    <FormControl>
-                       <Input
-                        placeholder="Start typing your address..."
-                        {...field}
-                        ref={(el) => {
-                          field.ref(el);
-                          addressInputRef.current = el;
-                        }}
-                        autoComplete="off"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="propertyType"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>What type of property is it?</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                <SelectValue placeholder="Select property type" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {propertyTypes.map((type) => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                                ))}
+                            </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="propertyFunction"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Property Function</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                <SelectValue placeholder="Select property function" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {propertyFunctions.map((func) => (
+                                <SelectItem key={func} value={func}>{func}</SelectItem>
+                                ))}
+                            </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </div>
+
+                {propertyType && (
+                    <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
+                        {renderFormFields(propertyType)}
+                    </div>
                 )}
-              />
-
-              {isAddressSelected && (
-                 <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
-                    <CardDescription>Please verify the details below and correct them if needed.</CardDescription>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <FormField
-                            control={form.control}
-                            name="propertyType"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Property Type</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                    <SelectValue placeholder="Select property type" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {propertyTypes.map((type) => (
-                                    <SelectItem key={type} value={type}>{type}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="propertyFunction"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Property Function</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                    <SelectValue placeholder="Select property function" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {propertyFunctions.map((func) => (
-                                    <SelectItem key={func} value={func}>{func}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Suburb</FormLabel>
-                                <FormControl>
-                                    <Input {...field} disabled />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                         <FormField
-                            control={form.control}
-                            name="city"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>City</FormLabel>
-                                <FormControl>
-                                    <Input {...field} disabled />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    </div>
-                    
-                    {showAccessCodeSwitch && (
-                        <FormField
-                            control={form.control}
-                            name="accessCodeRequired"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                                    <div className="space-y-0.5">
-                                        <FormLabel className="text-base">Is an Access Code Required?</FormLabel>
-                                    </div>
-                                    <FormControl>
-                                        <Switch
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                </FormItem>
-                            )}
-                        />
-                    )}
-                 </div>
-              )}
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-              <Button type="submit" disabled={isSubmitting || !isAddressSelected || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+              <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation, AddressDetails } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -11,15 +11,10 @@ interface BookingState extends BookingData {
   setUserProfile: (profileData: Partial<BookingData>) => void;
   setBookingFor: (bookingFor: BookingFor) => void;
   setPersonalDetails: (details: { name: string; surname: string; cellNumber: string; email: string }) => void;
-  setAddress: (address: string) => void;
-  setSuburb: (suburb: string) => void;
-  setCity: (city: string) => void;
-  setPropertyType: (propertyType: string) => void;
-  setPropertyFunction: (propertyFunction: string) => void;
-  setAccessCodeRequired: (required: boolean) => void;
+  setAddressDetails: (details: AddressDetails) => void;
   setLandlordDetails: (details: { landlordName: string; landlordSurname: string; landlordCellNumber: string; landlordEmail: string; }) => void;
   setOwnerDetails: (details: { ownerName: string; ownerSurname: string; ownerCellNumber: string; ownerEmail: string; }) => void;
-  setCompanyDetails: (details: { companyName: string; companyPhone: string; companyEmail: string; companyAddress: string; }) => void;
+  setCompanyDetails: (details: { companyName: string; companyPhone: string; companyEmail: string; }) => void;
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
@@ -37,12 +32,9 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   surname: '',
   cellNumber: '',
   email: '',
-  address: '',
-  city: '',
-  suburb: '',
-  propertyType: '',
-  propertyFunction: 'Private',
-  accessCodeRequired: false,
+  addressDetails: {},
+  formattedAddress: '',
+  
   bookingFor: 'personal', // Default value
   // Landlord
   landlordName: '',
@@ -58,7 +50,6 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   companyName: '',
   companyPhone: '',
   companyEmail: '',
-  companyAddress: '',
 
   itemsToRepair: [],
   problemDescriptions: {},
@@ -84,12 +75,19 @@ export const useBookingStore = create<BookingState>()(
       setUserProfile: (profileData) => set((state) => ({ ...state, ...profileData })),
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
-      setAddress: (address) => set({ address }),
-      setSuburb: (suburb) => set({ suburb }),
-      setCity: (city) => set({ city }),
-      setPropertyType: (propertyType) => set({ propertyType }),
-      setPropertyFunction: (propertyFunction) => set({ propertyFunction }),
-      setAccessCodeRequired: (accessCodeRequired) => set({ accessCodeRequired }),
+      setAddressDetails: (details: AddressDetails) => set((state) => {
+        let formattedAddress = '';
+        if (details.propertyType === 'Home') {
+            formattedAddress = `${details.houseNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Complex') {
+            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Estate') {
+            formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
+        } else if (details.propertyType === 'Complex in an Estate') {
+            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${details.city}`;
+        }
+        return { addressDetails: details, formattedAddress };
+      }),
       setLandlordDetails: (details) => set({ ...details }),
       setOwnerDetails: (details) => set({ ...details }),
       setCompanyDetails: (details) => set({ ...details }),
@@ -105,7 +103,7 @@ export const useBookingStore = create<BookingState>()(
       resetBooking: () => set(initialState),
     }),
     {
-      name: 'resmoke-booking-storage-v2', 
+      name: 'resmoke-booking-storage-v3', 
       storage: createJSONStorage(() => localStorage), 
     }
   )

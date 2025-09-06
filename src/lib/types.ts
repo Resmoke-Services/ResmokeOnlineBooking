@@ -1,4 +1,5 @@
 
+
 export interface UserProfile {
   uid: string;
   email: string;
@@ -32,7 +33,9 @@ export const paymentMethods = [
 ] as const;
 export type PaymentMethod = (typeof paymentMethods)[number]['id'];
 
-export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate', 'Business', 'Farm', 'Other'] as const;
+export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate'] as const;
+export type PropertyType = (typeof propertyTypes)[number];
+
 export const propertyFunctions = ['Private', 'Business'] as const;
 
 export interface TermsAgreement {
@@ -62,6 +65,28 @@ export interface AvailabilitySlot {
 
 export type BookingFor = 'personal' | 'landlord' | 'company' | 'friend';
 
+// Represents the structured address data
+export type AddressDetails = {
+    propertyType?: PropertyType;
+    propertyFunction?: 'Private' | 'Business';
+    accessCodeRequired?: boolean;
+    // Home
+    houseNumber?: string;
+    streetName?: string;
+    // Complex
+    unitNumber?: string;
+    complexName?: string;
+    streetNumber?: string;
+    // Estate
+    standNumber?: string;
+    streetNameInEstate?: string;
+    estateName?: string;
+    // Shared
+    suburb?: string;
+    city?: string;
+};
+
+
 // This is the complete data structure for the entire booking flow
 export interface BookingData {
   user: UserProfile | null;
@@ -72,12 +97,8 @@ export interface BookingData {
   email: string;
   
   // Service address details
-  address: string; 
-  city: string;
-  suburb: string;
-  propertyType: string;
-  propertyFunction: string;
-  accessCodeRequired: boolean;
+  addressDetails: AddressDetails;
+  formattedAddress: string;
 
   // Type of booking
   bookingFor: BookingFor;
@@ -98,7 +119,6 @@ export interface BookingData {
   companyName: string;
   companyPhone: string;
   companyEmail: string;
-  companyAddress: string;
 
   // Repair details
   itemsToRepair: RepairItem[];

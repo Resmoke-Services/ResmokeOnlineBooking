@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,7 +55,7 @@ export default function CompanyDetailsPage() {
 
   const handlePhoneNumberBlur = (fieldName: keyof CompanyBookingFormData) => (e: React.FocusEvent<HTMLInputElement>) => {
     let value = e.target.value.trim();
-    if (value.startsWith('0') && value.length === 10) {
+    if (value.startsWith('0') && value.length >= 10) { // Check for landline or cell
         value = `+27${value.substring(1)}`;
         form.setValue(fieldName, value, { shouldValidate: true });
     }
@@ -67,7 +68,6 @@ export default function CompanyDetailsPage() {
         companyName: data.companyName,
         companyPhone: data.companyPhone,
         companyEmail: data.companyEmail,
-        companyAddress: '', // This will be set in the next step
     });
     store.setPersonalDetails({
         name: data.contactName,
