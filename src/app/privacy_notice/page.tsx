@@ -1,19 +1,22 @@
 
 "use client";
 
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { ShieldCheck, XCircle } from "lucide-react";
+import { ShieldCheck, XCircle, Loader2 } from "lucide-react";
 
 export default function PrivacyNoticePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next") || "/user_profile";
+  const [isProcessing, setIsProcessing] = useState(false);
 
 
   const handleAccept = () => {
+    setIsProcessing(true);
     // Navigate to the next step in the booking process
     router.push(nextUrl);
   };
@@ -42,13 +45,22 @@ export default function PrivacyNoticePage() {
           </p>
         </CardContent>
         <CardFooter className="flex justify-between pt-6">
-          <Button variant="outline" onClick={handleDecline}>
+          <Button variant="outline" onClick={handleDecline} disabled={isProcessing}>
             <XCircle className="mr-2 h-4 w-4" />
             Decline
           </Button>
-          <Button onClick={handleAccept} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Accept & Continue
-            <ShieldCheck className="ml-2 h-4 w-4" />
+          <Button onClick={handleAccept} disabled={isProcessing} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Accept & Continue
+                <ShieldCheck className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </CardFooter>
       </Card>
