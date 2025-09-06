@@ -101,7 +101,7 @@ export default function AddressDetailsPage() {
           name="city"
           render={({ field }) => (
           <FormItem>
-              <FormLabel>City / Area</FormLabel>
+              <FormLabel>c) City / Area</FormLabel>
                 <Select 
                   onValueChange={(value) => {
                     const currentValues = form.getValues();
@@ -118,7 +118,7 @@ export default function AddressDetailsPage() {
                 >
                   <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="c) Select city / area" />
+                        <SelectValue placeholder="Select city" />
                       </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -353,7 +353,7 @@ export default function AddressDetailsPage() {
                         name="propertyType"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Property Type</FormLabel>
+                            <FormLabel>a) Property Type</FormLabel>
                             <Select 
                               onValueChange={(value) => {
                                 form.reset({
@@ -366,7 +366,7 @@ export default function AddressDetailsPage() {
                             >
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="a) Select property type" />
+                                <SelectValue placeholder="Select property type" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -384,7 +384,7 @@ export default function AddressDetailsPage() {
                         name="propertyFunction"
                         render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Property Function</FormLabel>
+                            <FormLabel>b) Property Function</FormLabel>
                             <Select 
                               onValueChange={(value) => {
                                 const currentValues = form.getValues();
@@ -400,7 +400,7 @@ export default function AddressDetailsPage() {
                             >
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="b) Select property function" />
+                                <SelectValue placeholder="Select property function" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
