@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -122,20 +121,24 @@ export default function PaymentAndTermsPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base">Preferred Payment Option</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                       <FormControl>
-                         <SelectTrigger>
-                           <SelectValue placeholder="Select a payment method" />
-                         </SelectTrigger>
-                       </FormControl>
-                       <SelectContent>
-                         {paymentMethods.map((method) => (
-                           <SelectItem key={method.id} value={method.id}>
-                             {method.label}
-                           </SelectItem>
-                         ))}
-                       </SelectContent>
-                     </Select>
+                     <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-wrap gap-x-8 gap-y-2"
+                      >
+                        {paymentMethods.map((method) => (
+                           <FormItem key={method.id} className="flex items-center space-x-3 space-y-0">
+                             <FormControl>
+                               <RadioGroupItem value={method.id} />
+                             </FormControl>
+                             <FormLabel className="font-normal">
+                               {method.label}
+                             </FormLabel>
+                           </FormItem>
+                        ))}
+                      </RadioGroup>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
