@@ -1,7 +1,7 @@
 
 import { z } from "zod";
 import { repairItems, paymentMethods, billingOptions } from "@/lib/types";
-import type { PaymentMethod as PaymentMethodType } from "@/lib/types";
+import type { PaymentMethod as PaymentMethodType, BillingInformation as BillingInformationType } from "@/lib/types";
 
 const zaPhoneNumberRegex = /^(?:\+27|0)[6-8][0-9]{8}$/;
 const zaLandlineRegex = /^(?:\+27|0)[0-9]{9}$/; // More generic for landlines/other numbers
@@ -89,6 +89,9 @@ export const itemToRepairSchema = z.object({
 export const paymentAndTermsSchema = z.object({
   paymentMethod: z.enum(paymentMethods.map(p => p.id) as [PaymentMethodType, ...PaymentMethodType[]], {
     required_error: "You must select a payment method.",
+  }),
+   billingInformation: z.enum(billingOptions as [BillingInformationType, ...BillingInformationType[]], {
+    required_error: "You must select a billing option.",
   }),
   terms: z.object({
     paymentOnPremises: z.boolean().refine((val) => val === true, {

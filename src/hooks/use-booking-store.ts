@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -18,6 +18,7 @@ interface BookingState extends BookingData {
   setItemsToRepair: (items: RepairItem[]) => void;
   setProblemDescriptions: (descriptions: Record<string, string>) => void;
   setPaymentMethods: (methods: PaymentMethod[]) => void;
+  setBillingInformation: (billingInformation: BillingInformation | null) => void;
   setTermsAgreement: (agreement: TermsAgreement | null) => void;
   setSelectedDateTime: (dateTime: BookingSlot | null) => void;
   setAvailability: (availability: AvailabilitySlot[]) => void;
@@ -52,6 +53,7 @@ const initialBookingData: Omit<BookingData, 'user'> = {
   itemsToRepair: [],
   problemDescriptions: {},
   paymentMethods: [],
+  billingInformation: null,
   termsAgreement: null,
   selectedDateTime: null,
   webhookConfirmation: null,
@@ -79,6 +81,7 @@ export const useBookingStore = create<BookingState>()(
       setItemsToRepair: (itemsToRepair) => set({ itemsToRepair }),
       setProblemDescriptions: (problemDescriptions) => set({ problemDescriptions }),
       setPaymentMethods: (paymentMethods) => set({ paymentMethods }),
+      setBillingInformation: (billingInformation) => set({ billingInformation }),
       setTermsAgreement: (termsAgreement) => set({ termsAgreement }),
       setSelectedDateTime: (selectedDateTime) => set({ selectedDateTime }),
       setAvailability: (availability) => set({ availability }),

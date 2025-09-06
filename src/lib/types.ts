@@ -98,6 +98,7 @@ export interface BookingData {
   
   // Payment and confirmation
   paymentMethods: PaymentMethod[];
+  billingInformation: BillingInformation | null;
   termsAgreement: TermsAgreement | null;
   selectedDateTime: BookingSlot | null;
   webhookConfirmation: WebhookConfirmation | null;

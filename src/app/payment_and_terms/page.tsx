@@ -22,7 +22,7 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import { type PaymentMethod, type TermsAgreement, paymentMethods, billingOptions } from "@/lib/types";
+import { type PaymentMethod, type TermsAgreement, paymentMethods, billingOptions, type BillingInformation } from "@/lib/types";
 import { paymentAndTermsSchema } from "@/lib/schemas";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
 
@@ -50,7 +50,9 @@ export default function PaymentAndTermsPage() {
   useEffect(() => {
     // Clear previous selections when the page loads
     store.setPaymentMethods([]);
-    store.setBillingInformation(null);
+    if (store.setBillingInformation) {
+        store.setBillingInformation(null);
+    }
     store.setTermsAgreement(null);
     form.reset({
       paymentMethod: undefined,
@@ -77,7 +79,9 @@ export default function PaymentAndTermsPage() {
     setIsSubmitting(true);
     
     store.setPaymentMethods([data.paymentMethod]);
-    store.setBillingInformation(data.billingInformation);
+    if(store.setBillingInformation) {
+      store.setBillingInformation(data.billingInformation);
+    }
     store.setTermsAgreement(data.terms as TermsAgreement);
 
     // Consolidate all data for the availability webhook
@@ -87,12 +91,6 @@ export default function PaymentAndTermsPage() {
       cellNumber: store.cellNumber,
       email: store.email,
       address: store.address,
-      city: store.city,
-      otherCityDescription: store.otherCityDescription,
-      suburb: store.suburb,
-      otherSuburbDescription: store.otherSuburbDescription,
-      propertyType: store.propertyType,
-      accessCodeRequired: store.accessCodeRequired,
       itemsToRepair: store.itemsToRepair,
       problemDescriptions: store.problemDescriptions,
       paymentMethods: [data.paymentMethod],
