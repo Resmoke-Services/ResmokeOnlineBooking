@@ -121,9 +121,9 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
     baseAddressSchema.extend({
         propertyType: z.literal("Complex"),
         unitNumber: z.string().min(1, "Unit/House number is required."),
-        complexName: z.string().min(2, "Complex name is required."),
+        complexName: z.string().min(1, "Complex name is required."),
         otherComplexName: z.string().optional(),
-        streetNumber: z.string().min(1, "Street number is required."),
+        streetNumber: z.string().optional(),
         streetName: z.string().min(2, "Street name is required."),
         accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
     }),
@@ -138,7 +138,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
     baseAddressSchema.extend({
         propertyType: z.literal("Complex in an Estate"),
         unitNumber: z.string().min(1, "Unit/House number is required."),
-        complexName: z.string().min(2, "Complex name is required."),
+        complexName: z.string().min(1, "Complex name is required."),
         otherComplexName: z.string().optional(),
         streetNameInEstate: z.string().min(2, "Street name is required."),
         estateName: z.string().min(2, "Estate name is required."),
@@ -148,7 +148,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         propertyType: z.literal("Office"),
         officeName: z.string().min(2, "Office/Building name is required."),
         officeParkName: z.string().optional(),
-        streetNumber: z.string().min(1, "Street number is required."),
+        streetNumber: z.string().optional(),
         streetName: z.string().min(2, "Street name is required."),
         accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
     }),
@@ -165,7 +165,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
     baseAddressSchema.extend({
         propertyType: z.literal("Other"),
         otherPropertyType: z.string().min(3, "Please specify the property type."),
-        streetNumber: z.string().min(1, "Street/Unit number is required."),
+        streetNumber: z.string().optional(),
         streetName: z.string().min(2, "Street name is required."),
     }),
 ]).refine(data => {
