@@ -25,7 +25,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { propertyTypes, propertyFunctions, cities, centurionSuburbs } from "@/lib/types";
+import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs } from "@/lib/types";
 import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -268,13 +268,9 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                const currentValues = form.getValues();
                                 form.reset({
                                   ...initialFormState,
                                   propertyType: value as PropertyType,
-                                  propertyFunction: undefined,
-                                  city: undefined,
-                                  suburb: '',
                                 });
                                 field.onChange(value as PropertyType);
                               }}
@@ -386,6 +382,29 @@ export default function AddressDetailsPage() {
                                                 </FormControl>
                                                 <SelectContent>
                                                     {centurionSuburbs.map((sub) => (
+                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                             ) : city && city === 'Pretoria' ? (
+                                 <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Suburb</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select suburb" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {pretoriaSuburbs.map((sub) => (
                                                         <SelectItem key={sub} value={sub}>{sub}</SelectItem>
                                                     ))}
                                                 </SelectContent>

@@ -52,6 +52,11 @@ export const centurionSuburbs = [
 ] as const;
 export type CenturionSuburb = (typeof centurionSuburbs)[number];
 
+export const pretoriaSuburbs = [
+    'Akasia', 'Amandasig', 'Annlin', 'Arcadia', 'Brooklyn', 'Claremont', 'Clydesdale', 'Constantia Park', 'Danville', 'Daspoort', 'Doornpoort', 'Dorandia', 'Elarduspark', 'Equestria', 'Erasmuskloof', 'Erasmusrand', 'Faerie Glen', 'Garsfontein', 'Groenkloof', 'Hatfield', 'Hazelwood', 'Hermanstad', 'Karenpark', 'Lady Selborne', 'Lukasrand', 'Lynnwood', 'Magalieskruin', 'Menlo Park', 'Montana', 'Monument Park', 'Moreleta Park', 'Mountain View', 'Muckleneuk', 'Newlands', 'Pretoria Central', 'Pretoria North', 'Pretoria West', 'Proclamation Hill', 'Rietvalleirand', 'Salvokop', 'Sinoville', 'Suiderberg', 'Sunnyside', 'Theresapark', 'Wapadrand', 'Waterkloof', 'Waterkloof Ridge', 'Wingate Park', 'Wonderboom'
+] as const;
+export type PretoriaSuburb = (typeof pretoriaSuburbs)[number];
+
 
 export interface TermsAgreement {
     paymentOnPremises: boolean;
