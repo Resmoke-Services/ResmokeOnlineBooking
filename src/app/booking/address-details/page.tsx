@@ -26,7 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes } from "@/lib/types";
-import type { PropertyType, PropertyFunction, City, CenturionSuburb, PretoriaSuburb, MidrandSuburb } from "@/lib/types";
+import type { PropertyType, City, CenturionSuburb, PretoriaSuburb, MidrandSuburb, PropertyFunction } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
@@ -69,6 +69,7 @@ export default function AddressDetailsPage() {
   });
   
   const propertyType = form.watch("propertyType");
+  const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
   const suburb = form.watch("suburb");
 
@@ -365,141 +366,149 @@ export default function AddressDetailsPage() {
                         </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>City / Area</FormLabel>
-                                <Select
-                                onValueChange={(value) => {
-                                    const newCity = value as City;
-                                    form.setValue('city', newCity, { shouldValidate: true });
-                                    form.resetField('suburb');
-                                    const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
-                                    fieldsToReset.forEach(fieldName => form.resetField(fieldName));
-                                }}
-                                value={field.value}
-                                >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select city / area" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {cities.map((c) => (
-                                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                                </Select>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    {city === 'Other' ? (
-                        <FormField
-                            control={form.control}
-                            name="otherCityDescription"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Please Specify City</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g., Johannesburg" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    ) : null}
-                     {city === 'Centurion' ? (
-                         <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
+                    {propertyFunction && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="city"
+                                render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Suburb</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormLabel>City / Area</FormLabel>
+                                        <Select
+                                        onValueChange={(value) => {
+                                            const newCity = value as City;
+                                            form.setValue('city', newCity, { shouldValidate: true });
+                                            form.resetField('suburb');
+                                            const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
+                                            fieldsToReset.forEach(fieldName => form.resetField(fieldName));
+                                        }}
+                                        value={field.value}
+                                        >
                                         <FormControl>
                                             <SelectTrigger>
-                                                <SelectValue placeholder="Select suburb" />
+                                                <SelectValue placeholder="Select city / area" />
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {centurionSuburbs.map((sub) => (
-                                                <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                            {cities.map((c) => (
+                                                <SelectItem key={c} value={c}>{c}</SelectItem>
                                             ))}
                                         </SelectContent>
-                                    </Select>
+                                        </Select>
                                     <FormMessage />
                                 </FormItem>
-                            )}
-                        />
-                     ) : city === 'Pretoria' ? (
-                         <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Suburb</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                )}
+                            />
+                            {city === 'Other' ? (
+                                <FormField
+                                    control={form.control}
+                                    name="otherCityDescription"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Please Specify City</FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select suburb" />
-                                            </SelectTrigger>
+                                            <Input placeholder="e.g., Johannesburg" {...field} />
                                         </FormControl>
-                                        <SelectContent>
-                                            {pretoriaSuburbs.map((sub) => (
-                                                <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                     ) : city === 'Midrand' ? (
-                         <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Suburb</FormLabel>
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                            ) : null}
+                        </>
+                    )}
+                    {city && city !== 'Other' && (
+                         <>
+                            {city === 'Centurion' ? (
+                                <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Suburb</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select suburb" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {centurionSuburbs.map((sub) => (
+                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            ) : city === 'Pretoria' ? (
+                                <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Suburb</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select suburb" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {pretoriaSuburbs.map((sub) => (
+                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            ) : city === 'Midrand' ? (
+                                <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Suburb</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select suburb" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {midrandSuburbs.map((sub) => (
+                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            ) : (
+                                <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Suburb</FormLabel>
                                         <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select suburb" />
-                                            </SelectTrigger>
+                                            <Input placeholder="e.g., Sandton" {...field} />
                                         </FormControl>
-                                        <SelectContent>
-                                            {midrandSuburbs.map((sub) => (
-                                                <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
                             )}
-                        />
-                     ) : city ? (
-                        <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Suburb</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g., Sandton" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                     ) : null}
+                        </>
+                    )}
                 </div>
 
-                {propertyType && form.getValues('propertyFunction') && form.getValues('city') && form.getValues('suburb') && (
+                {suburb && (
                     <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
-                        {renderFormFields(propertyType)}
+                        {renderFormFields(propertyType as PropertyType)}
                     </div>
                 )}
             </CardContent>
