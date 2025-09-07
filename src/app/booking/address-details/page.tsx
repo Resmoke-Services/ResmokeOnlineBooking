@@ -31,6 +31,7 @@ import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2, ChevronLeft } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
@@ -157,11 +158,13 @@ export default function AddressDetailsPage() {
                                 <SelectValue placeholder="Select complex" />
                             </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent position="popper">
+                          <ScrollArea className="h-72">
                             {complexList.map((complex) => (
                                 <SelectItem key={complex} value={complex}>{complex}</SelectItem>
                             ))}
                             <SelectItem value="Other">Other (Please specify)</SelectItem>
+                          </ScrollArea>
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -444,10 +447,12 @@ export default function AddressDetailsPage() {
                                                         <SelectValue placeholder="Select suburb" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {centurionSuburbs.map((sub) => (
-                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                                    ))}
+                                                <SelectContent position="popper">
+                                                    <ScrollArea className="h-72">
+                                                        {centurionSuburbs.map((sub) => (
+                                                            <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                        ))}
+                                                    </ScrollArea>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -467,10 +472,12 @@ export default function AddressDetailsPage() {
                                                         <SelectValue placeholder="Select suburb" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {pretoriaSuburbs.map((sub) => (
-                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                                    ))}
+                                                 <SelectContent position="popper">
+                                                    <ScrollArea className="h-72">
+                                                        {pretoriaSuburbs.map((sub) => (
+                                                            <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                        ))}
+                                                    </ScrollArea>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -490,10 +497,12 @@ export default function AddressDetailsPage() {
                                                         <SelectValue placeholder="Select suburb" />
                                                     </SelectTrigger>
                                                 </FormControl>
-                                                <SelectContent>
-                                                    {midrandSuburbs.map((sub) => (
-                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                                    ))}
+                                                <SelectContent position="popper">
+                                                     <ScrollArea className="h-72">
+                                                        {midrandSuburbs.map((sub) => (
+                                                            <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                        ))}
+                                                    </ScrollArea>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -546,4 +555,3 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
-
