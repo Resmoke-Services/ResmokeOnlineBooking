@@ -138,42 +138,35 @@ export const BookingHeader = () => {
         </Link>
         <nav>
           {user ? (
-            user.isGuest ? (
-               <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <User className="h-5 w-5" />
-                        <span>Guest Mode</span>
-                    </div>
-                    <Button onClick={handleGuestSignOut} variant="outline" size="sm">
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Log Out
-                    </Button>
-                </div>
-            ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={(auth.currentUser?.photoURL) || undefined} alt={user.displayName} />
-                      <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.displayName}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                    {user.isGuest ? (
+                       <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
+                    ) : (
+                      <>
+                        <AvatarImage src={(auth.currentUser?.photoURL) || undefined} alt={user.displayName} />
+                        <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                      </>
+                    )}
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{user.displayName}</p>
+                    {user.email && <p className="text-xs leading-none text-muted-foreground">{user.email}</p>}
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={user.isGuest ? handleGuestSignOut : handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
             <Button onClick={handleGoogleSignIn} variant="outline">
               <LogIn className="mr-2 h-4 w-4" />
