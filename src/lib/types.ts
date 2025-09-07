@@ -37,6 +37,7 @@ export const propertyTypes = ['Home', 'Complex', 'Estate', 'Complex in an Estate
 export type PropertyType = (typeof propertyTypes)[number];
 
 export const propertyFunctions = ['Private', 'Business'] as const;
+export type PropertyFunction = (typeof propertyFunctions)[number];
 
 export const cities = ['Centurion', 'Midrand', 'Pretoria', 'Other'] as const;
 export type City = (typeof cities)[number];
