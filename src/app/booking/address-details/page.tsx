@@ -38,8 +38,8 @@ type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 const initialFormState: AddressDetailsFormData = {
     propertyType: undefined,
     propertyFunction: undefined,
-    suburb: '',
     city: undefined,
+    suburb: '',
     otherCityDescription: '',
     houseNumber: '',
     streetName: '',
@@ -64,14 +64,6 @@ export default function AddressDetailsPage() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!user) {
-      router.replace('/auth?next=/booking/address-details');
-    }
-    // Clear any lingering address data in the store when the component mounts
-    setStoreAddressDetails({} as any);
-  }, [user, router, setStoreAddressDetails]);
-
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
     defaultValues: initialFormState,
@@ -81,6 +73,15 @@ export default function AddressDetailsPage() {
   const propertyType = form.watch("propertyType");
   const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
+
+  useEffect(() => {
+    if (!user) {
+      router.replace('/auth?next=/booking/address-details');
+    }
+    // Clear any lingering address data in the store when the component mounts
+    setStoreAddressDetails({} as any);
+  }, [user, router, setStoreAddressDetails]);
+
 
   async function onSubmit(data: AddressDetailsFormData) {
     setIsSubmitting(true);
@@ -102,11 +103,10 @@ export default function AddressDetailsPage() {
               <FormLabel>City</FormLabel>
                 <Select
                   onValueChange={(value) => {
-                    const currentValues = form.getValues();
                     form.reset({
                       ...initialFormState,
-                      propertyType: currentValues.propertyType,
-                      propertyFunction: currentValues.propertyFunction,
+                      propertyType: form.getValues().propertyType,
+                      propertyFunction: form.getValues().propertyFunction,
                       city: value as City,
                     });
                     field.onChange(value as City);
@@ -382,10 +382,9 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Function</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                const currentValues = form.getValues();
                                 form.reset({
                                   ...initialFormState,
-                                  propertyType: currentValues.propertyType,
+                                  propertyType: form.getValues().propertyType,
                                   propertyFunction: value as PropertyFunction,
                                 });
                                 field.onChange(value as PropertyFunction);
