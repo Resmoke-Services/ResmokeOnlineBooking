@@ -26,13 +26,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { propertyTypes, propertyFunctions, cities } from "@/lib/types";
+import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2, ChevronLeft } from "lucide-react";
-import type { PropertyType, PropertyFunction, City } from "@/lib/types";
-import { getSuburbsForCity } from "@/ai/flows/suburb-flow";
-import { useToast } from "@/hooks/use-toast";
 
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
@@ -62,11 +60,7 @@ const initialFormState: AddressDetailsFormData = {
 export default function AddressDetailsPage() {
   const router = useRouter();
   const { user, setAddressDetails: setStoreAddressDetails } = useBookingStore();
-  const { toast } = useToast();
-  
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [suburbs, setSuburbs] = useState<string[]>([]);
-  const [isFetchingSuburbs, setIsFetchingSuburbs] = useState(false);
 
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
@@ -77,39 +71,15 @@ export default function AddressDetailsPage() {
   const propertyType = form.watch("propertyType");
   const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
+  const suburb = form.watch("suburb");
 
   useEffect(() => {
     if (!user) {
       router.replace('/auth?next=/booking/address-details');
     }
+    // Clear any previous address details when the component mounts
     setStoreAddressDetails({} as any);
   }, [user, router, setStoreAddressDetails]);
-
-  useEffect(() => {
-    const fetchSuburbs = async () => {
-      if (!city || city === 'Other') {
-        setSuburbs([]);
-        form.setValue('suburb', '');
-        return;
-      }
-      setIsFetchingSuburbs(true);
-      try {
-        const result = await getSuburbsForCity({ city });
-        setSuburbs(result.suburbs);
-      } catch (error) {
-        console.error("Failed to fetch suburbs:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not fetch suburbs for the selected city. Please enter manually.",
-        });
-        // Fallback to text input if API fails might be an option here
-      } finally {
-        setIsFetchingSuburbs(false);
-      }
-    };
-    fetchSuburbs();
-  }, [city, form, toast]);
 
 
   async function onSubmit(data: AddressDetailsFormData) {
@@ -122,9 +92,7 @@ export default function AddressDetailsPage() {
     router.push("/item_to_repair");
   }
 
-  const renderFormFields = (type: PropertyType | undefined) => {
-    if (!type) return null;
-    
+  const renderFormFields = (type: PropertyType) => {
     const accessCodeRadioGroup = (
         <FormField
           control={form.control}
@@ -331,12 +299,9 @@ export default function AddressDetailsPage() {
                             <Select
                               onValueChange={(value) => {
                                 const currentValues = form.getValues();
-                                form.reset({
-                                  ...initialFormState,
-                                  propertyType: currentValues.propertyType,
-                                  propertyFunction: value as PropertyFunction,
-                                });
                                 field.onChange(value as PropertyFunction);
+                                form.setValue('city', undefined, { shouldDirty: true });
+                                form.setValue('suburb', '', { shouldDirty: true });
                               }}
                               value={field.value}
                               disabled={!propertyType}
@@ -356,88 +321,72 @@ export default function AddressDetailsPage() {
                         </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>City / Area</FormLabel>
-                                <Select
-                                onValueChange={(value) => {
-                                    const currentValues = form.getValues();
-                                    form.reset({
-                                    ...initialFormState,
-                                    propertyType: currentValues.propertyType,
-                                    propertyFunction: currentValues.propertyFunction,
-                                    city: value as City,
-                                    });
-                                    field.onChange(value as City);
-                                }}
-                                value={field.value}
-                                disabled={!propertyType || !propertyFunction}
-                                >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select city / area" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {cities.map((c) => (
-                                        <SelectItem key={c} value={c}>{c}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                                </Select>
-                            <FormMessage />
-                        </FormItem>
-                        )}
-                    />
-                    {city === 'Other' ? (
-                        <FormField
-                            control={form.control}
-                            name="otherCityDescription"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Please Specify City</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="e.g., Johannesburg" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                    ) : (
-                        <FormField
-                            control={form.control}
-                            name="suburb"
-                            render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Suburb</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    value={field.value}
-                                    disabled={!city || isFetchingSuburbs || suburbs.length === 0}
-                                >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={
-                                            isFetchingSuburbs ? "Loading suburbs..." : "Select suburb"
-                                        } />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {suburbs.map((sub) => (
-                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
+                    {propertyFunction && (
+                        <>
+                            <FormField
+                                control={form.control}
+                                name="city"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>City / Area</FormLabel>
+                                        <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value as City);
+                                            form.setValue('suburb', '', { shouldDirty: true });
+                                            form.setValue('otherCityDescription', '', { shouldDirty: true });
+                                        }}
+                                        value={field.value}
+                                        >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select city / area" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {cities.map((c) => (
+                                                <SelectItem key={c} value={c}>{c}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                        </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            {city === 'Other' ? (
+                                <FormField
+                                    control={form.control}
+                                    name="otherCityDescription"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Please Specify City</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g., Johannesburg" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                            ) : null}
+                             {city && (
+                                <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Suburb</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="e.g., Rooihuiskraal" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                    )}
+                                />
+                             )}
+                        </>
                     )}
                 </div>
 
-                {propertyType && propertyFunction && city && form.getValues().suburb && (
+                {propertyType && propertyFunction && city && suburb && (
                     <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
                         {renderFormFields(propertyType)}
                     </div>
