@@ -106,7 +106,7 @@ export const paymentAndTermsSchema = z.object({
 const baseAddressSchema = z.object({
     propertyType: z.enum(propertyTypes),
     propertyFunction: z.enum(propertyFunctions),
-    suburb: z.string().min(2, "Suburb is required."),
+    suburb: z.string({ required_error: "Please select a suburb." }).min(1, "Please select a suburb."),
     city: z.enum(cities, { required_error: 'Please select a city.'}),
     otherCityDescription: z.string().optional(),
 });
