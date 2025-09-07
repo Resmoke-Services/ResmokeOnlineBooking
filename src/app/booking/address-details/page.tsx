@@ -43,25 +43,12 @@ const initialFormState: AddressDetailsFormData = {
     otherCityDescription: '',
     houseNumber: '',
     streetName: '',
-    unitNumber: '',
-    complexName: '',
-    otherComplexName: '',
-    streetNumber: '',
-    standNumber: '',
-    streetNameInEstate: '',
-    estateName: '',
-    officeName: '',
-    officeParkName: '',
-    holdingName: '',
-    farmName: '',
-    otherPropertyType: '',
-    accessCodeRequired: 'no',
 };
 
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { user, setAddressDetails: setStoreAddressDetails, addressDetails } = useBookingStore();
+  const { user, setAddressDetails: setStoreAddressDetails, addressDetails } from useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
