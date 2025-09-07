@@ -63,9 +63,16 @@ export default function AddressDetailsPage() {
   const { user, setAddressDetails: setStoreAddressDetails, addressDetails } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    // For guest users, reset the address details to ensure no stale data is used.
+    if (user?.isGuest) {
+      setStoreAddressDetails({} as any); // Reset to empty object
+    }
+  }, [user, setStoreAddressDetails]);
+
   const form = useForm<AddressDetailsFormData>({
     resolver: zodResolver(addressDetailsSchema),
-    defaultValues: addressDetails ?? initialFormState,
+    defaultValues: (user?.isGuest ? initialFormState : addressDetails) ?? initialFormState,
     mode: "onChange",
   });
   
@@ -539,3 +546,4 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
