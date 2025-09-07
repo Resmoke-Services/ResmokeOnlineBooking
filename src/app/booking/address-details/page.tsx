@@ -36,9 +36,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 type AddressDetailsFormData = z.infer<typeof addressDetailsSchema>;
 
 const initialFormState: AddressDetailsFormData = {
-    propertyType: undefined,
-    propertyFunction: undefined,
-    city: undefined,
+    propertyType: "Home",
+    propertyFunction: "Private",
+    city: "Centurion",
     suburb: '',
     otherCityDescription: '',
     houseNumber: '',
@@ -55,7 +55,7 @@ const initialFormState: AddressDetailsFormData = {
     holdingName: '',
     farmName: '',
     otherPropertyType: '',
-    accessCodeRequired: undefined,
+    accessCodeRequired: 'no',
 };
 
 
@@ -93,7 +93,7 @@ export default function AddressDetailsPage() {
     setIsSubmitting(true);
     const processedData = {
         ...data,
-        accessCodeRequired: data.accessCodeRequired === 'yes',
+        accessCodeRequired: data.accessCodeRequired,
     };
     setStoreAddressDetails(processedData as any);
     router.push("/item_to_repair");
@@ -555,3 +555,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
