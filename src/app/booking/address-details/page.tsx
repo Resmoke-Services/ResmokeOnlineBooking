@@ -118,7 +118,7 @@ export default function AddressDetailsPage() {
                 >
                   <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select city" />
+                        <SelectValue placeholder="c) Select city / area" />
                       </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -366,7 +366,7 @@ export default function AddressDetailsPage() {
                             >
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="Select property type" />
+                                <SelectValue placeholder="a) Select property type" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -400,7 +400,7 @@ export default function AddressDetailsPage() {
                             >
                             <FormControl>
                                 <SelectTrigger>
-                                <SelectValue placeholder="Select property function" />
+                                <SelectValue placeholder="b) Select property function" />
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -445,5 +445,3 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
-
-    
