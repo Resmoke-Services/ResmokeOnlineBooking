@@ -102,7 +102,7 @@ export default function AddressDetailsPage() {
           render={({ field }) => (
           <FormItem>
               <FormLabel>City</FormLabel>
-                <Select 
+                <Select
                   onValueChange={(value) => {
                     const currentValues = form.getValues();
                     form.reset({
@@ -112,7 +112,7 @@ export default function AddressDetailsPage() {
                       city: value as City,
                     });
                     field.onChange(value);
-                  }} 
+                  }}
                   value={field.value}
                   disabled={!propertyType || !propertyFunction}
                 >
@@ -354,14 +354,14 @@ export default function AddressDetailsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Property Type</FormLabel>
-                            <Select 
+                            <Select
                               onValueChange={(value) => {
                                 form.reset({
                                   ...initialFormState,
                                   propertyType: value as PropertyType,
                                 });
                                 field.onChange(value);
-                              }} 
+                              }}
                               value={field.value}
                             >
                             <FormControl>
@@ -385,7 +385,7 @@ export default function AddressDetailsPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>Property Function</FormLabel>
-                            <Select 
+                            <Select
                               onValueChange={(value) => {
                                 const currentValues = form.getValues();
                                 form.reset({
@@ -394,8 +394,8 @@ export default function AddressDetailsPage() {
                                   propertyFunction: value as PropertyFunction,
                                 });
                                 field.onChange(value);
-                              }} 
-                              value={field.value} 
+                              }}
+                              value={field.value}
                               disabled={!propertyType}
                             >
                             <FormControl>
