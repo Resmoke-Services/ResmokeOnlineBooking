@@ -26,7 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes } from "@/lib/types";
-import type { PropertyType, City, CenturionSuburb, PretoriaSuburb, MidrandSuburb, PropertyFunction } from "@/lib/types";
+import type { PropertyType, City, PropertyFunction } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
@@ -70,7 +70,6 @@ export default function AddressDetailsPage() {
   });
   
   const propertyType = form.watch("propertyType");
-  const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
   const suburb = form.watch("suburb");
   const complexName = form.watch("complexName");
@@ -333,7 +332,6 @@ export default function AddressDetailsPage() {
                                 form.resetField('propertyFunction');
                                 form.resetField('city');
                                 form.resetField('suburb');
-                                // Reset all specific address fields
                                 const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'otherComplexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
                                 fieldsToReset.forEach(fieldName => form.resetField(fieldName));
                               }}
@@ -383,39 +381,40 @@ export default function AddressDetailsPage() {
                         </FormItem>
                         )}
                     />
-                    {propertyFunction && (
+                    <FormField
+                        control={form.control}
+                        name="city"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>City / Area</FormLabel>
+                                <Select
+                                onValueChange={(value) => {
+                                    const newCity = value as City;
+                                    form.setValue('city', newCity, { shouldValidate: true });
+                                    form.resetField('suburb');
+                                    const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'otherComplexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
+                                    fieldsToReset.forEach(fieldName => form.resetField(fieldName));
+                                }}
+                                value={field.value}
+                                disabled={!form.watch('propertyFunction')}
+                                >
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select city / area" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {cities.map((c) => (
+                                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                                </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                    {city && (
                         <>
-                            <FormField
-                                control={form.control}
-                                name="city"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>City / Area</FormLabel>
-                                        <Select
-                                        onValueChange={(value) => {
-                                            const newCity = value as City;
-                                            form.setValue('city', newCity, { shouldValidate: true });
-                                            form.resetField('suburb');
-                                            const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'otherComplexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
-                                            fieldsToReset.forEach(fieldName => form.resetField(fieldName));
-                                        }}
-                                        value={field.value}
-                                        >
-                                        <FormControl>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select city / area" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent>
-                                            {cities.map((c) => (
-                                                <SelectItem key={c} value={c}>{c}</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                        </Select>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
                             {city === 'Other' ? (
                                 <FormField
                                     control={form.control}
@@ -424,18 +423,13 @@ export default function AddressDetailsPage() {
                                     <FormItem>
                                         <FormLabel>Please Specify City</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="e.g., Johannesburg" {...field} />
+                                            <Input placeholder="e.g., Johannesburg" {...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                     )}
                                 />
-                            ) : null}
-                        </>
-                    )}
-                    {city && city !== 'Other' && (
-                         <>
-                            {city === 'Centurion' ? (
+                            ) : city === 'Centurion' ? (
                                 <FormField
                                     control={form.control}
                                     name="suburb"
@@ -512,7 +506,7 @@ export default function AddressDetailsPage() {
                                     <FormItem>
                                         <FormLabel>Suburb</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="e.g., Sandton" {...field} />
+                                            <Input placeholder="e.g., Sandton" {...field} value={field.value ?? ''} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -523,7 +517,7 @@ export default function AddressDetailsPage() {
                     )}
                 </div>
 
-                {suburb && (
+                {(suburb || (city === 'Other' && form.watch('otherCityDescription'))) && (
                     <div className="space-y-6 pt-4 border-t border-dashed animate-in fade-in-50 duration-500">
                         {renderFormFields(propertyType as PropertyType)}
                     </div>
@@ -550,3 +544,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
