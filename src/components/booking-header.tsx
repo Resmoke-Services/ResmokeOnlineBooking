@@ -104,6 +104,12 @@ export const BookingHeader = () => {
       });
     }
   };
+
+  const handleGuestSignOut = () => {
+    resetBooking();
+    setUser(null);
+    router.push('/');
+  };
   
   const getInitials = (name: string) => {
     const names = name.split(' ');
@@ -130,9 +136,15 @@ export const BookingHeader = () => {
         <nav>
           {user ? (
             user.isGuest ? (
-               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <User className="h-5 w-5" />
-                    <span>Guest Mode</span>
+               <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <User className="h-5 w-5" />
+                        <span>Guest Mode</span>
+                    </div>
+                    <Button onClick={handleGuestSignOut} variant="outline" size="sm">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log Out
+                    </Button>
                 </div>
             ) : (
               <DropdownMenu>
