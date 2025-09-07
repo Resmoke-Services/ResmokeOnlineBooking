@@ -57,7 +57,7 @@ export const pretoriaSuburbs = [
 export type PretoriaSuburb = (typeof pretoriaSuburbs)[number];
 
 export const midrandSuburbs = [
-    'Allandale', 'Barbeque Downs', 'Beaulieu', 'Blue Hills', 'Carlswald', 'Clayville', 'Country View', 'Crowthorne', 'Ebony Park', 'Erand', 'Glen Austin', 'Glenferness', 'Halfway Gardens', 'Halfway House', 'Ivory Park', 'Kaalfontein', 'Kyalami', 'Noordwyk', 'President Park', 'Rabie Ridge', 'Sagewood', 'Summerset', 'Vorna Valley', 'Willaway'
+    'Allandale', 'Barbeque Downs', 'Beaulieu', 'Blue Hills', 'Carlswald', 'Clayville', 'Country View', 'Crowthorne', 'Ebony Park', 'Erand', 'Glen Austin', 'Glenferness', 'Halfway Gardens', 'Halfway House', 'Ivory Park', 'Kaalfontein', 'Kyalami', 'Noordwyk', 'President Park', 'Rabie Ridge', 'Sagewood', 'Summerset', 'Vorna Valley', 'Willaway', 'Waterfall'
 ] as const;
 export type MidrandSuburb = (typeof midrandSuburbs)[number];
 
@@ -85,6 +85,24 @@ export const centurionComplexes: Record<string, string[]> = {
     'The Reeds': ['Alcade', 'Barrique', 'Brooklands Lifestyle Estate', 'Casa Grande', 'Casa Mia', 'Clarinet Ridge', 'Estann', 'Glenfields', 'Hereford Estate', 'Hill View', 'Hillstead', 'Hurlingham', 'Jade Park', 'Karmel', 'Morton Manor', 'Parksig', 'Presidentia', 'Riverside Estate', 'Saxby', 'Strelitzia', 'The Thornlands', 'Villa Corfu'],
     'Wierda Park': ['Arnolds Creek', 'Battlefields', 'Bondev Park', 'Bronberg', 'Century Manor Estate', 'Wierda Glen Estate', 'Wierdaveld'],
     'Zwartkop': ['Zwartkop Golf Estate'],
+};
+
+export const midrandComplexes: Record<string, string[]> = {
+    'Barbeque Downs': ['Cheshni', 'Jacana', 'Kyalami Hills', 'Millbrook', 'The Boulevard', 'The Edge', 'The Kyalami', 'The Poplar', 'The Racecourse', 'The Willows', 'Tinza'],
+    'Blue Hills': ['Afrivillage', 'Blue Hills Equestrian Estate', 'Blue Hills Ext', 'The Sheds @ Waterfall'],
+    'Carlswald': ['Carlswald Creek', 'Carlswald North Estate', 'Carlswald View', 'Cedar Roc', 'Crescentwood Estate', 'Crowthorne Estate', 'Hill of Good Hope', 'Le Mistral', 'Villa Toscana', 'Village-in-Carlswald', 'West End'],
+    'Country View': ['Cara Bianca', 'Country View Estate', 'Phoenix Regent Estate', 'The Heights Estate', 'Villa d\'Arc', 'Waterberg'],
+    'Crowthorne': ['The Paddocks', 'The Firs', 'The Willows'],
+    'Erand': ['Erand Court', 'Erand Mews', 'Phoenix View Estate', 'The Heights', 'Vodaworld Estate'],
+    'Glen Austin': ['Austin View', 'Glen Austin Estate', 'The Willows'],
+    'Halfway Gardens': ['Halfway Gardens Mews', 'Acacia', 'Broadwalk Crescent', 'Carlswald Meadows', 'Cascade', 'Hillstead', 'Lever Road', 'Matika', 'Midrand Village', 'The West End', 'Waterford complex'],
+    'Halfway House': ['Grand Apartments', 'Midrand Square', 'Parkview', 'The Grand'],
+    'Kyalami': ['Helderfontein Estate', 'Kyalami Estates', 'Kyalami Glen Estate', 'Kyalami Terrace', 'Saddlebrook Estate', 'The Whisken'],
+    'Noordwyk': ['Cottonwood', 'Decimus', 'Lake Xanadu', 'Noordwyk Manor', 'Sanridge', 'Silver Stream Estate', 'Summerset Hill', 'The Crescent'],
+    'President Park': ['Glen Acres Park Estate'],
+    'Summerset': ['Summerset Place', 'The Grace'],
+    'Vorna Valley': ['Le Roux', 'Silverwood', 'The Link', 'Villa Rondè', 'Waterfall Ridge'],
+    'Waterfall': ['Ellipse Waterfall', 'Kikuyu', 'The Munyaka', 'The Polofields', 'Waterfall Country Estate', 'Waterfall Country Village'],
 };
 
 
@@ -195,3 +213,5 @@ export interface BookingData {
   // Internal tracking
   servicePath: string[];
 }
+
+    

@@ -25,7 +25,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes } from "@/lib/types";
+import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes, midrandComplexes } from "@/lib/types";
 import type { PropertyType, City, PropertyFunction } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -126,7 +126,8 @@ export default function AddressDetailsPage() {
       );
     
     const isCenturionSuburbWithComplexes = city === 'Centurion' && suburb && (centurionComplexes as Record<string, string[]>)[suburb];
-    const complexList = isCenturionSuburbWithComplexes ? (centurionComplexes as Record<string, string[]>)[suburb] : [];
+    const isMidrandSuburbWithComplexes = city === 'Midrand' && suburb && (midrandComplexes as Record<string, string[]>)[suburb];
+    const complexList = isCenturionSuburbWithComplexes ? (centurionComplexes as Record<string, string[]>)[suburb] : (isMidrandSuburbWithComplexes ? (midrandComplexes as Record<string, string[]>)[suburb] : []);
 
     const complexNameField = (
         <FormField
@@ -530,3 +531,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
