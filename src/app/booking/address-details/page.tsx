@@ -128,7 +128,7 @@ export default function AddressDetailsPage() {
     const isCenturionSuburbWithComplexes = city === 'Centurion' && suburb && (centurionComplexes as Record<string, string[]>)[suburb];
     const complexList = isCenturionSuburbWithComplexes ? (centurionComplexes as Record<string, string[]>)[suburb] : [];
 
-    const complexNameField = isCenturionSuburbWithComplexes ? (
+    const complexNameField = (
         <FormField
             control={form.control}
             name="complexName"
@@ -148,20 +148,6 @@ export default function AddressDetailsPage() {
                             <SelectItem value="Other">Other (Please specify)</SelectItem>
                         </SelectContent>
                     </Select>
-                    <FormMessage />
-                </FormItem>
-            )}
-        />
-    ) : (
-        <FormField
-            control={form.control}
-            name="complexName"
-            render={({ field }) => (
-                <FormItem>
-                    <FormLabel>Complex Name</FormLabel>
-                    <FormControl>
-                        <Input placeholder="e.g., The Willows" {...field} value={field.value ?? ''} />
-                    </FormControl>
                     <FormMessage />
                 </FormItem>
             )}
