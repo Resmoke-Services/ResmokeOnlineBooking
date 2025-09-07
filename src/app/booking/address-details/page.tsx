@@ -47,7 +47,7 @@ const initialFormState: AddressDetailsFormData = {
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { user, setAddressDetails: setStoreAddressDetails, addressDetails } from useBookingStore();
+  const { user, setAddressDetails: setStoreAddressDetails, addressDetails } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -541,5 +541,3 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
-
-    
