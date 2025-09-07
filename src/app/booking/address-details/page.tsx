@@ -29,7 +29,6 @@ import { propertyTypes, propertyFunctions, cities } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 
@@ -61,7 +60,6 @@ const initialFormState: AddressDetailsFormData = {
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { toast } = useToast();
   const { user, setAddressDetails: setStoreAddressDetails } = useBookingStore();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,7 +109,7 @@ export default function AddressDetailsPage() {
                       propertyFunction: currentValues.propertyFunction,
                       city: value as City,
                     });
-                    field.onChange(value);
+                    field.onChange(value as City);
                   }}
                   value={field.value}
                   disabled={!propertyType || !propertyFunction}
@@ -356,11 +354,8 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                form.reset({
-                                  ...initialFormState,
-                                  propertyType: value as PropertyType,
-                                });
-                                field.onChange(value);
+                                form.reset({ ...initialFormState, propertyType: value as PropertyType });
+                                field.onChange(value as PropertyType);
                               }}
                               value={field.value}
                             >
@@ -393,7 +388,7 @@ export default function AddressDetailsPage() {
                                   propertyType: currentValues.propertyType,
                                   propertyFunction: value as PropertyFunction,
                                 });
-                                field.onChange(value);
+                                field.onChange(value as PropertyFunction);
                               }}
                               value={field.value}
                               disabled={!propertyType}
