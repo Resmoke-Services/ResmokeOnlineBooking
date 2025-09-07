@@ -40,7 +40,6 @@ const initialFormState: AddressDetailsFormData = {
     propertyFunction: "Private",
     city: "Centurion",
     suburb: '',
-    otherCityDescription: '',
     houseNumber: '',
     streetName: '',
 };
