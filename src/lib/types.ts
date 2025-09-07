@@ -42,6 +42,17 @@ export type PropertyFunction = (typeof propertyFunctions)[number];
 export const cities = ['Centurion', 'Midrand', 'Pretoria', 'Other'] as const;
 export type City = (typeof cities)[number];
 
+export const centurionSuburbs = [
+    'Amberfield', 'Arandia', 'Bronberrick', 'Celtisdal', 'Centurion Central', 'Claudius', 
+    'Clubview', 'Die Hoewes', 'Doringkloof', 'Eldoraigne', 'Erasmia', 'Hennopspark', 
+    'Heuweloord', 'Highveld', 'Irene', 'Kloofsig', 'Kosmosdal', 'Laudium', 'Louwlardia', 
+    'Lyttelton', 'Lyttelton A.H.', 'Lyttelton Manor', 'Monavoni', 'Olievenhoutbosch', 
+    'Pierre van Ryneveld Park', 'Raslouw', 'Rooihuiskraal', 'Rooihuiskraal Noord', 
+    'Sunderland Ridge', 'The Reeds', 'Valhalla', 'Wierda Park', 'Zwartkop'
+] as const;
+export type CenturionSuburb = (typeof centurionSuburbs)[number];
+
+
 export interface TermsAgreement {
     paymentOnPremises: boolean;
     emailConsent: boolean;
@@ -73,7 +84,7 @@ export type BookingFor = 'personal' | 'landlord' | 'company' | 'friend';
 export type AddressDetails = {
     propertyType?: PropertyType;
     propertyFunction?: 'Private' | 'Business';
-    accessCodeRequired?: boolean;
+    accessCodeRequired?: 'yes' | 'no';
     // Home
     houseNumber?: string;
     streetName?: string;
