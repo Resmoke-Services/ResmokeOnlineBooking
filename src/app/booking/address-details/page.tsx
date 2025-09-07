@@ -103,10 +103,11 @@ export default function AddressDetailsPage() {
               <FormLabel>City / Area</FormLabel>
                 <Select
                   onValueChange={(value) => {
+                    const currentValues = form.getValues();
                     form.reset({
                       ...initialFormState,
-                      propertyType: form.getValues().propertyType,
-                      propertyFunction: form.getValues().propertyFunction,
+                      propertyType: currentValues.propertyType,
+                      propertyFunction: currentValues.propertyFunction,
                       city: value as City,
                     });
                     field.onChange(value as City);
@@ -143,21 +144,6 @@ export default function AddressDetailsPage() {
               </FormItem>
               )}
           />
-      )}
-      {city && (
-        <FormField
-            control={form.control}
-            name="suburb"
-            render={({ field }) => (
-            <FormItem>
-                <FormLabel>Suburb</FormLabel>
-                <FormControl>
-                    <Input placeholder="e.g., Rooihuiskraal" {...field} />
-                </FormControl>
-                <FormMessage />
-            </FormItem>
-            )}
-        />
       )}
     </>
   );
@@ -370,9 +356,10 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Function</FormLabel>
                             <Select
                               onValueChange={(value) => {
+                                const currentValues = form.getValues();
                                 form.reset({
                                   ...initialFormState,
-                                  propertyType: form.getValues().propertyType,
+                                  propertyType: currentValues.propertyType,
                                   propertyFunction: value as PropertyFunction,
                                 });
                                 field.onChange(value as PropertyFunction);
@@ -397,6 +384,21 @@ export default function AddressDetailsPage() {
                     />
                     <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
                         {cityFields}
+                        {city && (
+                            <FormField
+                                control={form.control}
+                                name="suburb"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Suburb</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="e.g., Rooihuiskraal" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        )}
                     </div>
                 </div>
 
