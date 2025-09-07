@@ -122,6 +122,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         propertyType: z.literal("Complex"),
         unitNumber: z.string().min(1, "Unit/House number is required."),
         complexName: z.string().min(2, "Complex name is required."),
+        otherComplexName: z.string().optional(),
         streetNumber: z.string().min(1, "Street number is required."),
         streetName: z.string().min(2, "Street name is required."),
         accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
@@ -138,6 +139,7 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         propertyType: z.literal("Complex in an Estate"),
         unitNumber: z.string().min(1, "Unit/House number is required."),
         complexName: z.string().min(2, "Complex name is required."),
+        otherComplexName: z.string().optional(),
         streetNameInEstate: z.string().min(2, "Street name is required."),
         estateName: z.string().min(2, "Estate name is required."),
         accessCodeRequired: z.enum(['yes', 'no'], { required_error: 'Please select an option for access code.' }),
@@ -174,4 +176,12 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
 }, {
     message: "Please specify the city/area name (min 3 characters).",
     path: ['otherCityDescription'],
+}).refine(data => {
+    if ((data.propertyType === 'Complex' || data.propertyType === 'Complex in an Estate') && data.complexName === 'Other') {
+        return data.otherComplexName && data.otherComplexName.length > 2;
+    }
+    return true;
+}, {
+    message: "Please specify the complex name (min 3 characters).",
+    path: ['otherComplexName'],
 });

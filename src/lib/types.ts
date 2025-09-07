@@ -43,11 +43,11 @@ export type City = (typeof cities)[number];
 
 export const centurionSuburbs = [
     'Amberfield', 'Arandia', 'Bronberrick', 'Celtisdal', 'Centurion Central', 'Claudius', 
-    'Clubview', 'Die Hoewes', 'Doringkloof', 'Eldoraigne', 'Erasmia', 'Hennopspark', 
+    'Clubview', 'Die Hoewes', 'Doringkloof', 'Eco-Park Estate', 'Eldoraigne', 'Erasmia', 'Hennopspark', 
     'Heuweloord', 'Highveld', 'Irene', 'Kloofsig', 'Kosmosdal', 'Laudium', 'Louwlardia', 
-    'Lyttelton', 'Lyttelton A.H.', 'Lyttelton Manor', 'Monavoni', 'Olievenhoutbosch', 
+    'Lyttelton', 'Lyttelton A.H.', 'Lyttelton Manor', 'Midstream', 'Monavoni', 'Olievenhoutbosch', 
     'Pierre van Ryneveld Park', 'Raslouw', 'Rooihuiskraal', 'Rooihuiskraal Noord', 
-    'Sunderland Ridge', 'The Reeds', 'Valhalla', 'Wierda Park', 'Zwartkop'
+    'Sunderland Ridge', 'Thatchfield', 'The Reeds', 'Valhalla', 'Wierda Park', 'Zwartkop'
 ] as const;
 export type CenturionSuburb = (typeof centurionSuburbs)[number];
 
@@ -67,6 +67,7 @@ export const centurionComplexes: Record<string, string[]> = {
     'Clubview': ['Janel\'s Place', 'St. George'],
     'Die Hoewes': ['Aragon', 'Atlantis', 'Bayswater', 'Bourbon Street', 'Centurion Golf Estate', 'Crystal Gardens', 'Fountain Villages', 'Golden Fields Estate', 'Hampshire', 'Hennopsview', 'La Comores', 'Le Jardin', 'Lexton', 'Meldt', 'Montserrat', 'Notting Hill', 'Old Trafford', 'Panorama Park', 'Pasadena', 'Regents Park', 'San Marino', 'Sheffield', 'Somerset', 'The Mews', 'The Oval', 'Three Fountains', 'Uitsig', 'Villa Bianco', 'Villa Mia', 'Visagie'],
     'Doringkloof': ['Doringkloof Village'],
+    'Eco-Park Estate': ['Eco Park Estate', 'Emerald Gardens', 'Onyx Park'],
     'Eldoraigne': ['Bordeaux', 'Chateaux de Grace', 'Eldo Glen', 'Eldo Park', 'Eldo View', 'Eldo Ridge Estate', 'Eldoraigne Aftreelandgoed', 'Kama Creek', 'La Borie', 'La Motte', 'Morningside', 'The Pines', 'Villa Reinette', 'Villa Shiane'],
     'Hennopspark': ['Basoon Park', 'Bon Courage', 'Carmen', 'Ilanga', 'Jean Park', 'Karana', 'Katarina', 'Roosmaryn', 'Via Bianca'],
     'Heuweloord': ['Arundo Estate', 'Heuwelsig Estate', 'Stone Gate', 'Thornfields'],
@@ -75,10 +76,12 @@ export const centurionComplexes: Record<string, string[]> = {
     'Kosmosdal': ['Blue Valley Golf Estate', 'Candlewoods Country Estate', 'Country View Estate', 'Summerfields'],
     'Lyttelton': ['Baldersbronn', 'Brandwag', 'Clifton Hill', 'Fijnbos', 'Goedehoop', 'Kasteel', 'La-Vue', 'Laborie', 'Loucharl', 'Villa Martine'],
     'Lyttelton Manor': ['Baldersbronn', 'Brandwag', 'Clifton Hill', 'Fijnbos', 'Goedehoop', 'Kasteel', 'La-Vue', 'Laborie', 'Loucharl', 'Villa Martine'],
+    'Midstream': ['Ascend to Midstream', 'Midfield Estate', 'Midlands Estate', 'Midstream Estate', 'Midstream Heights', 'Midstream Hill Estate', 'Midstream Meadows', 'Midstream Ridge Estate', 'Retire at Midstream'],
     'Monavoni': ['Silverstone Estate', 'Stone Ridge Country Estate', 'Thatch Hill Estate', 'The Hudson Estate', 'Valley View Estate', 'Westwood'],
     'Pierre van Ryneveld Park': ['De prestige', 'Rietvlei Heights Country Estate', 'Rietvlei Ridge Country Estate'],
     'Rooihuiskraal': ['Amber Ridge', 'Anabranch', 'Avignon', 'Bavaria', 'Belgaum', 'Bianca Villas', 'Cabernet', 'Canterbury', 'Chablis', 'Chardonnay', 'Crafford Park', 'Crecy', 'Dulcian Manor', 'Eden Garden', 'Elkana', 'Fleur de Lis', 'Galloway', 'Jatoba', 'Kildare', 'Knoppiesdoring', 'Kubu', 'La Maison', 'La Terra de Luc', 'Lalaphanzi', 'Langebrigg', 'Lemonwood', 'Magaliesig', 'Marabu', 'Marantan', 'Mauritius', 'Montagu', 'Monte Villas', 'Mopanie', 'Oakhurst', 'Portugal', 'Provence', 'Raspberry', 'Robinhill', 'Rooihuiskraal-Noord (complex)', 'Rua Vista', 'Sahara Glen', 'Santelmo', 'Savannah', 'Serene', 'Serengeti', 'Shamrock', 'Silver Oaks', 'Stockholm Complex', 'Tehilla', 'Tugela', 'Umgeni', 'Verona', 'Villa Chemika', 'Villa d\'Alegria', 'Villa Serine', 'Villieria', 'Waterberg Fields', 'Willow Creek', 'Willow Haven', 'Willow Park', 'Willowdene', 'Willowvale', 'Zambezi'],
     'Rooihuiskraal Noord': ['Amber Ridge', 'Anabranch', 'Avignon', 'Bavaria', 'Belgaum', 'Bianca Villas', 'Cabernet', 'Canterbury', 'Chablis', 'Chardonnay', 'Crafford Park', 'Crecy', 'Dulcian Manor', 'Eden Garden', 'Elkana', 'Fleur de Lis', 'Galloway', 'Jatoba', 'Kildare', 'Knoppiesdoring', 'Kubu', 'La Maison', 'La Terra de Luc', 'Lalaphanzi', 'Langebrigg', 'Lemonwood', 'Magaliesig', 'Marabu', 'Marantan', 'Mauritius', 'Montagu', 'Monte Villas', 'Mopanie', 'Oakhurst', 'Portugal', 'Provence', 'Raspberry', 'Robinhill', 'Rooihuiskraal-Noord (complex)', 'Rua Vista', 'Sahara Glen', 'Santelmo', 'Savannah', 'Serene', 'Serengeti', 'Shamrock', 'Silver Oaks', 'Stockholm Complex', 'Tehilla', 'Tugela', 'Umgeni', 'Verona', 'Villa Chemika', 'Villa d\'Alegria', 'Villa Serine', 'Villieria', 'Waterberg Fields', 'Willow Creek', 'Willow Haven', 'Willow Park', 'Willowdene', 'Willowvale', 'Zambezi'],
+    'Thatchfield': ['Thatchfield Estate', 'Thatchfield Ridge'],
     'The Reeds': ['Alcade', 'Barrique', 'Brooklands Lifestyle Estate', 'Casa Grande', 'Casa Mia', 'Clarinet Ridge', 'Estann', 'Glenfields', 'Hereford Estate', 'Hill View', 'Hillstead', 'Hurlingham', 'Jade Park', 'Karmel', 'Morton Manor', 'Parksig', 'Presidentia', 'Riverside Estate', 'Saxby', 'Strelitzia', 'The Thornlands', 'Villa Corfu'],
     'Wierda Park': ['Arnolds Creek', 'Battlefields', 'Bondev Park', 'Bronberg', 'Century Manor Estate', 'Wierda Glen Estate', 'Wierdaveld'],
     'Zwartkop': ['Zwartkop Golf Estate'],
@@ -123,6 +126,7 @@ export type AddressDetails = {
     // Complex
     unitNumber?: string;
     complexName?: string;
+    otherComplexName?: string;
     streetNumber?: string;
     // Estate
     standNumber?: string;
@@ -191,7 +195,3 @@ export interface BookingData {
   // Internal tracking
   servicePath: string[];
 }
-
-    
-
-    

@@ -44,6 +44,7 @@ const initialFormState: AddressDetailsFormData = {
     streetName: '',
     unitNumber: '',
     complexName: '',
+    otherComplexName: '',
     streetNumber: '',
     standNumber: '',
     streetNameInEstate: '',
@@ -72,6 +73,7 @@ export default function AddressDetailsPage() {
   const propertyFunction = form.watch("propertyFunction");
   const city = form.watch("city");
   const suburb = form.watch("suburb");
+  const complexName = form.watch("complexName");
 
   useEffect(() => {
     if (!user) {
@@ -144,6 +146,7 @@ export default function AddressDetailsPage() {
                             {complexList.map((complex) => (
                                 <SelectItem key={complex} value={complex}>{complex}</SelectItem>
                             ))}
+                            <SelectItem value="Other">Other (Please specify)</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage />
@@ -164,6 +167,22 @@ export default function AddressDetailsPage() {
                 </FormItem>
             )}
         />
+    );
+    
+    const otherComplexNameField = (
+      <FormField
+        control={form.control}
+        name="otherComplexName"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Please Specify Complex Name</FormLabel>
+            <FormControl>
+              <Input placeholder="Enter complex name" {...field} value={field.value ?? ''} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     );
 
 
@@ -186,6 +205,7 @@ export default function AddressDetailsPage() {
                         <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., Unit 45" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {complexNameField}
+                    {complexName === 'Other' && otherComplexNameField}
                      <FormField control={form.control} name="streetNumber" render={({ field }) => (
                         <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -220,6 +240,7 @@ export default function AddressDetailsPage() {
                         <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., 7" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
                     {complexNameField}
+                    {complexName === 'Other' && otherComplexNameField}
                     <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
                         <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -313,7 +334,7 @@ export default function AddressDetailsPage() {
                                 form.resetField('city');
                                 form.resetField('suburb');
                                 // Reset all specific address fields
-                                const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
+                                const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'otherComplexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
                                 fieldsToReset.forEach(fieldName => form.resetField(fieldName));
                               }}
                               value={field.value}
@@ -343,10 +364,6 @@ export default function AddressDetailsPage() {
                               onValueChange={(value) => {
                                  const newFunc = value as PropertyFunction;
                                  form.setValue('propertyFunction', newFunc, { shouldValidate: true });
-                                 form.resetField('city');
-                                 form.resetField('suburb');
-                                 const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
-                                 fieldsToReset.forEach(fieldName => form.resetField(fieldName));
                               }}
                               value={field.value}
                               disabled={!propertyType}
@@ -379,7 +396,7 @@ export default function AddressDetailsPage() {
                                             const newCity = value as City;
                                             form.setValue('city', newCity, { shouldValidate: true });
                                             form.resetField('suburb');
-                                            const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
+                                            const fieldsToReset: Array<keyof AddressDetailsFormData> = ['houseNumber', 'streetName', 'unitNumber', 'complexName', 'otherComplexName', 'streetNumber', 'standNumber', 'streetNameInEstate', 'estateName', 'officeName', 'officeParkName', 'holdingName', 'farmName', 'otherPropertyType', 'accessCodeRequired', 'otherCityDescription'];
                                             fieldsToReset.forEach(fieldName => form.resetField(fieldName));
                                         }}
                                         value={field.value}
