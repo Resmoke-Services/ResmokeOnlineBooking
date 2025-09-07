@@ -25,8 +25,8 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs } from "@/lib/types";
-import type { PropertyType, PropertyFunction, City } from "@/lib/types";
+import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes } from "@/lib/types";
+import type { PropertyType, PropertyFunction, City, CenturionSuburb } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
@@ -123,6 +123,49 @@ export default function AddressDetailsPage() {
           )}
         />
       );
+    
+    const isCenturionSuburbWithComplexes = city === 'Centurion' && suburb && (centurionComplexes as Record<string, string[]>)[suburb];
+    const complexList = isCenturionSuburbWithComplexes ? (centurionComplexes as Record<string, string[]>)[suburb] : [];
+
+    const complexNameField = isCenturionSuburbWithComplexes ? (
+        <FormField
+            control={form.control}
+            name="complexName"
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Complex Name</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select complex" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {complexList.map((complex) => (
+                                <SelectItem key={complex} value={complex}>{complex}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    ) : (
+        <FormField
+            control={form.control}
+            name="complexName"
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Complex Name</FormLabel>
+                    <FormControl>
+                        <Input placeholder="e.g., The Willows" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    );
+
 
     switch (type) {
         case 'Home':
@@ -142,9 +185,7 @@ export default function AddressDetailsPage() {
                      <FormField control={form.control} name="unitNumber" render={({ field }) => (
                         <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., Unit 45" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={form.control} name="complexName" render={({ field }) => (
-                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Willows" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
-                    )} />
+                    {complexNameField}
                      <FormField control={form.control} name="streetNumber" render={({ field }) => (
                         <FormItem><FormLabel>Street Number</FormLabel><FormControl><Input placeholder="e.g., 123" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -178,9 +219,7 @@ export default function AddressDetailsPage() {
                     <FormField control={form.control} name="unitNumber" render={({ field }) => (
                         <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input placeholder="e.g., 7" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <FormField control={form.control} name="complexName" render={({ field }) => (
-                        <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input placeholder="e.g., The Oaks" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
-                    )} />
+                    {complexNameField}
                     <FormField control={form.control} name="streetNameInEstate" render={({ field }) => (
                         <FormItem><FormLabel>Street Name (in estate)</FormLabel><FormControl><Input placeholder="e.g., Protea Avenue" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
@@ -268,12 +307,12 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                field.onChange(value as PropertyType);
-                                // Reset subsequent fields
-                                form.setValue('propertyFunction', undefined, { shouldDirty: true, shouldValidate: true });
-                                form.setValue('city', undefined, { shouldDirty: true, shouldValidate: true });
-                                form.setValue('suburb', '', { shouldDirty: true, shouldValidate: true });
-                                form.setValue('otherCityDescription', '', { shouldDirty: true, shouldValidate: true });
+                                const newType = value as PropertyType;
+                                form.reset({
+                                    ...initialFormState,
+                                    // Preserve user's high-level choices
+                                    propertyType: newType,
+                                });
                               }}
                               value={field.value}
                             >
@@ -300,10 +339,12 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Function</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                field.onChange(value as PropertyFunction);
-                                form.setValue('city', undefined, { shouldDirty: true, shouldValidate: true });
-                                form.setValue('suburb', '', { shouldDirty: true, shouldValidate: true });
-                                form.setValue('otherCityDescription', '', { shouldDirty: true, shouldValidate: true });
+                                 const newFunc = value as PropertyFunction;
+                                 form.reset({
+                                     ...initialFormState,
+                                     propertyType: form.getValues('propertyType'),
+                                     propertyFunction: newFunc,
+                                 });
                               }}
                               value={field.value}
                               disabled={!propertyType}
@@ -333,9 +374,13 @@ export default function AddressDetailsPage() {
                                     <FormLabel>City / Area</FormLabel>
                                         <Select
                                         onValueChange={(value) => {
-                                            field.onChange(value as City);
-                                            form.setValue('suburb', '', { shouldDirty: true, shouldValidate: true });
-                                            form.setValue('otherCityDescription', '', { shouldDirty: true, shouldValidate: true });
+                                            const newCity = value as City;
+                                            form.reset({
+                                                ...initialFormState,
+                                                propertyType: form.getValues('propertyType'),
+                                                propertyFunction: form.getValues('propertyFunction'),
+                                                city: newCity,
+                                            });
                                         }}
                                         value={field.value}
                                         >
