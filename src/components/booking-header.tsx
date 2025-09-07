@@ -23,7 +23,7 @@ import { LogIn, LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export const BookingHeader = () => {
-  const { user, setUser, setName, setSurname, setCellNumber, setAddress, setEmail, resetBooking } = useBookingStore();
+  const { user, setUser, setUserProfile, resetBooking } = useBookingStore();
   const firestore = useFirestore();
   const { toast } = useToast();
   const router = useRouter();
@@ -52,31 +52,34 @@ export const BookingHeader = () => {
           displayName: firebaseUser.displayName || 'User',
           isGuest: false,
         };
-        setUser(userData);
-        setEmail(userData.email);
 
         if (userDoc.exists()) {
           const data = userDoc.data();
-          setName(data.name || userData.displayName.split(' ')[0] || '');
-          setSurname(data.surname || userData.displayName.split(' ')[1] || '');
-          setCellNumber(data.cellNumber || '');
-          setAddress(data.address || '');
+          setUserProfile({
+            user: userData,
+            ...data,
+          });
         } else {
           const nameParts = firebaseUser.displayName?.split(' ') || ['User'];
           const newName = nameParts[0];
           const newSurname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
 
-          await setDoc(userRef, {
+          const newDbUser = {
             uid: firebaseUser.uid,
             email: firebaseUser.email,
             displayName: firebaseUser.displayName,
             name: newName,
             surname: newSurname,
             createdAt: new Date(),
-          });
+          };
+          await setDoc(userRef, newDbUser);
 
-          setName(newName);
-          setSurname(newSurname);
+          setUserProfile({
+            user: userData,
+            name: newName,
+            surname: newSurname,
+            email: userData.email,
+          });
         }
       }
     } catch (error: any) {
