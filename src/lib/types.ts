@@ -52,7 +52,7 @@ export const centurionSuburbs = [
 export type CenturionSuburb = (typeof centurionSuburbs)[number];
 
 export const pretoriaSuburbs = [
-    'Akasia', 'Amandasig', 'Annlin', 'Arcadia', 'Brooklyn', 'Claremont', 'Clydesdale', 'Constantia Park', 'Danville', 'Daspoort', 'Doornpoort', 'Dorandia', 'Elarduspark', 'Equestria', 'Erasmuskloof', 'Erasmusrand', 'Faerie Glen', 'Garsfontein', 'Groenkloof', 'Hatfield', 'Hazelwood', 'Hermanstad', 'Karenpark', 'Lady Selborne', 'Lukasrand', 'Lynnwood', 'Magalieskruin', 'Menlo Park', 'Montana', 'Monument Park', 'Moreleta Park', 'Mountain View', 'Muckleneuk', 'Newlands', 'Pretoria Central', 'Pretoria North', 'Pretoria West', 'Proclamation Hill', 'Rietvalleirand', 'Salvokop', 'Sinoville', 'Suiderberg', 'Sunnyside', 'Theresapark', 'Wapadrand', 'Waterkloof', 'Waterkloof Ridge', 'Wingate Park', 'Wonderboom'
+    'Akasia', 'Amandasig', 'Annlin', 'Arcadia', 'Boardwalk', 'Brooklyn', 'Chantelle', 'Claremont', 'Clydesdale', 'Constantia Park', 'Danville', 'Daspoort', 'Doornpoort', 'Dorandia', 'Elarduspark', 'Equestria', 'Erasmuskloof', 'Erasmusrand', 'Faerie Glen', 'Garsfontein', 'Gezina', 'Groenkloof', 'Hatfield', 'Hazelwood', 'Hermanstad', 'Karenpark', 'Kirkney', 'Lady Selborne', 'Lukasrand', 'Lynnwood', 'Magalieskruin', 'Menlo Park', 'Montana', 'Monument Park', 'Moreleta Park', 'Mountain View', 'Muckleneuk', 'Newlands', 'Pretoria Central', 'Pretoria North', 'Pretoria West', 'Proclamation Hill', 'Rietvalleirand', 'Riviera', 'Salvokop', 'Silver Lakes', 'Sinoville', 'Suiderberg', 'Sunnyside', 'Theresapark', 'Wapadrand', 'Waterkloof', 'Waterkloof Ridge', 'Wingate Park', 'Wonderboom'
 ] as const;
 export type PretoriaSuburb = (typeof pretoriaSuburbs)[number];
 
@@ -105,6 +105,45 @@ export const midrandComplexes: Record<string, string[]> = {
     'Waterfall': ['Ellipse Waterfall', 'Kikuyu', 'The Munyaka', 'The Polofields', 'Waterfall Country Estate', 'Waterfall Country Village'],
 };
 
+export const pretoriaComplexes: Record<string, string[]> = {
+    'Boardwalk': ['Boardwalk Meander', 'Boardwalk Manor Estate', 'Boardwalk Villas'],
+    'Brooklyn': ['Brooklyn Stone', 'IQ Brooklyn', 'The Urban', 'The Village'],
+    'Constantia Park': ['Constantia Gardens', 'Constantia Mews', 'Constantia Place'],
+    'Equestria': ['Boulders', 'Equestria Estate', 'Paramount Estate', 'The Grove', 'Tygervalley', 'Willow Acres Estate'],
+    'Erasmuskloof': ['Castle Gate', 'Erasmus Park', 'Kloofsig'],
+    'Faerie Glen': ['The Paramount', 'Faerie Glen Village', 'Glenwood', 'The Glen', 'Valley Farm'],
+    'Garsfontein': ['Bella Vista', 'El Dòr', 'Garsfontein Park', 'The Glades', 'Woodlands Grove'],
+    'Hazelwood': ['The Club', 'The Village', 'Trilogy Collection'],
+    'Lynnwood': ['Lynnwood Manor Estate', 'Lynnwood Place', 'The Pad', 'Stratus'],
+    'Menlo Park': ['The Capital', 'The Hub', 'The Trilogy', 'Menlyn Maine Residences'],
+    'Moreleta Park': ['The Wilds', 'Moreleta Park Village', 'The Meadows', 'Olivewood', 'Hillside', 'Waterkloof View', 'Country Walk'],
+    'Newlands': ['Newlands Terrace', 'The Gables', 'Village on Charles'],
+    'Rietvalleirand': ['Rietvlei Heights Country Estate', 'Waterkloof Heights'],
+    'Silver Lakes': ['Silver Lakes Golf Estate', 'Lombardy Estate', 'Six Fountains Estate'],
+    'Wapadrand': ['Wapadrand Security Village', 'The Bataleur'],
+    'Waterkloof': ['Waterkloof Palms', 'The Ridge Estate', 'Waterkloof on Main', 'Waterkloof Marina'],
+    'Waterkloof Ridge': ['Waterkloof Palms', 'The Ridge Estate', 'Waterkloof on Main', 'Waterkloof Marina'],
+    'Amandasig': ['Amandasig Aftree Oord', 'Heatherdale'],
+    'Annlin': ['Annlin Place', 'Annlin Gardens', 'Crimson Cherry', 'Zambezi Manor'],
+    'Chantelle': ['Chantelle Park', 'Chantelle Mews', 'The Orchards'],
+    'Doornpoort': ['Doornpoort complex', 'Deo Gloria'],
+    'Karenpark': ['Akasia', 'Karenpark Crossing', 'The Orchards'],
+    'Montana': ['Zambezi Estate', 'Bougainvillea Estate', 'Montana Gardens', 'Sable Hills Waterfront Estate', 'Green Acres Estate', 'Monatana Tuine'],
+    'Sinoville': ['Sinoville Villas', 'Magaliesberg Country Estate', 'Stephanus'],
+    'Theresapark': ['Terra Gardens', 'Theresapark Estate', 'Valencia'],
+    'Arcadia': ['Union Buildings View', 'Hamilton Court', 'Arcadia Place', 'Loftus Versfeld'],
+    'Gezina': ['Roseville', 'Villeria'],
+    'Hatfield': ['Duncan Court', 'Festival\'s Edge', 'Hatfield Square', 'The Edge'],
+    'Muckleneuk': ['Groenkloof Estates', 'Muckleneuk Manor', 'The Diplomat', 'Fehrsen'],
+    'Groenkloof': ['Groenkloof Estates', 'Muckleneuk Manor', 'The Diplomat', 'Fehrsen'],
+    'Riviera': ['Riviera Mews', 'The Riviera'],
+    'Sunnyside': ['Sunny Court', 'Bultman', 'Jacaranda Park', 'Walker Street'],
+    'Danville': ['Danville Hof', 'Daspoort Villas', 'Elandspoort'],
+    'Daspoort': ['Danville Hof', 'Daspoort Villas', 'Elandspoort'],
+    'Kirkney': ['Kirkney Village', 'The Westview'],
+    'Pretoria West': ['West Park', 'WF Nkomo Village', 'Proclamation Hill'],
+    'Suiderberg': ['Suiderberg Mews', 'Suiderberg Villas']
+};
 
 export interface TermsAgreement {
     paymentOnPremises: boolean;
@@ -213,5 +252,3 @@ export interface BookingData {
   // Internal tracking
   servicePath: string[];
 }
-
-    
