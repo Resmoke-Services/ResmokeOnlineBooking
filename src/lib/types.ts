@@ -61,13 +61,12 @@ export const midrandSuburbs = [
 ] as const;
 export type MidrandSuburb = (typeof midrandSuburbs)[number];
 
-export const centurionComplexes = {
+export const centurionComplexes: Record<string, string[]> = {
     'Amberfield': ['Albuquerque', 'Amberfield Crest Estate', 'Amberfield Glen Estate', 'Amberfield Heights Estate', 'Amberfield Manor Estate', 'Amberfield Ridge Estate', 'Amberfield Valley Estate', 'Colorado @ Amberfield City', 'The Atlanta @ Amberfield City', 'The Manhattan Lifestyle Estate'],
     'Bronberrick': ['Aleppo Place', 'Bentley Park', 'Bergen', 'Blarney', 'Casa Bella', 'Jasmyn', 'La Paloma', 'Lombardy', 'Villa Neser', 'Willem\'s Hof'],
     'Clubview': ['Janel\'s Place', 'St. George'],
     'Die Hoewes': ['Aragon', 'Atlantis', 'Bayswater', 'Bourbon Street', 'Centurion Golf Estate', 'Crystal Gardens', 'Fountain Villages', 'Golden Fields Estate', 'Hampshire', 'Hennopsview', 'La Comores', 'Le Jardin', 'Lexton', 'Meldt', 'Montserrat', 'Notting Hill', 'Old Trafford', 'Panorama Park', 'Pasadena', 'Regents Park', 'San Marino', 'Sheffield', 'Somerset', 'The Mews', 'The Oval', 'Three Fountains', 'Uitsig', 'Villa Bianco', 'Villa Mia', 'Visagie'],
     'Doringkloof': ['Doringkloof Village'],
-    'Eco-Park Estate': ['Eco Park Estate', 'Emerald Gardens', 'Onyx Park'],
     'Eldoraigne': ['Bordeaux', 'Chateaux de Grace', 'Eldo Glen', 'Eldo Park', 'Eldo View', 'Eldo Ridge Estate', 'Eldoraigne Aftreelandgoed', 'Kama Creek', 'La Borie', 'La Motte', 'Morningside', 'The Pines', 'Villa Reinette', 'Villa Shiane'],
     'Hennopspark': ['Basoon Park', 'Bon Courage', 'Carmen', 'Ilanga', 'Jean Park', 'Karana', 'Katarina', 'Roosmaryn', 'Via Bianca'],
     'Heuweloord': ['Arundo Estate', 'Heuwelsig Estate', 'Stone Gate', 'Thornfields'],
@@ -192,5 +191,7 @@ export interface BookingData {
   // Internal tracking
   servicePath: string[];
 }
+
+    
 
     
