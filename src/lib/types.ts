@@ -1,5 +1,4 @@
 
-
 export interface UserProfile {
   uid: string;
   email: string;
@@ -56,6 +55,11 @@ export const pretoriaSuburbs = [
     'Akasia', 'Amandasig', 'Annlin', 'Arcadia', 'Brooklyn', 'Claremont', 'Clydesdale', 'Constantia Park', 'Danville', 'Daspoort', 'Doornpoort', 'Dorandia', 'Elarduspark', 'Equestria', 'Erasmuskloof', 'Erasmusrand', 'Faerie Glen', 'Garsfontein', 'Groenkloof', 'Hatfield', 'Hazelwood', 'Hermanstad', 'Karenpark', 'Lady Selborne', 'Lukasrand', 'Lynnwood', 'Magalieskruin', 'Menlo Park', 'Montana', 'Monument Park', 'Moreleta Park', 'Mountain View', 'Muckleneuk', 'Newlands', 'Pretoria Central', 'Pretoria North', 'Pretoria West', 'Proclamation Hill', 'Rietvalleirand', 'Salvokop', 'Sinoville', 'Suiderberg', 'Sunnyside', 'Theresapark', 'Wapadrand', 'Waterkloof', 'Waterkloof Ridge', 'Wingate Park', 'Wonderboom'
 ] as const;
 export type PretoriaSuburb = (typeof pretoriaSuburbs)[number];
+
+export const midrandSuburbs = [
+    'Allandale', 'Barbeque Downs', 'Beaulieu', 'Blue Hills', 'Carlswald', 'Clayville', 'Country View', 'Crowthorne', 'Ebony Park', 'Erand', 'Glen Austin', 'Glenferness', 'Halfway Gardens', 'Halfway House', 'Ivory Park', 'Kaalfontein', 'Kyalami', 'Noordwyk', 'President Park', 'Rabie Ridge', 'Sagewood', 'Summerset', 'Vorna Valley', 'Willaway'
+] as const;
+export type MidrandSuburb = (typeof midrandSuburbs)[number];
 
 
 export interface TermsAgreement {
@@ -164,3 +168,5 @@ export interface BookingData {
   // Internal tracking
   servicePath: string[];
 }
+
+    

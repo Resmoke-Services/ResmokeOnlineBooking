@@ -25,7 +25,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs } from "@/lib/types";
+import { propertyTypes, propertyFunctions, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs } from "@/lib/types";
 import type { PropertyType, PropertyFunction, City } from "@/lib/types";
 import { addressDetailsSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
@@ -268,11 +268,12 @@ export default function AddressDetailsPage() {
                             <FormLabel>Property Type</FormLabel>
                             <Select
                               onValueChange={(value) => {
-                                form.reset({
-                                  ...initialFormState,
-                                  propertyType: value as PropertyType,
-                                });
                                 field.onChange(value as PropertyType);
+                                // Reset subsequent fields
+                                form.setValue('propertyFunction', undefined, { shouldDirty: true, shouldValidate: true });
+                                form.setValue('city', undefined, { shouldDirty: true, shouldValidate: true });
+                                form.setValue('suburb', '', { shouldDirty: true, shouldValidate: true });
+                                form.setValue('otherCityDescription', '', { shouldDirty: true, shouldValidate: true });
                               }}
                               value={field.value}
                             >
@@ -302,6 +303,7 @@ export default function AddressDetailsPage() {
                                 field.onChange(value as PropertyFunction);
                                 form.setValue('city', undefined, { shouldDirty: true, shouldValidate: true });
                                 form.setValue('suburb', '', { shouldDirty: true, shouldValidate: true });
+                                form.setValue('otherCityDescription', '', { shouldDirty: true, shouldValidate: true });
                               }}
                               value={field.value}
                               disabled={!propertyType}
@@ -413,6 +415,29 @@ export default function AddressDetailsPage() {
                                         </FormItem>
                                     )}
                                 />
+                             ) : city && city === 'Midrand' ? (
+                                 <FormField
+                                    control={form.control}
+                                    name="suburb"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Suburb</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select suburb" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    {midrandSuburbs.map((sub) => (
+                                                        <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                              ) : city && (
                                 <FormField
                                     control={form.control}
@@ -459,3 +484,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
