@@ -108,7 +108,7 @@ export default function PaymentAndTermsPage() {
     try {
         const availabilityData = await getAvailableSlots(availabilityRequestDetails);
         store.setAvailability(availabilityData);
-        router.push("/item_to_repair");
+        router.push("/select_datetime");
     } catch (error: any) {
       console.error("Failed to fetch availability:", error);
       toast({
