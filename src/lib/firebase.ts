@@ -49,7 +49,8 @@ const getClientFirestore = (): Firestore => {
     if (firestore) {
         return firestore;
     }
-    firestore = getFirestore(getClientApp());
+    const clientApp = getClientApp();
+    firestore = getFirestore(clientApp);
     return firestore;
 }
 
