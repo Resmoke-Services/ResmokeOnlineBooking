@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import { type PaymentMethod, type TermsAgreement, paymentMethods, type BillingInformation } from "@/lib/types";
 import { paymentAndTermsSchema } from "@/lib/schemas";
-import { getAvailableSlots } from "@/app/actions/booking-actions";
+import { confirmBooking } from "@/app/actions/booking-actions";
 
 type PaymentAndTermsFormData = z.infer<typeof paymentAndTermsSchema>;
 
@@ -90,27 +90,20 @@ export default function PaymentAndTermsPage() {
     store.setBillingInformation(data.billingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    // Consolidate all data for the availability webhook
-    const availabilityRequestDetails = {
-      name: store.name,
-      surname: store.surname,
-      cellNumber: store.cellNumber,
-      email: store.email,
-      address: store.formattedAddress,
-      itemsToRepair: store.itemsToRepair,
-      problemDescriptions: store.problemDescriptions,
+    const bookingDetails = {
+      ...store,
       paymentMethods: [data.paymentMethod],
       billingInformation: data.billingInformation,
       termsAgreement: data.terms,
-      servicePath: store.servicePath,
     };
 
+
     try {
-        const availabilityData = await getAvailableSlots(availabilityRequestDetails);
-        store.setAvailability(availabilityData);
-        router.push("/confirmation");
+        const confirmation = await confirmBooking(bookingDetails);
+        store.setWebhookConfirmation(confirmation);
+        router.push("/booking/confirmation");
     } catch (error: any) {
-      console.error("Failed to fetch availability:", error);
+      console.error("Failed to confirm booking:", error);
       toast({
         variant: "destructive",
         title: "Submission Failed",
