@@ -13,19 +13,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase App
-let app: FirebaseApp;
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApp();
-}
+// Singleton pattern to ensure single instance of Firebase app
+const getFirebaseApp = (): FirebaseApp => {
+  if (!getApps().length) {
+    return initializeApp(firebaseConfig);
+  }
+  return getApp();
+};
 
-
-// Initialize services
+const app: FirebaseApp = getFirebaseApp();
 const auth: Auth = getAuth(app);
 const firestore: Firestore = getFirestore(app);
-
 
 // Export the initialized instances
 export { app, auth, firestore };
