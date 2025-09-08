@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +25,7 @@ import { useBookingStore } from "@/hooks/use-booking-store";
 import { useRouter } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
 import { addressDetailsSchema } from "@/lib/schemas";
+import { propertyTypes } from "@/lib/types";
 
 type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
@@ -44,8 +46,6 @@ export default function AddressDetailsPage() {
 
   const propertyType = form.watch("propertyType");
   const city = form.watch("city");
-  const suburb = form.watch("suburb");
-  const complexName = form.watch("complexName");
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
@@ -77,14 +77,9 @@ export default function AddressDetailsPage() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Home">Home</SelectItem>
-                    <SelectItem value="Complex">Complex</SelectItem>
-                    <SelectItem value="Estate">Estate</SelectItem>
-                    <SelectItem value="Complex in an Estate">Complex in an Estate</SelectItem>
-                    <SelectItem value="Office">Office</SelectItem>
-                    <SelectItem value="Small Holding">Small Holding</SelectItem>
-                    <SelectItem value="Farm">Farm</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    {propertyTypes.map((type) => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
