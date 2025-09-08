@@ -4,9 +4,9 @@ import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Singleton holder for the Firebase app and service instances.
-let app: FirebaseApp | null = null;
-let auth: Auth | null = null;
-let firestore: Firestore | null = null;
+let app: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
 
 // Firebase config read from environment variables
 const firebaseConfig = {
@@ -18,46 +18,15 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// A function to initialize and get the Firebase app instance (client-side)
-const getClientApp = (): FirebaseApp => {
-    if (app) {
-        return app; // Return the existing instance if it has been created.
-    }
-
-    // If no instance exists, check if one has been initialized by Firebase already.
-    if (getApps().length > 0) {
-        app = getApp();
-        return app;
-    }
-    
-    // Initialize the app and store it in the singleton variable.
+// Initialize Firebase App (if not already initialized)
+if (!getApps().length) {
     app = initializeApp(firebaseConfig);
-    return app;
+} else {
+    app = getApp();
 }
 
-// A function to get the Auth instance (client-side)
-const getClientAuth = (): Auth => {
-    if (auth) {
-        return auth;
-    }
-    auth = getAuth(getClientApp());
-    return auth;
-}
-
-// A function to get the Firestore instance (client-side)
-const getClientFirestore = (): Firestore => {
-    if (firestore) {
-        return firestore;
-    }
-    const clientApp = getClientApp();
-    firestore = getFirestore(clientApp);
-    return firestore;
-}
-
+auth = getAuth(app);
+firestore = getFirestore(app);
 
 // Export the initialized instances for client-side use
-const clientApp = getClientApp();
-const clientAuth = getClientAuth();
-const clientFirestore = getClientFirestore();
-
-export { clientApp, clientAuth as auth, clientFirestore as firestore };
+export { app, auth, firestore };
