@@ -1,12 +1,12 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
-// This side-effect import is required for Firestore to work on the client.
-import 'firebase/firestore';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Singleton holder for the Firebase app instance.
+// Singleton holder for the Firebase app and service instances.
 let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
+let firestore: Firestore | null = null;
 
 // Firebase config read from environment variables
 const firebaseConfig = {
@@ -44,8 +44,19 @@ const getClientAuth = (): Auth => {
     return auth;
 }
 
-// Export the functions to be used in client components
+// A function to get the Firestore instance (client-side)
+const getClientFirestore = (): Firestore => {
+    if (firestore) {
+        return firestore;
+    }
+    firestore = getFirestore(getClientApp());
+    return firestore;
+}
+
+
+// Export the initialized instances for client-side use
 const clientApp = getClientApp();
 const clientAuth = getClientAuth();
+const clientFirestore = getClientFirestore();
 
-export { clientApp, clientAuth as auth };
+export { clientApp, clientAuth as auth, clientFirestore as firestore };

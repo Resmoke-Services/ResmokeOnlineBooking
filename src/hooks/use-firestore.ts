@@ -2,24 +2,15 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { clientApp } from '@/lib/firebase';
-
-const DATABASE_ID = 'resmoke-online-booking-database';
-
-// This function safely initializes and returns the Firestore instance.
-// It's designed to be called only on the client side.
-const getClientFirestore = () => {
-  // Pass the database ID to getFirestore
-  return getFirestore(clientApp, DATABASE_ID);
-};
+import { type Firestore } from 'firebase/firestore';
+import { firestore as db } from '@/lib/firebase';
 
 export function useFirestore() {
   const [firestore, setFirestore] = useState<Firestore | null>(null);
 
   useEffect(() => {
     // This effect runs only on the client-side after the component mounts.
-    const db = getClientFirestore();
+    // The firestore instance is already initialized in firebase.ts
     setFirestore(db);
   }, []);
 
