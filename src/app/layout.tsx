@@ -3,14 +3,33 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { GeistSans } from 'geist/font/sans';
 
+const APP_NAME = "Resmoke Online Booking";
+const APP_DESCRIPTION = "Online booking for Resmoke services.";
+
 export const metadata: Metadata = {
-  title: 'Resmoke Online Booking',
-  description: 'Online booking for Resmoke services.',
+  applicationName: APP_NAME,
+  title: {
+    default: APP_NAME,
+    template: `%s | ${APP_NAME}`,
+  },
+  description: APP_DESCRIPTION,
   manifest: '/manifest.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: '#192231',
+  themeColor: '#8B0000',
 }
 
 export default function RootLayout({
