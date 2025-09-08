@@ -49,7 +49,7 @@ export default function AddressDetailsPage() {
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    router.push("/item_to_repair");
+    router.push("/booking/item-to-repair");
   }
 
   return (
