@@ -82,7 +82,7 @@ export default function ServicePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl">
           {serviceOptions.map((details) => (
             <Link 
-              href={`/privacy_notice?next=${encodeURIComponent(details.href)}`} 
+              href={details.href}
               key={details.type} 
               className="block group h-full"
             >
