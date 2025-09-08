@@ -34,7 +34,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/customer_profile"
+    href: "/booking/select-type"
   },
   {
     type: 'collection_delivery',
@@ -72,7 +72,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/customer_profile"
+    href: "/booking/select-type"
   }
 ];
 
@@ -86,7 +86,11 @@ export default function ServicePage() {
       <div className="flex justify-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl">
           {serviceOptions.map((details) => (
-            <Link href={details.href} key={details.type} className="block group h-full">
+            <Link 
+              href={`/privacy_notice?next=${encodeURIComponent(details.href)}`} 
+              key={details.type} 
+              className="block group h-full"
+            >
               <Card className="w-full h-full overflow-hidden shadow-xl border-2 border-primary/50 animate-in fade-in-50 duration-500 transition-all hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 flex flex-col">
                 <div className="relative w-full aspect-video bg-black/20">
                   <Image

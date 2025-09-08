@@ -26,7 +26,7 @@ const GoogleIcon = () => (
 export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nextUrl = searchParams.get('next') || '/customer_profile';
+  const nextUrl = searchParams.get('next') || '/booking/select-type';
   
   const { user, setUserProfile } = useBookingStore();
   const firestore = useFirestore();

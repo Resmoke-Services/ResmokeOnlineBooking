@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
-import ServiceSelectionTracker from '@/components/service-selection-tracker';
 
 const serviceOptions = [
   {
@@ -21,16 +20,14 @@ const serviceOptions = [
       'All repairs include a comprehensive warranty on both parts and labour.',
       'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
-      'All major brands and models serviced.',
+      'Limited Options (Contact us for enquiries).',
       (
         <span>
           Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span><br /><br />
-          Cost Breakdown Example: R550 (Callout Fee) + R750 (Parts) + R650 (Labour) = R1950.<br /><br />
-          </span>
-    ),
-      '"While you are here" or non-prebooked items will be charged an additional "While you are here" fee of R250 per item.',
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
+        </span>
+      ),
       'Full payment shall be made immediately upon completion of services.'
     ],
     image: {
@@ -38,7 +35,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice"
   },
   {
     type: 'workshop',
@@ -55,24 +52,15 @@ const serviceOptions = [
       'Card/EFT/PayShap Payments accepted.',
       'Drop off at our Centurion workshop.',
       'No callout fee.',
-      'All major brands and models serviced.',
-      'Strip and Quote Fee applies based on item selected.',
-      (
-        <span>
-          Strip and Quote Fee applies based on item selected (Excludes Parts, Labour & Additional Fees):<br />
-          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R250 (Typical)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Extensive)</span><br /><br />
-          Cost Breakdown Example: R250 (Strip & Quote Fee) + R750 (Parts) + R650 (Labour) = R1650.<br /><br />
-          </span>
-      ),
+      'Limited options (Contact us for more information).',
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_appliances_icon_06.PNG?alt=media&token=a2b8f513-c1bf-45ff-9da8-a7687671b385",
+      src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_mechanical_repairs_workshop_icon_01.PNG?alt=media&token=9c10eeb8-734a-49fb-9d9f-6526262190a7",
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice"
   },
   {
     type: 'collection_delivery',
@@ -85,58 +73,45 @@ const serviceOptions = [
     ),
     description: 'We will collect your Items from your home or office, perform the repairs at our workshop, and deliver them back to you.',
     features: [
-      'All repairs include a comprehensive warranty on both parts and labour.',
-      'Card/EFT/PayShap Payments accepted.',
       'Convenient pickup and return.',
       'Ideal for busy schedules.',
+      'Pickup & Delivery fee applies based on item size and location (Excludes Parts, Labour & Additional Fees).',
       (
         <span>
-          Collection & Delivery Fee - Small Hand-carryable Items (e.g., Microwave):<br />
+          Small Items (e.g., Motors) – Hand-carryable mechanical items:<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R350 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Outside Centurion Area)</span>
         </span>
       ),
       (
         <span>
-          Collection & Delivery Fee - Large Items requiring trolley/extra handling (e.g., Dishwasher):<br />
+          Large Items (e.g., Machinery) – Bulky mechanical items requiring trolley/extra handling:<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
         </span>
       ),
-      (
-        <span>
-          Strip and Quote Fee applies based on item selected (Excludes Parts, Labour & Additional Fees):<br />
-          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R250 (Typical)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R450+ (Extensive)</span><br /><br />
-          Cost Breakdown Example: R350 (Collection & Delivery Fee) + R250 (Strip & Quote Fee) + R750 (Parts) + R650 (Labour) = R2000.<br /><br />
-          </span>
-      ),
-      'Full payment shall be made prior to the release of any item from the workshop.'
+      'Full payment shall be made prior to the release of any item from the workshop.',
+      'Card / Cash / EFT payments accepted.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_workshop_repairs_appliances_collection_icon_01.PNG?alt=media&token=201b9335-a8d6-4b92-bda6-f1ce4845bcc0",
+      src: "https://firebasestorage.googleapis.com/v0/b/resmokeonlinebooking.firebasestorage.app/o/images_and_logos%2Fimagen_ai_generated_16_9_mechanical_repairs_collection_icon_03.PNG?alt=media&token=cc072df9-8450-466c-aabb-d1f1e13bf0fc",
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice"
   }
 ];
 
 export default function ServicePage() {
   return (
     <BookingFlowLayout>
-      <ServiceSelectionTracker selections={["REPAIRS", "APPLIANCES"]} />
       <div className="text-center mb-16">
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">APPLIANCE REPAIRS</h1>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">MECHANICAL REPAIRS</h1>
         <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
         {serviceOptions.map((details) => (
-          <Link 
-            href={`/privacy_notice?next=${encodeURIComponent(details.href)}`} 
-            key={details.type} 
-            className="block group h-full"
-          >
+          <Link href={details.href} key={details.type} className="block group h-full">
             <Card className="w-full h-full overflow-hidden shadow-xl border-2 border-primary/50 animate-in fade-in-50 duration-500 transition-all hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 flex flex-col">
               <div className="relative w-full aspect-video bg-black/20">
                 <Image
