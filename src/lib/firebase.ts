@@ -13,18 +13,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Initialize Firebase App
 let app: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
-
-if (getApps().length === 0) {
+if (!getApps().length) {
     app = initializeApp(firebaseConfig);
 } else {
     app = getApp();
 }
 
-auth = getAuth(app);
-firestore = getFirestore(app);
+
+// Initialize services
+const auth: Auth = getAuth(app);
+const firestore: Firestore = getFirestore(app);
 
 
 // Export the initialized instances
