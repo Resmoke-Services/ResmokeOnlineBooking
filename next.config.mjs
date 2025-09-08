@@ -1,3 +1,4 @@
+
 /** @type {import('next').NextConfig} */
 import withPWAInit from "@ducanh2912/next-pwa";
 
@@ -8,28 +9,44 @@ const withPWA = withPWAInit({
   skipWaiting: true,
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  swcMinify: true,
-  workboxOptions: {
-    disableDevLogs: true,
-  },
+  cacheStartUrl: true,
+  dynamicStartUrl: true,
   fallbacks: {
     document: "/offline",
+  },
+  workboxOptions: {
+    importScripts: [],
+    runtimeCaching: [
+      {
+        urlPattern: /^https?.*/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'offlineCache',
+          expiration: {
+            maxEntries: 200,
+          },
+        },
+      },
+    ],
   },
 });
 
 const nextConfig = {
+  output: 'export',
+  reactStrictMode: true,
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
         port: "",
-        pathname: "/v0/b/resmokeonlinebooking.firebasestorage.app/**",
+        pathname: "/**",
       },
     ],
   },
-  output: 'export',
 };
 
 export default withPWA(nextConfig);
+
+    

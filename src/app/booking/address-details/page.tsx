@@ -42,6 +42,7 @@ const initialFormState: AddressDetailsFormData = {
     suburb: '',
     houseNumber: '',
     streetName: '',
+    accessCodeRequired: 'no',
 };
 
 
@@ -541,5 +542,7 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
 
     
