@@ -3,11 +3,6 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Singleton holder for the Firebase app and service instances.
-let app: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
-
 // Firebase config read from environment variables
 const firebaseConfig = {
  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -18,8 +13,11 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Initialize Firebase App (if not already initialized)
-if (!getApps().length) {
+let app: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
+
+if (getApps().length === 0) {
     app = initializeApp(firebaseConfig);
 } else {
     app = getApp();
@@ -28,5 +26,6 @@ if (!getApps().length) {
 auth = getAuth(app);
 firestore = getFirestore(app);
 
-// Export the initialized instances for client-side use
+
+// Export the initialized instances
 export { app, auth, firestore };
