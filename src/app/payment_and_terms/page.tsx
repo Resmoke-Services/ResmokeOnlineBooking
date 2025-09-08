@@ -79,12 +79,9 @@ export default function PaymentAndTermsPage() {
 
   useEffect(() => {
     if (!store.user) {
-      router.replace('/customer_profile');
+      router.replace('/auth?next=/payment_and_terms');
     }
-    if (store.itemsToRepair.length === 0) {
-        router.replace('/item_to_repair');
-    }
-  }, [store.user, store.itemsToRepair, router]);
+  }, [store.user, router]);
 
   async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
@@ -111,7 +108,7 @@ export default function PaymentAndTermsPage() {
     try {
         const availabilityData = await getAvailableSlots(availabilityRequestDetails);
         store.setAvailability(availabilityData);
-        router.push("/select_datetime");
+        router.push("/item_to_repair");
     } catch (error: any) {
       console.error("Failed to fetch availability:", error);
       toast({

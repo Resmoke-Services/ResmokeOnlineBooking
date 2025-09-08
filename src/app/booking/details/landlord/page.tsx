@@ -92,7 +92,7 @@ export default function LandlordDetailsPage() {
       }
     }
     
-    router.push("/item_to_repair");
+    router.push("/booking/address-details");
   }
 
   return (
