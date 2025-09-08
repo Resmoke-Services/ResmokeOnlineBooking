@@ -51,7 +51,11 @@ const initialFormState: AddressDetailsFormData = {
     otherPropertyType: '',
     standNumber: '',
     streetNameInEstate: '',
-    unitNumber: ''
+    unitNumber: '',
+    otherComplexName: '',
+    officeParkName: '',
+    otherCityDescription: '',
+    streetNumber: '',
 };
 
 
@@ -551,11 +555,3 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
-
-    
-
-    
-
-
-
-    
