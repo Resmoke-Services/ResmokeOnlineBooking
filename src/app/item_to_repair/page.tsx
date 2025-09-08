@@ -61,7 +61,7 @@ export default function ItemToRepairPage() {
     setItemsToRepair(finalItems);
     setProblemDescriptions(finalDescriptions);
     
-    router.push("/select_datetime");
+    router.push("/payment_and_terms");
   }
 
   if (!user) {
