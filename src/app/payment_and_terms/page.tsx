@@ -96,7 +96,7 @@ export default function PaymentAndTermsPage() {
       surname: store.surname,
       cellNumber: store.cellNumber,
       email: store.email,
-      address: store.address,
+      address: store.formattedAddress,
       itemsToRepair: store.itemsToRepair,
       problemDescriptions: store.problemDescriptions,
       paymentMethods: [data.paymentMethod],
@@ -108,7 +108,7 @@ export default function PaymentAndTermsPage() {
     try {
         const availabilityData = await getAvailableSlots(availabilityRequestDetails);
         store.setAvailability(availabilityData);
-        router.push("/select_datetime");
+        router.push("/confirmation");
     } catch (error: any) {
       console.error("Failed to fetch availability:", error);
       toast({

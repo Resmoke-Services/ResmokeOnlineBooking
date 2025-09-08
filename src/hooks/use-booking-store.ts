@@ -27,13 +27,12 @@ interface BookingState extends BookingData {
   resetBooking: () => void;
 }
 
-const initialBookingData: Omit<BookingData, 'user'> = {
+const initialBookingData: Omit<BookingData, 'user' | 'formattedAddress'> = {
   name: '',
   surname: '',
   cellNumber: '',
   email: '',
   addressDetails: {},
-  formattedAddress: '',
   
   bookingFor: 'personal', // Default value
   // Landlord
@@ -65,6 +64,7 @@ const initialState = {
   ...initialBookingData,
   availability: [],
   user: null,
+  formattedAddress: '',
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -75,28 +75,44 @@ export const useBookingStore = create<BookingState>()(
       setUserProfile: (profileData) => set((state) => ({ ...state, ...profileData })),
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
-      setAddressDetails: (details: AddressDetails) => set((state) => {
+      setAddressDetails: (details: AddressDetails) => set(() => {
         let formattedAddress = '';
         const cityDisplay = details.city === 'Other' ? details.otherCityDescription : details.city;
+        const suburbDisplay = details.suburb; // Assuming suburb is always selected
 
-        if (details.propertyType === 'Home') {
-            formattedAddress = `${details.houseNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Complex') {
-            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Estate') {
-            formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Complex in an Estate') {
-            formattedAddress = `Unit ${details.unitNumber}, ${details.complexName}, ${details.streetNameInEstate}, ${details.estateName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Office') {
-            formattedAddress = `${details.officeName}, ${details.officeParkName ? details.officeParkName + ', ' : ''}${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Small Holding') {
-            formattedAddress = `${details.holdingName}, ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Farm') {
-            formattedAddress = `${details.farmName}, ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
-        } else if (details.propertyType === 'Other') {
-            formattedAddress = `${details.otherPropertyType}, ${details.streetNumber} ${details.streetName}, ${details.suburb}, ${cityDisplay}`;
+        switch (details.propertyType) {
+            case 'Home':
+                formattedAddress = `${details.houseNumber} ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Complex':
+                const complex = details.complexName === 'Other' ? details.otherComplexName : details.complexName;
+                formattedAddress = `Unit ${details.unitNumber}, ${complex}, ${details.streetNumber || ''} ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Estate':
+                formattedAddress = `Stand ${details.standNumber}, ${details.houseNumber} ${details.streetNameInEstate}, ${details.estateName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Complex in an Estate':
+                const complexInEstate = details.complexName === 'Other' ? details.otherComplexName : details.complexName;
+                formattedAddress = `Unit ${details.unitNumber}, ${complexInEstate}, ${details.streetNameInEstate}, ${details.estateName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Office':
+                formattedAddress = `${details.officeName}, ${details.officeParkName ? details.officeParkName + ', ' : ''}${details.streetNumber || ''} ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Small Holding':
+                formattedAddress = `${details.holdingName}, ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Farm':
+                formattedAddress = `${details.farmName}, ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
+            case 'Other':
+                formattedAddress = `${details.otherPropertyType}, ${details.streetNumber || ''} ${details.streetName}, ${suburbDisplay}, ${cityDisplay}`;
+                break;
         }
-        return { addressDetails: details, formattedAddress };
+
+        return { 
+            addressDetails: details, 
+            formattedAddress: formattedAddress.trim().replace(/ ,/g, ',').replace(/, ,/g, ',') 
+        };
       }),
       setLandlordDetails: (details) => set({ ...details }),
       setOwnerDetails: (details) => set({ ...details }),

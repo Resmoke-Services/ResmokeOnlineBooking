@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState } from 'react';
@@ -23,7 +24,7 @@ type AddressFormData = z.infer<typeof addressDetailsSchema>;
 
 const AddressDetailsPage = () => {
   const router = useRouter();
-  const { addressDetails, setAddressDetails, setFormattedAddress } = useBookingStore();
+  const { addressDetails, setAddressDetails } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<AddressFormData>({
@@ -32,6 +33,8 @@ const AddressDetailsPage = () => {
         propertyType: 'Home',
         propertyFunction: 'Private',
         city: 'Pretoria',
+        suburb: '',
+        accessCodeRequired: 'no',
     },
     mode: 'onChange',
   });
@@ -61,42 +64,6 @@ const AddressDetailsPage = () => {
   const handleSubmit = (data: AddressFormData) => {
     setIsSubmitting(true);
     setAddressDetails(data as AddressDetails);
-
-    // Manual formatting based on the submitted data
-    let formattedAddress = '';
-    const cityDisplay = data.city === 'Other' ? data.otherCityDescription : data.city;
-    const suburbDisplay = data.suburb === 'Other' ? data.otherSuburbDescription : data.suburb;
-
-    switch (data.propertyType) {
-        case 'Home':
-            formattedAddress = `${data.houseNumber} ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Complex':
-            const complex = data.complexName === 'Other' ? data.otherComplexName : data.complexName;
-            formattedAddress = `Unit ${data.unitNumber}, ${complex}, ${data.streetNumber || ''} ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Estate':
-            formattedAddress = `Stand ${data.standNumber}, ${data.houseNumber} ${data.streetNameInEstate}, ${data.estateName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Complex in an Estate':
-            const complexInEstate = data.complexName === 'Other' ? data.otherComplexName : data.complexName;
-            formattedAddress = `Unit ${data.unitNumber}, ${complexInEstate}, ${data.streetNameInEstate}, ${data.estateName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Office':
-            formattedAddress = `${data.officeName}, ${data.officeParkName ? data.officeParkName + ', ' : ''}${data.streetNumber || ''} ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Small Holding':
-            formattedAddress = `${data.holdingName}, ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Farm':
-            formattedAddress = `${data.farmName}, ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-        case 'Other':
-            formattedAddress = `${data.otherPropertyType}, ${data.streetNumber || ''} ${data.streetName}, ${suburbDisplay}, ${cityDisplay}`;
-            break;
-    }
-
-    setFormattedAddress(formattedAddress.trim().replace(/ ,/g, ',').replace(/, ,/g, ','));
     router.push('/item_to_repair');
   };
 
