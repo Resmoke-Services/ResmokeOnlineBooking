@@ -23,48 +23,23 @@ import { Input } from "@/components/ui/input";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { useRouter } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
+import { addressDetailsSchema } from "@/lib/schemas";
 
-// Define the schema with all possible fields
-const formSchema = z.object({
-  propertyType: z.string().min(1, "Property type is required"),
-  propertyFunction: z.string().min(1, "Property function is required"),
-  suburb: z.string().min(1, "Suburb is required"),
-  city: z.string().min(1, "City is required"),
-  otherCityDescription: z.string().optional(),
-  otherSuburbDescription: z.string().optional(),
-  houseNumber: z.string().optional(),
-  streetName: z.string().optional(),
-  unitNumber: z.string().optional(),
-  complexName: z.string().optional(),
-  otherComplexName: z.string().optional(),
-  streetNumber: z.string().optional(),
-  buildingName: z.string().optional(),
-  floorNumber: z.string().optional(),
-  roomNumber: z.string().optional(),
-  estateName: z.string().optional(),
-  accessCode: z.string().optional(),
-  holdingName: z.string().optional(),
-  farmName: z.string().optional(),
-  areaName: z.string().optional(),
-  otherPropertyType: z.string().optional(),
-  accessCodeRequired: z.enum(["yes", "no"]).optional(),
-});
-
-type AddressFormValues = z.infer<typeof formSchema>;
+type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { addressDetails, setAddressDetails } = useBookingStore();
+  const { addressDetails, setAddressDetails: setStoreAddressDetails } = useBookingStore();
 
   const form = useForm<AddressFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(addressDetailsSchema),
     defaultValues: addressDetails || {
-        propertyType: "",
-        propertyFunction: "",
-        suburb: "",
-        city: "",
-        accessCodeRequired: "no",
+      propertyType: undefined,
+      propertyFunction: 'Private',
+      suburb: "",
+      city: undefined,
     },
+     mode: 'onChange',
   });
 
   const propertyType = form.watch("propertyType");
@@ -73,7 +48,7 @@ export default function AddressDetailsPage() {
   const complexName = form.watch("complexName");
 
   function onSubmit(data: AddressFormValues) {
-    setAddressDetails(data);
+    setStoreAddressDetails(data);
     router.push("/item_to_repair");
   }
 
@@ -103,11 +78,12 @@ export default function AddressDetailsPage() {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="Home">Home</SelectItem>
-                    <SelectItem value="Business">Business</SelectItem>
                     <SelectItem value="Complex">Complex</SelectItem>
-                    <SelectItem value="Apartment">Apartment</SelectItem>
                     <SelectItem value="Estate">Estate</SelectItem>
-                    <SelectItem value="Holding">Holding/Farm</SelectItem>
+                    <SelectItem value="Complex in an Estate">Complex in an Estate</SelectItem>
+                    <SelectItem value="Office">Office</SelectItem>
+                    <SelectItem value="Small Holding">Small Holding</SelectItem>
+                    <SelectItem value="Farm">Farm</SelectItem>
                     <SelectItem value="Other">Other</SelectItem>
                   </SelectContent>
                 </Select>
@@ -167,9 +143,6 @@ export default function AddressDetailsPage() {
               </FormItem>
             )}
           />
-          {suburb === 'Other' && (
-               <FormField control={form.control} name="otherSuburbDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Sunninghill" /></FormControl><FormMessage /></FormItem>)} />
-          )}
 
           {/* Dynamically render fields based on propertyType */}
           {propertyType === 'Home' && (
