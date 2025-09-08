@@ -1,4 +1,3 @@
-
 /** @type {import('next').NextConfig} */
 import withPWAInit from "@ducanh2912/next-pwa";
 
@@ -9,44 +8,18 @@ const withPWA = withPWAInit({
   skipWaiting: true,
   cacheOnFrontEndNav: true,
   aggressiveFrontEndNavCaching: true,
-  cacheStartUrl: true,
-  dynamicStartUrl: true,
-  fallbacks: {
-    document: "/offline",
-  },
+  reloadOnOnline: true,
+  swcMinify: true,
   workboxOptions: {
-    importScripts: [],
-    runtimeCaching: [
-      {
-        urlPattern: /^https?.*/,
-        handler: 'NetworkFirst',
-        options: {
-          cacheName: 'offlineCache',
-          expiration: {
-            maxEntries: 200,
-          },
-        },
-      },
-    ],
+    disableDevLogs: true,
   },
 });
 
 const nextConfig = {
   output: 'export',
-  reactStrictMode: true,
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "firebasestorage.googleapis.com",
-        port: "",
-        pathname: "/**",
-      },
-    ],
   },
 };
 
 export default withPWA(nextConfig);
-
-    

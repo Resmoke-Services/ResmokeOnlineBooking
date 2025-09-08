@@ -43,6 +43,15 @@ const initialFormState: AddressDetailsFormData = {
     houseNumber: '',
     streetName: '',
     accessCodeRequired: 'no',
+    complexName: '',
+    estateName: '',
+    holdingName: '',
+    farmName: '',
+    officeName: '',
+    otherPropertyType: '',
+    standNumber: '',
+    streetNameInEstate: '',
+    unitNumber: ''
 };
 
 
