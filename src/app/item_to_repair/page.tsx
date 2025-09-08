@@ -45,7 +45,7 @@ export default function ItemToRepairPage() {
   
   useEffect(() => {
     if (!user) {
-      router.replace('/user_profile');
+      router.replace('/auth');
     }
   }, [user, router]);
   
@@ -61,7 +61,7 @@ export default function ItemToRepairPage() {
     setItemsToRepair(finalItems);
     setProblemDescriptions(finalDescriptions);
     
-    router.push("/payment_and_terms");
+    router.push("/select_datetime");
   }
 
   if (!user) {

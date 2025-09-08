@@ -1,33 +1,26 @@
-import withPWAInit from '@ducanh2912/next-pwa';
+/** @type {import('next').NextConfig} */
+import withPWA from '@ducanh2912/next-pwa';
 
-const withPWA = withPWAInit({
+const pwaConfig = withPWA({
   dest: 'public',
-  disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
 });
 
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  reactStrictMode: true,
   images: {
     unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/**',
       },
     ],
   },
-  webpack: (config) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      net: false,
-      os: false,
-    };
-    return config;
-  },
 };
 
-export default withPWA(nextConfig);
+export default pwaConfig(nextConfig);

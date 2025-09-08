@@ -82,7 +82,7 @@ export default function AddressDetailsPage() {
         accessCodeRequired: data.accessCodeRequired,
     };
     setStoreAddressDetails(processedData as any);
-    router.push("/item_to_repair");
+    router.push("/payment_and_terms");
   }
 
   const renderFormFields = (type: PropertyType) => {
@@ -541,3 +541,5 @@ export default function AddressDetailsPage() {
     </BookingFlowLayout>
   );
 }
+
+    

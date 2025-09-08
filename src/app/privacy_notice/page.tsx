@@ -15,14 +15,11 @@ export default function PrivacyNoticePage() {
 
   const handleAccept = () => {
     setIsProcessing(true);
-    // Get the 'next' URL from query params, or default to the booking type selection page.
     const nextUrl = searchParams.get('next') || '/booking/select-type';
-    // Navigate to the auth page, which will then handle redirection after login/guest selection.
     router.push(`/auth?next=${encodeURIComponent(nextUrl)}`);
   };
 
   const handleDecline = () => {
-    // Go back to the previous page (service category selection)
     router.back();
   };
 
