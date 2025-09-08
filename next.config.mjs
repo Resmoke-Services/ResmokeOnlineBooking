@@ -6,20 +6,19 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
-  reloadOnOnline: true,
-  swcMinify: true,
-  workboxOptions: {
-    disableDevLogs: true,
-  },
-  fallbacks: {
-    document: '/offline',
-  },
 });
 
 const nextConfig = {
-  // Your Next.js configuration options go here.
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'firebasestorage.googleapis.com',
+        port: '',
+        pathname: '/v0/b/resmokeonlinebooking.firebasestorage.app/**',
+      },
+    ],
+  },
 };
 
 export default withPWA(nextConfig);
