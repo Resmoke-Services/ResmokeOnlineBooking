@@ -18,21 +18,14 @@ let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
-// This function ensures Firebase is initialized only once, and only on the client.
-function initializeFirebaseServices() {
-    if (typeof window !== 'undefined') {
-        if (!getApps().length) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            app = getApp();
-        }
-        auth = getAuth(app);
-        firestore = getFirestore(app);
-    }
+if (typeof window !== 'undefined' && !getApps().length) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    firestore = getFirestore(app);
+} else if (typeof window !== 'undefined') {
+    app = getApp();
+    auth = getAuth(app);
+    firestore = getFirestore(app);
 }
-
-// Call the function to initialize services.
-// This will only execute in a client-side environment.
-initializeFirebaseServices();
 
 export { app, auth, firestore };
