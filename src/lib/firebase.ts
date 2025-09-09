@@ -16,20 +16,19 @@ let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
-if (getApps().length === 0) {
+if (typeof window !== 'undefined' && !getApps().length) {
   app = initializeApp(firebaseConfig);
-} else {
-  app = getApp();
-}
-
-try {
   auth = getAuth(app);
   firestore = getFirestore(app);
-} catch (error) {
-  console.error("Firebase service initialization error:", error);
-  // Handle the error appropriately, maybe by setting them to null or a mock object
+} else {
+  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  try {
+    firestore = getFirestore(app);
+  } catch (error) {
+    console.error("Firebase service initialization error:", error);
+    // Handle the error appropriately, maybe by setting them to null or a mock object
+  }
 }
 
-
-// Export the initialized instances
-export { app, auth, firestore };
+export { app as firebaseApp, auth, firestore };
