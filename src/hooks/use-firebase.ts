@@ -7,7 +7,7 @@ import { getAuth, type Auth } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import { firebaseConfig } from '@/lib/firebase';
 
-// Define the services interface without Firestore initially
+// Define the services interface
 export interface FirebaseServices {
   app: FirebaseApp;
   auth: Auth;
