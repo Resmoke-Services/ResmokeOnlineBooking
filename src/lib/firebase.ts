@@ -14,18 +14,37 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// This function ensures we only initialize Firebase on the client-side.
-const getClientSideFirebase = () => {
-  if (typeof window !== "undefined") {
-    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-    const auth = getAuth(app);
-    const firestore = getFirestore(app);
-    return { app, auth, firestore };
-  }
-  // Return null or mock objects on the server
-  return { app: null, auth: null, firestore: null };
+let app: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
+
+// This function ensures Firebase is initialized only once on the client-side.
+const initializeFirebaseServices = () => {
+    if (typeof window !== 'undefined') {
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+        auth = getAuth(app);
+        firestore = getFirestore(app);
+    }
 };
 
-const { app, auth, firestore } = getClientSideFirebase();
+// Call the function to initialize services. 
+// "use client" ensures this module-level code runs only in the browser.
+initializeFirebaseServices();
 
-export { app, auth, firestore, getClientSideFirebase as getFirebaseServices };
+// Export the initialized services.
+// On the server, these will be undefined, which is safe.
+// On the client, they will be the initialized instances.
+export { app, auth, firestore };
+
+// A utility function for components to get the services.
+// This is an alternative to direct imports if needed, but direct imports are fine in client components.
+export const getFirebaseServices = () => {
+    if (!app) {
+        initializeFirebaseServices();
+    }
+    return { app, auth, firestore };
+};
