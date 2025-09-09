@@ -73,7 +73,7 @@ export default function PaymentAndTermsPage() {
   
   useEffect(() => {
     if (store.bookingFor === 'personal' && billingOptions.length > 0) {
-      form.setValue('billingInformation', (billingOptions[0].value ?? '') as BillingInformation, { shouldValidate: true });
+      form.setValue('billingInformation', (billingOptions[0]?.value ?? '') as BillingInformation, { shouldValidate: true });
     }
   }, [store.bookingFor, billingOptions, form]);
 
