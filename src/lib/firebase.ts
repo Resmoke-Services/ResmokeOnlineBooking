@@ -3,7 +3,6 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-// Firebase config read from environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -13,26 +12,27 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Singleton pattern to ensure single instance of Firebase app
-const getFirebaseApp = (): FirebaseApp => {
-  if (getApps().length === 0) {
-    return initializeApp(firebaseConfig);
-  }
-  return getApp();
-};
-
-const app: FirebaseApp = getFirebaseApp();
+let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
-// Lazy initialization for services to avoid issues in different environments
+if (!getApps().length) {
+  try {
+    app = initializeApp(firebaseConfig);
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+    // Handle the error appropriately
+  }
+} else {
+  app = getApp();
+}
+
 try {
   auth = getAuth(app);
   firestore = getFirestore(app);
 } catch (error) {
-  console.error("Firebase initialization error:", error);
+  console.error("Firebase service initialization error:", error);
   // Handle the error appropriately, maybe by setting them to null or a mock object
-  // For now, we will let it throw during development to catch issues.
 }
 
 // Export the initialized instances
