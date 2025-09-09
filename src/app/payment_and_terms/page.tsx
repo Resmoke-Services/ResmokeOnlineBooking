@@ -73,7 +73,7 @@ export default function PaymentAndTermsPage() {
   
   useEffect(() => {
     if (store.bookingFor === 'personal' && billingOptions.length > 0) {
-      form.setValue('billingInformation', (billingOptions[0]?.value ?? '') as BillingInformation, { shouldValidate: true });
+      form.setValue('billingInformation', billingOptions[0]?.value ?? '', { shouldValidate: true });
     }
   }, [store.bookingFor, billingOptions, form]);
 
@@ -87,7 +87,7 @@ export default function PaymentAndTermsPage() {
     setIsSubmitting(true);
     
     store.setPaymentMethods([data.paymentMethod]);
-    store.setBillingInformation(data.billingInformation);
+    store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
     const bookingDetails = {
@@ -165,7 +165,7 @@ export default function PaymentAndTermsPage() {
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        value={field.value}
+                        value={field.value ?? ""}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                         disabled={store.bookingFor === 'personal'}
                       >
