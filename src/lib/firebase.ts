@@ -15,10 +15,10 @@ const firebaseConfig = {
 
 // Singleton pattern to ensure single instance of Firebase app
 const getFirebaseApp = (): FirebaseApp => {
-  if (!getApps().length) {
-    return initializeApp(firebaseConfig);
-  }
-  return getApp();
+    if (!getApps().length) {
+        return initializeApp(firebaseConfig);
+    }
+    return getApp();
 };
 
 const app: FirebaseApp = getFirebaseApp();
