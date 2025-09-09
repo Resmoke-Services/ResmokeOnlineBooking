@@ -14,43 +14,25 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Singleton pattern to ensure single instance of app
-const getFirebaseApp = (): FirebaseApp => {
-  if (getApps().length === 0) {
-    return initializeApp(firebaseConfig);
-  }
-  return getApp();
-};
+let app: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
 
-const app: FirebaseApp = getFirebaseApp();
-
-// Lazy initialization for Firebase services
-let authInstance: Auth | null = null;
-let firestoreInstance: Firestore | null = null;
-
-const getAuthInstance = (): Auth => {
-  if (typeof window !== 'undefined') {
-    if (!authInstance) {
-      authInstance = getAuth(app);
+// This function ensures Firebase is initialized only once, and only on the client.
+function initializeFirebaseServices() {
+    if (typeof window !== 'undefined') {
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+        auth = getAuth(app);
+        firestore = getFirestore(app);
     }
-    return authInstance;
-  }
-  // Return a mock or null object on the server
-  return null as unknown as Auth;
-};
+}
 
-const getFirestoreInstance = (): Firestore => {
-  if (typeof window !== 'undefined') {
-    if (!firestoreInstance) {
-      firestoreInstance = getFirestore(app);
-    }
-    return firestoreInstance;
-  }
-  // Return a mock or null object on the server
-  return null as unknown as Firestore;
-};
+// Call the function to initialize services.
+// This will only execute in a client-side environment.
+initializeFirebaseServices();
 
-// Export functions that lazily initialize and return the services
-export const auth = getAuthInstance();
-export const firestore = getFirestoreInstance();
-export { app };
+export { app, auth, firestore };
