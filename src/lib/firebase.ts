@@ -1,3 +1,4 @@
+// This file is intended for client-side use only.
 "use client";
 
 import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
@@ -13,17 +14,24 @@ export const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Singleton instances for Firebase services
 let app: FirebaseApp;
-export let auth: Auth;
-export let firestore: Firestore;
+let auth: Auth;
+let firestore: Firestore;
 
-// Initialize Firebase on the client side
-if (typeof window !== 'undefined' && !getApps().length) {
-    app = initializeApp(firebaseConfig);
+function initializeFirebase() {
+  if (typeof window !== 'undefined') {
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApp();
+    }
     auth = getAuth(app);
     firestore = getFirestore(app);
-} else if (typeof window !== 'undefined') {
-    app = getApp();
-    auth = getAuth(app);
-    firestore = getFirestore(app);
+  }
 }
+
+// Initialize on first load
+initializeFirebase();
+
+export { app, auth, firestore };
