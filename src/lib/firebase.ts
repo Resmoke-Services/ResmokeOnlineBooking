@@ -12,26 +12,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// This function ensures Firebase is initialized only once.
-const getFirebaseApp = (): FirebaseApp => {
-  if (!getApps().length) {
-    return initializeApp(firebaseConfig);
-  } else {
-    return getApp();
-  }
-};
+// Singleton pattern to ensure single Firebase app instance
+const app: FirebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-const app = getFirebaseApp();
 let auth: Auth;
 let firestore: Firestore;
 
-// The try-catch block handles potential issues if services fail to initialize,
-// which is especially important in a server environment.
 try {
   auth = getAuth(app);
   firestore = getFirestore(app);
 } catch (error) {
-  console.error("Firebase service initialization error:", error);
+  console.error("Firebase initialization error:", error);
   // Handle the error appropriately, maybe by setting them to null or a mock object
 }
 
