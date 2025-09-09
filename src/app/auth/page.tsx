@@ -6,13 +6,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
-import { getFirebaseServices } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, User } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
+import { useFirebase } from '@/hooks/use-firebase';
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -30,6 +30,7 @@ export default function AuthPage() {
   
   const { user, setUserProfile } = useBookingStore();
   const firestore = useFirestore();
+  const { auth } = useFirebase();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -40,7 +41,6 @@ export default function AuthPage() {
   }, [user, router, nextUrl]);
 
   const handleGoogleSignIn = async () => {
-    const { auth } = getFirebaseServices();
     if (!firestore || !auth) {
       toast({
         variant: 'destructive',
@@ -134,7 +134,7 @@ export default function AuthPage() {
         <CardContent className="space-y-4">
           <Button 
             onClick={handleGoogleSignIn} 
-            disabled={isProcessing} 
+            disabled={isProcessing || !auth} 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
           >
             {isProcessing ? (

@@ -14,22 +14,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { getFirebaseServices } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useFirestore } from '@/hooks/use-firestore';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useFirebase } from '@/hooks/use-firebase';
 
 export const BookingHeader = () => {
   const { user, setUser, setUserProfile, resetBooking } = useBookingStore();
   const firestore = useFirestore();
+  const { auth } = useFirebase();
   const { toast } = useToast();
   const router = useRouter();
 
   const handleGoogleSignIn = async () => {
-    const { auth } = getFirebaseServices();
     if (!firestore || !auth) {
       toast({
         variant: 'destructive',
@@ -94,7 +94,6 @@ export const BookingHeader = () => {
   };
 
   const handleSignOut = async () => {
-    const { auth } = getFirebaseServices();
     if (!auth) return;
     try {
       await signOut(auth);
@@ -123,8 +122,6 @@ export const BookingHeader = () => {
     return initials.toUpperCase();
   }
   
-  const auth = getFirebaseServices().auth;
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
@@ -173,7 +170,7 @@ export const BookingHeader = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleGoogleSignIn} variant="outline">
+            <Button onClick={handleGoogleSignIn} variant="outline" disabled={!auth}>
               <LogIn className="mr-2 h-4 w-4" />
               Sign in with Google
             </Button>
