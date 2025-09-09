@@ -27,7 +27,7 @@ try {
   auth = getAuth(app);
   firestore = getFirestore(app);
 } catch (error) {
-  console.error("Firebase service initialization error:", error);
+  console.error("Firebase initialization error:", error);
   // Handle the error appropriately, maybe by setting them to null or a mock object
 }
 
