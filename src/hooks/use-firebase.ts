@@ -2,20 +2,35 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { firebaseConfig, type FirebaseServices } from '@/lib/firebase';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
+import { firebaseConfig } from '@/lib/firebase';
+
+// Define the services interface without Firestore initially
+export interface FirebaseServices {
+  app: FirebaseApp;
+  auth: Auth;
+  firestore: Firestore;
+}
 
 export function useFirebase(): FirebaseServices | null {
   const [services, setServices] = useState<FirebaseServices | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    const initialize = async () => {
+      // Dynamically import getFirestore only on the client side
+      const { getFirestore } = await import('firebase/firestore');
+
       const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
       const auth = getAuth(app);
       const firestore = getFirestore(app);
+
       setServices({ app, auth, firestore });
+    };
+
+    if (typeof window !== 'undefined') {
+      initialize();
     }
   }, []);
 
