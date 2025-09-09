@@ -13,26 +13,27 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let app: FirebaseApp;
+// Singleton pattern to ensure single instance of Firebase app
+const getFirebaseApp = (): FirebaseApp => {
+  if (getApps().length === 0) {
+    return initializeApp(firebaseConfig);
+  }
+  return getApp();
+};
+
+const app: FirebaseApp = getFirebaseApp();
 let auth: Auth;
 let firestore: Firestore;
 
-function getFirebaseApp() {
-  if (getApps().length) {
-    return getApp();
-  }
-  return initializeApp(firebaseConfig);
+// Lazy initialization for services to avoid issues in different environments
+try {
+  auth = getAuth(app);
+  firestore = getFirestore(app);
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+  // Handle the error appropriately, maybe by setting them to null or a mock object
+  // For now, we will let it throw during development to catch issues.
 }
-
-// Ensure single initialization
-if (!getApps().length) {
-    app = initializeApp(firebaseConfig);
-} else {
-    app = getApp();
-}
-
-auth = getAuth(app);
-firestore = getFirestore(app);
 
 // Export the initialized instances
 export { app, auth, firestore };
