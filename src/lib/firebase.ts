@@ -1,7 +1,9 @@
 
+"use client";
+
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, Auth } from 'firebase/auth';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,19 +18,16 @@ let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
+// Initialize Firebase on the client side
 if (typeof window !== 'undefined' && !getApps().length) {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   firestore = getFirestore(app);
-} else {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+} else if (getApps().length) {
+  app = getApp();
   auth = getAuth(app);
-  try {
-    firestore = getFirestore(app);
-  } catch (error) {
-    console.error("Firebase service initialization error:", error);
-    // Handle the error appropriately, maybe by setting them to null or a mock object
-  }
+  firestore = getFirestore(app);
 }
 
-export { app as firebaseApp, auth, firestore };
+// @ts-ignore - These will be initialized on the client
+export { app, auth, firestore };
