@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { useBookingStore } from '@/hooks/use-booking-store';
-import { auth } from '@/lib/firebase';
+import { getFirebaseServices } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useFirestore } from '@/hooks/use-firestore';
@@ -40,7 +40,8 @@ export default function AuthPage() {
   }, [user, router, nextUrl]);
 
   const handleGoogleSignIn = async () => {
-    if (!firestore) {
+    const { auth } = getFirebaseServices();
+    if (!firestore || !auth) {
       toast({
         variant: 'destructive',
         title: 'Initialization Error',

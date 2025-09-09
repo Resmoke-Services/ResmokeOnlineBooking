@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { auth } from '@/lib/firebase';
+import { getFirebaseServices } from '@/lib/firebase';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useFirestore } from '@/hooks/use-firestore';
@@ -29,11 +29,12 @@ export const BookingHeader = () => {
   const router = useRouter();
 
   const handleGoogleSignIn = async () => {
-    if (!firestore) {
+    const { auth } = getFirebaseServices();
+    if (!firestore || !auth) {
       toast({
         variant: 'destructive',
         title: 'Initialization Error',
-        description: 'Database is not ready. Please try again in a moment.',
+        description: 'Services are not ready. Please try again in a moment.',
       });
       return;
     }
@@ -93,6 +94,8 @@ export const BookingHeader = () => {
   };
 
   const handleSignOut = async () => {
+    const { auth } = getFirebaseServices();
+    if (!auth) return;
     try {
       await signOut(auth);
       resetBooking(); // Clear all booking and user data from the store
@@ -119,6 +122,8 @@ export const BookingHeader = () => {
     const initials = names.map(n => n[0]).join('');
     return initials.toUpperCase();
   }
+  
+  const auth = getFirebaseServices().auth;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -146,7 +151,7 @@ export const BookingHeader = () => {
                        <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
                     ) : (
                       <>
-                        <AvatarImage src={(auth.currentUser?.photoURL) || undefined} alt={user.displayName} />
+                        <AvatarImage src={(auth?.currentUser?.photoURL) || undefined} alt={user.displayName} />
                         <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
                       </>
                     )}

@@ -14,18 +14,30 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// Singleton pattern for Firebase services
 let app: FirebaseApp;
 let auth: Auth;
 let firestore: Firestore;
 
-if (typeof window !== 'undefined' && !getApps().length) {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    firestore = getFirestore(app);
-} else if (typeof window !== 'undefined') {
-    app = getApp();
-    auth = getAuth(app);
-    firestore = getFirestore(app);
+function getFirebaseServices() {
+    if (typeof window !== 'undefined') {
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+        
+        if (!auth) {
+            auth = getAuth(app);
+        }
+        
+        if (!firestore) {
+            firestore = getFirestore(app);
+        }
+    }
+    // Services will be undefined on the server, which is expected.
+    return { app, auth, firestore };
 }
 
-export { app, auth, firestore };
+// Export the getter function
+export { getFirebaseServices };
