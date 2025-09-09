@@ -1,4 +1,3 @@
-
 "use client";
 
 import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
@@ -15,27 +14,16 @@ export const firebaseConfig = {
 };
 
 let app: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
+export let auth: Auth;
+export let firestore: Firestore;
 
-// This function can be called from a client component's useEffect to initialize Firebase.
-export const getFirebaseServices = () => {
-    if (typeof window !== 'undefined') {
-        if (!getApps().length) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            app = getApp();
-        }
-
-        // Initialize services if they haven't been already
-        if (!auth) {
-            auth = getAuth(app);
-        }
-        if (!firestore) {
-            firestore = getFirestore(app);
-        }
-    }
-    
-    // On the server, these will be undefined, which is handled by the hook.
-    return { app, auth, firestore };
-};
+// Initialize Firebase on the client side
+if (typeof window !== 'undefined' && !getApps().length) {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    firestore = getFirestore(app);
+} else if (typeof window !== 'undefined') {
+    app = getApp();
+    auth = getAuth(app);
+    firestore = getFirestore(app);
+}
