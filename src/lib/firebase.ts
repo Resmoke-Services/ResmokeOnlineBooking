@@ -1,7 +1,7 @@
 
 "use client";
 
-import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import { initializeApp, getApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 
@@ -14,30 +14,18 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Singleton pattern for Firebase services
-let app: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
-
-function getFirebaseServices() {
-    if (typeof window !== 'undefined') {
-        if (!getApps().length) {
-            app = initializeApp(firebaseConfig);
-        } else {
-            app = getApp();
-        }
-        
-        if (!auth) {
-            auth = getAuth(app);
-        }
-        
-        if (!firestore) {
-            firestore = getFirestore(app);
-        }
-    }
-    // Services will be undefined on the server, which is expected.
+// This function ensures we only initialize Firebase on the client-side.
+const getClientSideFirebase = () => {
+  if (typeof window !== "undefined") {
+    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+    const auth = getAuth(app);
+    const firestore = getFirestore(app);
     return { app, auth, firestore };
-}
+  }
+  // Return null or mock objects on the server
+  return { app: null, auth: null, firestore: null };
+};
 
-// Export the getter function
-export { getFirebaseServices };
+const { app, auth, firestore } = getClientSideFirebase();
+
+export { app, auth, firestore, getClientSideFirebase as getFirebaseServices };
