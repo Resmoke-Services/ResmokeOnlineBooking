@@ -5,7 +5,7 @@ import { getFirestore, Firestore } from 'firebase/firestore';
 
 // Firebase config read from environment variables
 const firebaseConfig = {
- apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
@@ -18,13 +18,19 @@ let auth: Auth;
 let firestore: Firestore;
 
 function getFirebaseApp() {
-    if (!getApps().length) {
-        return initializeApp(firebaseConfig);
-    }
+  if (getApps().length) {
     return getApp();
+  }
+  return initializeApp(firebaseConfig);
 }
 
-app = getFirebaseApp();
+// Ensure single initialization
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApp();
+}
+
 auth = getAuth(app);
 firestore = getFirestore(app);
 
