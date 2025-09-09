@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -16,16 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/hooks/use-firestore';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useFirebase } from '@/hooks/use-firebase';
+import { auth, firestore } from '@/lib/firebase';
 
 export const BookingHeader = () => {
   const { user, setUser, setUserProfile, resetBooking } = useBookingStore();
-  const firestore = useFirestore();
-  const { auth } = useFirebase();
   const { toast } = useToast();
   const router = useRouter();
 

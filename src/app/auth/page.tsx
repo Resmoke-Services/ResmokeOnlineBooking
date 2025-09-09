@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -8,11 +7,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { useBookingStore } from '@/hooks/use-booking-store';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useFirestore } from '@/hooks/use-firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, User } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
-import { useFirebase } from '@/hooks/use-firebase';
+import { auth, firestore } from '@/lib/firebase';
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -29,8 +27,6 @@ export default function AuthPage() {
   const nextUrl = searchParams.get('next') || '/booking/select-type';
   
   const { user, setUserProfile } = useBookingStore();
-  const firestore = useFirestore();
-  const { auth } = useFirebase();
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
 

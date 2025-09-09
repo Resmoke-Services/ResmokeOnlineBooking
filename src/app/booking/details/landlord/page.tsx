@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +21,7 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
-import { useFirestore } from "@/hooks/use-firestore";
+import { firestore } from '@/lib/firebase';
 
 type LandlordBookingFormData = z.infer<typeof landlordBookingSchema>;
 
@@ -30,7 +29,6 @@ export default function LandlordDetailsPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
-  const firestore = useFirestore();
 
   useEffect(() => {
     if (!store.user) {
