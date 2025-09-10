@@ -14,9 +14,9 @@ import { format, parseISO, startOfDay } from "date-fns";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { type BookingData } from "@/lib/types";
 
-// Helper function to create a plain object from the Zustand store proxy
-const getPlainStoreObject = (store: BookingData) => {
-  return JSON.parse(JSON.stringify(store));
+// Helper function to create a plain object from a store's state
+const getPlainStoreObject = (state: BookingData) => {
+  return JSON.parse(JSON.stringify(state));
 };
 
 
@@ -89,7 +89,7 @@ export default function SelectDateTimePage() {
     try {
       // Get a plain object representation of the store's state
       // This is important to ensure server actions receive serializable data
-      const plainStoreState = getPlainStoreObject(store.$state);
+      const plainStoreState = getPlainStoreObject(store.getState());
 
       const confirmationDetails = {
         ...plainStoreState,
