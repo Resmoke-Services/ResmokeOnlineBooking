@@ -89,7 +89,7 @@ export default function SelectDateTimePage() {
     try {
       // Get a plain object representation of the store's state
       // This is important to ensure server actions receive serializable data
-      const plainStoreState = getPlainStoreObject(store.getState());
+      const plainStoreState = getPlainStoreObject(store);
 
       const confirmationDetails = {
         ...plainStoreState,
@@ -173,7 +173,7 @@ export default function SelectDateTimePage() {
                 )}
             </Button>
         </CardFooter>
-      </Card>
+      </card>
     </BookingFlowLayout>
   );
 }
