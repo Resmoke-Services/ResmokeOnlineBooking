@@ -12,6 +12,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
 import BookingFlowLayout from "@/components/booking-flow-layout";
+import { type BookingData } from "@/lib/types";
+
+// Helper function to create a plain object from the Zustand store proxy
+const getPlainStoreObject = (store: BookingData) => {
+  return JSON.parse(JSON.stringify(store));
+};
+
 
 export default function SelectDateTimePage() {
   const router = useRouter();
@@ -76,19 +83,22 @@ export default function SelectDateTimePage() {
     setIsSubmitting(true);
     
     const formattedDate = format(selectedDate, "yyyy-MM-dd");
-    const slotStart = `${formattedDate}T${selectedTime}:00`;
 
     store.setSelectedDateTime({ date: formattedDate, time: selectedTime });
 
     try {
+      // Get a plain object representation of the store's state
+      // This is important to ensure server actions receive serializable data
+      const plainStoreState = getPlainStoreObject(store.$state);
+
       const confirmationDetails = {
-        ...store, // Pass the whole store state
-        slotStart,
+        ...plainStoreState,
+        selectedDateTime: { date: formattedDate, time: selectedTime },
       };
       
       const confirmation = await confirmBooking(confirmationDetails);
       store.setWebhookConfirmation(confirmation);
-      router.push("/booking/confirmation");
+      router.push("/confirmation");
       
     } catch (error: any) {
       console.error("Booking failed:", error);

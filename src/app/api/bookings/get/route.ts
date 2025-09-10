@@ -2,13 +2,14 @@
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 
+// This forces the route to be evaluated dynamically.
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 export async function GET() {
   try {
     const bookingsCollection = adminDb.collection('bookings');
-    const snapshot = await bookingsCollection.get();
+    // Fetch bookings ordered by creation date, descending.
+    const snapshot = await bookingsCollection.orderBy('createdAt', 'desc').get();
 
     if (snapshot.empty) {
       return NextResponse.json({ bookings: [] }, { status: 200 });
@@ -19,6 +20,6 @@ export async function GET() {
     return NextResponse.json({ bookings }, { status: 200 });
   } catch (error) {
     console.error('Error fetching bookings:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ message: 'Internal Server Error while fetching bookings' }, { status: 500 });
   }
 }
