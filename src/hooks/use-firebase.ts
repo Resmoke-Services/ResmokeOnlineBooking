@@ -20,7 +20,7 @@ export function useFirebase(): FirebaseServices | null {
   useEffect(() => {
     // This function will only run on the client side
     const initialize = async () => {
-      // Dynamically import getFirestore only when this effect runs in the browser
+      // Dynamically import getFirestore only on the client
       const { getFirestore } = await import('firebase/firestore');
 
       const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
@@ -30,11 +30,11 @@ export function useFirebase(): FirebaseServices | null {
       setServices({ app, auth, firestore });
     };
 
-    // The check for `typeof window` is an extra safeguard.
+    // useEffect only runs on the client, so this check is a safeguard.
     if (typeof window !== 'undefined') {
       initialize();
     }
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   return services;
 }
