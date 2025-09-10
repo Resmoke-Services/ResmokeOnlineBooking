@@ -173,7 +173,7 @@ export default function SelectDateTimePage() {
                 )}
             </Button>
         </CardFooter>
-      </card>
+      </Card>
     </BookingFlowLayout>
   );
 }
