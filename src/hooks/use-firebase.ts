@@ -2,35 +2,44 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-// Statically import getFirestore to ensure the service is registered
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { firebaseConfig } from '@/lib/firebase';
+import { getCoreFirebaseServices } from '@/lib/firebase';
+import type { FirebaseApp } from 'firebase/app';
+import type { Auth } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
 
-// Define the services interface
+// The interface now includes Firestore again
 export interface FirebaseServices {
   app: FirebaseApp;
   auth: Auth;
   firestore: Firestore;
 }
 
+/**
+ * A hook to safely access the initialized Firebase services on the client side.
+ * Returns null during server-rendering and on the initial client render,
+ * then provides the services once they are available.
+ * This hook is now responsible for lazily initializing Firestore.
+ */
 export function useFirebase(): FirebaseServices | null {
   const [services, setServices] = useState<FirebaseServices | null>(null);
 
   useEffect(() => {
-    const initialize = () => {
-      const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-      const auth = getAuth(app);
-      // This call is now safe because of the static import above
-      const firestore = getFirestore(app);
+    // This function will run only on the client side
+    const initialize = async () => {
+      // Get the core services (App, Auth) which are safe to get
+      const coreServices = getCoreFirebaseServices();
+      
+      // Dynamically import getFirestore to ensure it's a client-side only operation
+      const { getFirestore } = await import('firebase/firestore');
+      
+      const firestore = getFirestore(coreServices.app);
 
-      setServices({ app, auth, firestore });
+      // Set the full suite of services, including Firestore
+      setServices({ ...coreServices, firestore });
     };
 
     initialize();
-    
-  }, []); // The empty dependency array ensures this runs only once per component mount
+  }, []); // Empty dependency array ensures this runs once on mount
 
   return services;
 }
