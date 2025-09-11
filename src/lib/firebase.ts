@@ -23,6 +23,10 @@ export function getFirebaseServices(): FirebaseServices {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID!,
   };
 
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    throw new Error('Firebase config is not set. Please check your .env file.');
+  }
+
   const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
   const auth = getAuth(app);
   const firestore = getFirestore(app);
