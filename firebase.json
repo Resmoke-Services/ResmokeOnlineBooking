@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "resmokeonlinebooking-pwa",
     "source": ".",
     "ignore": [
       "firebase.json",
