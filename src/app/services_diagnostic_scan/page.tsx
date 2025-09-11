@@ -34,7 +34,7 @@ const serviceOptions = [
       alt: "Technician performing diagnostic scan",
       hint: "car diagnostic"
     },
-    href: "/auth?next=/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   },
   {
     type: 'onsite',
@@ -72,7 +72,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/auth?next=/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   }
 ];
 
