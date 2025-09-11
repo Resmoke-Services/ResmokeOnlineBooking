@@ -1,9 +1,13 @@
 
+'use client';  // 👈 This makes the whole component a client component
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { ServiceCard } from '@/components/service-card';
 import { BookingHeader } from '@/components/booking-header';
 import ServiceSelectionTracker from '@/components/service-selection-tracker';
+import { useFirebase } from '@/hooks/use-firebase';
+import PageSpinner from '@/components/page-spinner';
 
 const services = [
   {
@@ -33,6 +37,12 @@ const services = [
 ];
 
 export default function Home() {
+  const firebase = useFirebase();
+
+  if (!firebase) {
+    return <PageSpinner />;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <ServiceSelectionTracker selections={[]} />
@@ -55,8 +65,8 @@ export default function Home() {
         <section id="services" className="py-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">Online Booking</h2>
-                <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT A SERVICE</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">Online Booking</h2>
+              <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT A SERVICE</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {services.map((service) => (
@@ -65,7 +75,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        
       </main>
 
       <footer className="w-full bg-card/50 border-t border-border/50">
