@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -134,7 +135,7 @@ export default function AuthPage() {
             disabled={isProcessing || !firebase} 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
           >
-            {isProcessing ? (
+            {isProcessing || !firebase ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Processing...
