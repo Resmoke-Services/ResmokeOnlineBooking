@@ -26,16 +26,9 @@ export function useFirebase(): FirebaseServices | null {
   useEffect(() => {
     // This function will run only on the client side
     const initialize = async () => {
-      // Get the core services (App, Auth) which are safe to get
-      const coreServices = getCoreFirebaseServices();
-      
-      // Dynamically import getFirestore to ensure it's a client-side only operation
-      const { getFirestore } = await import('firebase/firestore');
-      
-      const firestore = getFirestore(coreServices.app);
-
-      // Set the full suite of services, including Firestore
-      setServices({ ...coreServices, firestore });
+      // Get the core services (App, Auth, Firestore) which are safe to get on client
+      const allServices = getCoreFirebaseServices();
+      setServices(allServices as FirebaseServices);
     };
 
     initialize();
