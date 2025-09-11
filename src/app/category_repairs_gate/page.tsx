@@ -35,7 +35,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   }
 ];
 

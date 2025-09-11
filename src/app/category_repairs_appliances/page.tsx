@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   },
   {
     type: 'workshop',
@@ -72,7 +72,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   },
   {
     type: 'collection_delivery',
@@ -118,7 +118,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "delivery van"
     },
-    href: "/booking/select-type"
+    href: "/privacy_notice?next=/booking/select-type"
   }
 ];
 
