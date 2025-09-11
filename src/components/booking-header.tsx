@@ -167,7 +167,7 @@ export const BookingHeader = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleGoogleSignIn} variant="outline" disabled={true}>
+            <Button onClick={handleGoogleSignIn} variant="outline" disabled={!firebase}>
               <LogIn className="mr-2 h-4 w-4" />
               Sign in with Google
             </Button>
