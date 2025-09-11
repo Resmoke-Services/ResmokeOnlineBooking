@@ -19,7 +19,7 @@ export const firebaseConfig = {
 interface FirebaseServices {
   app: FirebaseApp;
   auth: Auth;
-  firestore: Firestore | null; // Firestore can be null initially
+  firestore: Firestore; 
 }
 
 // A private variable to hold the initialized core services
