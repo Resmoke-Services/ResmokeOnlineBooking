@@ -1,7 +1,9 @@
 {
   "hosting": {
     "site": "resmokeonlinebooking-pwa",
-    "source": ".",
+    // This now points to your actual app folder
+    "source": "ResmokeOnlineBooking",
+
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -25,3 +27,4 @@
     ]
   }
 }
+
