@@ -16,7 +16,7 @@ export default function PrivacyNoticePage() {
   const handleAccept = () => {
     setIsProcessing(true);
     const nextUrl = searchParams.get('next') || '/booking/select-type';
-    router.push(`/auth?next=${encodeURIComponent(nextUrl)}`);
+    router.push(nextUrl);
   };
 
   const handleDecline = () => {
