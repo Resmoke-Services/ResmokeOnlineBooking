@@ -4,7 +4,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/hooks/use-booking-store";
-import { getAvailableSlots, confirmBooking } from "@/app/actions/booking-actions";
+import { getAvailableSlots } from "@/app/actions/booking-actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,13 +12,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { type BookingData } from "@/lib/types";
-
-// Helper function to create a plain object from a store's state
-const getPlainStoreObject = (state: BookingData) => {
-  return JSON.parse(JSON.stringify(state));
-};
-
 
 export default function SelectDateTimePage() {
   const router = useRouter();
@@ -85,31 +78,9 @@ export default function SelectDateTimePage() {
     const formattedDate = format(selectedDate, "yyyy-MM-dd");
 
     store.setSelectedDateTime({ date: formattedDate, time: selectedTime });
-
-    try {
-      // Get a plain object representation of the store's state
-      // This is important to ensure server actions receive serializable data
-      const plainStoreState = getPlainStoreObject(store);
-
-      const confirmationDetails = {
-        ...plainStoreState,
-        selectedDateTime: { date: formattedDate, time: selectedTime },
-      };
-      
-      const confirmation = await confirmBooking(confirmationDetails);
-      store.setWebhookConfirmation(confirmation);
-      router.push("/confirmation");
-      
-    } catch (error: any) {
-      console.error("Booking failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Booking Failed",
-        description: error.message || "An unexpected error occurred. Please try again.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    
+    // Navigate to the next step, do not confirm booking here
+    router.push("/payment_and_terms");
   };
 
 
@@ -166,10 +137,10 @@ export default function SelectDateTimePage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Confirming...
+                    Processing...
                   </>
                 ) : (
-                  "Confirm Booking"
+                  "Next"
                 )}
             </Button>
         </CardFooter>
