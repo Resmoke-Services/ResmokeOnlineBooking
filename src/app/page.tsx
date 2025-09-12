@@ -1,13 +1,15 @@
 
-'use client';  // 👈 This makes the whole component a client component
+'use client';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { ServiceCard } from '@/components/service-card';
 import { BookingHeader } from '@/components/booking-header';
-import ServiceSelectionTracker from '@/components/service-selection-tracker';
 import { useFirebase } from '@/hooks/use-firebase';
 import PageSpinner from '@/components/page-spinner';
+
+const ServiceSelectionTracker = dynamic(() => import('@/components/service-selection-tracker'), { ssr: false });
 
 const services = [
   {
