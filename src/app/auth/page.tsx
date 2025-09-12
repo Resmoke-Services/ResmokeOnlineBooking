@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, User } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
 import { useFirebase } from '@/hooks/use-firebase';
+import PageSpinner from '@/components/page-spinner';
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -119,6 +120,9 @@ export default function AuthPage() {
     router.push(nextUrl);
   };
 
+  if (!firebase) {
+    return <PageSpinner />;
+  }
 
   return (
     <BookingFlowLayout>
@@ -135,7 +139,7 @@ export default function AuthPage() {
             disabled={isProcessing || !firebase} 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
           >
-            {isProcessing || !firebase ? (
+            {isProcessing ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                 Processing...
