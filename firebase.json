@@ -1,6 +1,6 @@
 {
   "apphosting": {
-    "source": ".",
+    "source": "ResmokeOnlineBooking",
     "site": "resmokeonlinebooking-pwa"
   }
 }
