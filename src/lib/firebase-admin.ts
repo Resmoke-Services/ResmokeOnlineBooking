@@ -1,12 +1,10 @@
-
 import { initializeApp, getApps, App, cert } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
+import { getAuth, Auth } from 'firebase-admin/auth';
 
-// Ensure required environment variables are present
+// This configuration relies on environment variables being set in your deployment environment.
 if (!process.env.FIREBASE_PROJECT_ID || !process.env.FIREBASE_CLIENT_EMAIL || !process.env.FIREBASE_PRIVATE_KEY) {
-    console.warn("Firebase Admin environment variables are not fully set. Admin SDK will not be initialized.");
-    // Return a mock or throw an error if you want to handle this more strictly
-    // For now, we will let it fail later if used.
+  console.warn("Firebase Admin environment variables are not fully set. Admin SDK will not be initialized.");
 }
 
 const serviceAccount = {
@@ -29,5 +27,6 @@ if (!getApps().length && serviceAccount.projectId && serviceAccount.clientEmail 
 }
 
 const adminDb: Firestore = adminApp.name ? getFirestore(adminApp) : {} as Firestore;
+const adminAuth: Auth = adminApp.name ? getAuth(adminApp) : {} as Auth;
 
-export { adminDb };
+export { adminDb, adminAuth };
