@@ -8,7 +8,7 @@
     pkgs.graphicsmagick-imagemagick-compat
     pkgs.doas-sudo-shim
     pkgs.docker
-    pkgs.nodejs_20
+    pkgs.nodejs_22
     pkgs.zulu
   ];
   # Sets environment variables in the workspace
