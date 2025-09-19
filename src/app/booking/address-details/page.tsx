@@ -20,12 +20,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { useRouter } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
 import { addressDetailsSchema } from "@/lib/schemas";
-import { propertyTypes } from "@/lib/types";
+import { propertyTypes, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes, midrandComplexes, pretoriaComplexes } from "@/lib/types";
+import { useMemo } from "react";
+import { ChevronLeft } from "lucide-react";
 
 type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
@@ -38,127 +41,260 @@ export default function AddressDetailsPage() {
     defaultValues: addressDetails || {
       propertyType: undefined,
       propertyFunction: 'Private',
-      suburb: "",
       city: undefined,
+      suburb: undefined,
     },
-     mode: 'onChange',
+    mode: 'onChange',
   });
 
-  const propertyType = form.watch("propertyType");
-  const city = form.watch("city");
+  const { watch, control } = form;
+  const propertyType = watch("propertyType");
+  const city = watch("city");
+  const suburb = watch("suburb");
+  const complexName = watch("complexName");
+
+  const suburbOptions = useMemo(() => {
+    switch (city) {
+      case 'Centurion': return centurionSuburbs;
+      case 'Pretoria': return pretoriaSuburbs;
+      case 'Midrand': return midrandSuburbs;
+      default: return [];
+    }
+  }, [city]);
+
+  const complexOptions = useMemo(() => {
+    if (!city || !suburb) return [];
+    if (city === 'Centurion') return centurionComplexes[suburb] || ['Other'];
+    if (city === 'Pretoria') return pretoriaComplexes[suburb] || ['Other'];
+    if (city === 'Midrand') return midrandComplexes[suburb] || ['Other'];
+    return ['Other'];
+  }, [city, suburb]);
+
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    router.push("/booking/item-to-repair");
+    router.push("/item_to_repair");
+  }
+
+  const renderConditionalFields = () => {
+    switch (propertyType) {
+      case 'Home':
+        return (
+          <>
+            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+          </>
+        );
+      case 'Complex':
+      case 'Complex in an Estate':
+         return (
+          <>
+            <FormField control={control} name="unitNumber" render={({ field }) => ( <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            {propertyType === 'Complex in an Estate' && (
+              <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            )}
+             <FormField
+                control={control}
+                name="complexName"
+                render={({ field }) => (
+                <FormItem>
+                    <FormLabel>Complex Name</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="Select a complex" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                            {complexOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                </FormItem>
+                )}
+            />
+            {complexName === 'Other' && (
+                <FormField control={control} name="otherComplexName" render={({ field }) => ( <FormItem><FormLabel>Please Specify Complex Name</FormLabel><FormControl><Input {...field} placeholder="e.g., The Willows" /></FormControl><FormMessage /></FormItem>)} />
+            )}
+            {propertyType === 'Complex' && <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />}
+            {propertyType === 'Complex in an Estate' && <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />}
+             <FormField
+                control={form.control}
+                name="accessCodeRequired"
+                render={({ field }) => (
+                    <FormItem className="space-y-3">
+                        <FormLabel>Is an access code required?</FormLabel>
+                        <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormLabel className="font-normal">Yes</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormLabel className="font-normal">No</FormLabel>
+                                </FormItem>
+                            </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+          </>
+        );
+      case 'Estate':
+         return (
+          <>
+            <FormField control={control} name="standNumber" render={({ field }) => ( <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+             <FormField
+                control={form.control}
+                name="accessCodeRequired"
+                render={({ field }) => (
+                    <FormItem className="space-y-3">
+                        <FormLabel>Is an access code required?</FormLabel>
+                        <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormLabel className="font-normal">Yes</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormLabel className="font-normal">No</FormLabel>
+                                </FormItem>
+                            </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+          </>
+        );
+      case 'Office':
+        return (
+          <>
+            <FormField control={control} name="officeName" render={({ field }) => ( <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="officeParkName" render={({ field }) => ( <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+             <FormField
+                control={form.control}
+                name="accessCodeRequired"
+                render={({ field }) => (
+                    <FormItem className="space-y-3">
+                        <FormLabel>Is an access code required?</FormLabel>
+                        <FormControl>
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormLabel className="font-normal">Yes</FormLabel>
+                                </FormItem>
+                                <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormLabel className="font-normal">No</FormLabel>
+                                </FormItem>
+                            </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+          </>
+        );
+      case 'Small Holding':
+        return (
+            <>
+                <FormField control={control} name="holdingName" render={({ field }) => ( <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            </>
+        );
+      case 'Farm':
+        return (
+            <>
+                <FormField control={control} name="farmName" render={({ field }) => ( <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            </>
+        );
+      case 'Other':
+        return (
+            <>
+                <FormField control={control} name="otherPropertyType" render={({ field }) => ( <FormItem><FormLabel>Please Specify Property Type</FormLabel><FormControl><Input {...field} placeholder="e.g., Warehouse, School" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            </>
+        );
+      default:
+        return null;
+    }
   }
 
   return (
     <div className="max-w-2xl mx-auto p-4 sm:p-6 md:p-8">
       <Progress value={40} className="mb-8" />
       <h2 className="text-2xl font-bold mb-4 text-center">Address Details</h2>
-      <p className="text-center text-gray-600 mb-8">
+      <p className="text-center text-muted-foreground mb-8">
         Where will we be doing the repair?
       </p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="propertyType"
-            render={({ field }) => (
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField control={control} name="propertyType" render={({ field }) => (
               <FormItem>
                 <FormLabel>Property Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select property type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {propertyTypes.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>City</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a city" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="Pretoria">Pretoria</SelectItem>
-                    <SelectItem value="Centurion">Centurion</SelectItem>
-                    <SelectItem value="Midrand">Midrand</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
+                  <FormControl><SelectTrigger><SelectValue placeholder="Select property type" /></SelectTrigger></FormControl>
+                  <SelectContent>{propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type}</SelectItem>))}</SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-           {city === 'Other' && (
-             <FormField control={form.control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg" /></FormControl><FormMessage /></FormItem>)} />
-           )}
+          {propertyType && (
+            <>
+              <FormField control={control} name="city" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City / Area</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl><SelectTrigger><SelectValue placeholder="Select a city or area" /></SelectTrigger></FormControl>
+                      <SelectContent>{cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="suburb"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Suburb</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a suburb" />
-                        </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                        {/* Populate suburbs based on city */}
-                        <SelectItem value="SuburbA">Suburb A</SelectItem>
-                        <SelectItem value="SuburbB">Suburb B</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Dynamically render fields based on propertyType */}
-          {propertyType === 'Home' && (
-             <>
-                <FormField control={form.control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-             </>
-          )}
-
-          {propertyType === 'Complex' && (
-             <>
-                <FormField control={form.control} name="unitNumber" render={({ field }) => ( <FormItem><FormLabel>Unit Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={form.control} name="complexName" render={({ field }) => ( <FormItem><FormLabel>Complex Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-             </>
+              {city === 'Other' && (
+                <FormField control={control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City / Area</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg South" /></FormControl><FormMessage /></FormItem>)} />
+              )}
+              
+              {city && city !== 'Other' && (
+                <>
+                    <FormField control={control} name="suburb" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Suburb</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl><SelectTrigger><SelectValue placeholder="Select a suburb" /></SelectTrigger></FormControl>
+                                <SelectContent>
+                                    {suburbOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    {suburb === 'Other' && (
+                         <FormField control={control} name="otherSuburb" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Rivonia" /></FormControl><FormMessage /></FormItem>)} />
+                    )}
+                </>
+              )}
+              
+              {renderConditionalFields()}
+            </>
           )}
           
-          <div className="flex justify-between">
+          <div className="flex justify-between pt-4">
             <Button type="button" variant="outline" onClick={() => router.back()}>
-              Back
+              <ChevronLeft className="mr-2 h-4 w-4" /> Back
             </Button>
-            <Button type="submit">Next</Button>
+            <Button type="submit" disabled={!form.formState.isValid}>Next</Button>
           </div>
         </form>
       </Form>

@@ -60,28 +60,19 @@ export const friendBookingSchema = z.object({
 
 
 export const itemToRepairSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
+  items: z.array(z.string()).refine((value) => value.length > 0, {
     message: "You have to select at least one item.",
   }),
   descriptions: z.record(z.string()).optional(),
-}).refine((data) => {
-    if (data.items.includes("OTHER") && (!data.descriptions?.['OTHER'] || data.descriptions['OTHER'].trim().length < 6)) {
-        return false;
+}).refine(data => {
+    // If 'OTHER' is the only item selected, or one of the items, its description is required.
+    if (data.items.includes('OTHER')) {
+        return data.descriptions?.['OTHER'] && data.descriptions['OTHER'].trim().length >= 6;
     }
     return true;
 }, {
-    message: "Please provide a description for the 'Other' item (min. 6 characters).",
-    path: ["descriptions.OTHER"],
-}).refine((data) => {
-    for (const item of data.items) {
-        if (!data.descriptions?.[item] || data.descriptions[item].trim().length < 6) {
-            return false;
-        }
-    }
-    return true;
-}, {
-    message: "Please describe the problem for each selected item (min. 6 characters).",
-    path: ["descriptions"],
+    message: "Please describe the 'Other' item (min. 6 characters).",
+    path: ["descriptions.OTHER"], // Point error to the specific field
 });
 
 export const paymentAndTermsSchema = z.object({
@@ -104,11 +95,12 @@ export const paymentAndTermsSchema = z.object({
 
 // Base schema with fields common to most property types
 const baseAddressSchema = z.object({
-    propertyType: z.enum(propertyTypes),
+    propertyType: z.enum(propertyTypes, { required_error: 'Please select a property type.' }),
     propertyFunction: z.enum(propertyFunctions),
-    suburb: z.string().min(2, "Suburb is required."),
     city: z.enum(cities, { required_error: 'Please select a city.'}),
     otherCityDescription: z.string().optional(),
+    suburb: z.string({ required_error: 'Please select a suburb.'}).min(1, "Suburb is required."),
+    otherSuburb: z.string().optional(),
 });
 
 // Discriminated union for address details based on propertyType
@@ -176,6 +168,14 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
 }, {
     message: "Please specify the city/area name (min 3 characters).",
     path: ['otherCityDescription'],
+}).refine(data => {
+    if (data.suburb === 'Other') {
+        return data.otherSuburb && data.otherSuburb.length > 2;
+    }
+    return true;
+}, {
+    message: "Please specify the suburb (min 3 characters).",
+    path: ['otherSuburb'],
 }).refine(data => {
     if ((data.propertyType === 'Complex' || data.propertyType === 'Complex in an Estate') && data.complexName === 'Other') {
         return data.otherComplexName && data.otherComplexName.length > 2;
