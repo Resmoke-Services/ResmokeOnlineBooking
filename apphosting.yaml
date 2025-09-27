@@ -23,3 +23,8 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: FIREBASE_CONFIG
+    secret: FIREBASE_CONFIG
+    availability:
+      - BUILD
+      - RUNTIME
