@@ -8,29 +8,60 @@ runConfig:
   # service to scale down to zero when there is no traffic.
   minInstances: 0
 
-# The "env" section defines environment variables for your backend.
-# We are securely loading these from Google Cloud Secret Manager.
+# The "env" section defines environment variables for your backend and build process.
 env:
-  # This block defines an environment variable named 'APP_FIREBASE_ADMIN_CREDENTIALS'.
-  # It instructs App Hosting to get the value from the secret with the same name
-  # in Google Cloud Secret Manager.
+  # --- SERVER-SIDE SECRETS (Loaded from Secret Manager) ---
+
+  # Defines the 'APP_FIREBASE_ADMIN_CREDENTIALS' secret for the Admin SDK.
   - variable: APP_FIREBASE_ADMIN_CREDENTIALS
     secret: APP_FIREBASE_ADMIN_CREDENTIALS
     availability:
       - BUILD
       - RUNTIME
 
-  # Defines the GEMINI_API_KEY environment variable.
+  # Defines the 'GEMINI_API_KEY' secret for Genkit.
   - variable: GEMINI_API_KEY
     secret: GEMINI_API_KEY
     availability:
       - BUILD
       - RUNTIME
 
-  # Defines the FIREBASE_CONFIG environment variable.
-  # This provides the public Firebase config to the server environment.
+  # Defines the 'FIREBASE_CONFIG' secret (optional, for server-side consistency).
   - variable: FIREBASE_CONFIG
     secret: FIREBASE_CONFIG
     availability:
       - BUILD
       - RUNTIME
+
+  # --- CLIENT-SIDE PUBLIC VARIABLES (Values set directly) ---
+  # These are needed for the Next.js build process to expose them to the browser.
+
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyAs0PxKNxmHD1V00HvTtgsmMkYDUPzyr9c"
+    availability:
+      - BUILD
+
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "studio-2610147525-49407.firebaseapp.com"
+    availability:
+      - BUILD
+
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "studio-2610147525-49407"
+    availability:
+      - BUILD
+
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "studio-2610147525-49407.firebasestorage.app"
+    availability:
+      - BUILD
+
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "841215751788"
+    availability:
+      - BUILD
+
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:841215751788:web:b9b091c6e467fd25560a49"
+    availability:
+      - BUILD
