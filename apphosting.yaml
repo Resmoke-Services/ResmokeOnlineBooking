@@ -1,15 +1,42 @@
+# This file configures the settings for your Firebase App Hosting backend.
+# It controls the server environment (Cloud Run) and how secrets are managed.
+# For more details, see the official documentation:
+# https://firebase.google.com/docs/app-hosting/configure
+
+# "runConfig" defines the settings for the underlying Cloud Run service that
+# powers your Next.js application's backend (for SSR, API routes, etc.).
 runConfig:
+  # "minInstances" sets the minimum number of server instances to keep running.
+  # Setting it to 0 is cost-effective for development or low-traffic apps,
+  # as it allows the service to scale down to zero when there's no traffic.
+  # A "cold start" may occur on the first request after scaling to zero.
   minInstances: 0
+
+# "env" is used to define environment variables that will be available to your
+# backend code. In this configuration, we are securely loading these variables
+# from Google Cloud Secret Manager instead of writing them directly in the file.
 env:
+  # This entry grants your app access to a secret stored in Secret Manager.
+  # The "secret" key specifies the name of the secret in Secret Manager.
+  # By default, this also sets the environment variable name inside your app.
+  # For example, this secret will be available as process.env.APP_FIREBASE_ADMIN_CREDENTIALS.
   - secret: APP_FIREBASE_ADMIN_CREDENTIALS
+    # "availability" specifies when the secret should be made available.
+    # It's a good practice to include both BUILD and RUNTIME.
     availability:
-    - BUILD
-    - RUNTIME
+      - BUILD    # The secret is available during the build process (e.g., `next build`).
+      - RUNTIME  # The secret is available when the application is running.
+
+  # This makes the Gemini API key available to your server-side code.
   - secret: GEMINI_API_KEY
     availability:
-    - BUILD
-    - RUNTIME
+      - BUILD
+      - RUNTIME
+
+  # This is often used to provide the client-side Firebase configuration
+  # to the backend, which can be useful for certain initialization tasks.
+  # The value for this secret should be the JSON object from your Firebase project settings.
   - secret: FIREBASE_CONFIG
     availability:
-    - BUILD
-    - RUNTIME
+      - BUILD
+      - RUNTIME
