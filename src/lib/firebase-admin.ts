@@ -1,37 +1,31 @@
+import admin from 'firebase-admin';
+import { App, cert, getApps } from 'firebase-admin/app';
+import { Auth, getAuth } from 'firebase-admin/auth';
+import { Firestore, getFirestore } from 'firebase-admin/firestore';
 
-import { initializeApp, getApps, App, cert } from 'firebase-admin/app';
-import { getFirestore, Firestore } from 'firebase-admin/firestore';
-import { getAuth, Auth } from 'firebase-admin/auth';
+// This is the service account credential that you stored in Google Cloud Secret Manager.
+// The apphosting.yaml file makes this environment variable available to your backend.
+const serviceAccount = process.env.APP_FIREBASE_ADMIN_CREDENTIALS;
 
-let adminApp: App;
-let adminDb: Firestore;
-let adminAuth: Auth;
-
-function initializeAdminSDK() {
-  const credentialsJson = process.env.APP_FIREBASE_ADMIN_CREDENTIALS;
-
-  // Only attempt to initialize if not already done and if credentials exist.
-  if (credentialsJson && !getApps().length) {
-    try {
-      const serviceAccount = JSON.parse(credentialsJson);
-      adminApp = initializeApp({ credential: cert(serviceAccount) });
-    } catch (error: any) {
-      console.error("CRITICAL: Failed to parse or initialize Firebase Admin SDK from credentials.", error);
-      // Don't throw here to allow build to pass, error will be caught in API routes.
-    }
-  }
-  
-  // Get the initialized app if it exists, otherwise get the first one.
-  // This handles multiple initializations in different environments.
-  if (!adminApp) {
-    adminApp = getApps().length ? getApps()[0] : initializeApp();
+// To prevent re-initializing the app on every hot-reload in development,
+// we check if the apps have already been initialized.
+// This is a crucial performance and safety measure.
+if (!getApps().length) {
+  // Ensure the service account credentials are provided before trying to initialize.
+  // The build should fail if these are missing, as it indicates a critical config error.
+  if (!serviceAccount) {
+    throw new Error('CRITICAL: Firebase Admin credentials are not set in the environment.');
   }
 
-  adminDb = getFirestore(adminApp);
-  adminAuth = getAuth(adminApp);
+  admin.initializeApp({
+    // The credential must be created by parsing the JSON string from the environment variable.
+    credential: cert(JSON.parse(serviceAccount)),
+  });
 }
 
-// Initialize the SDK on module load.
-initializeAdminSDK();
+// Export the initialized admin services for use in your API routes.
+// We get the services from the default app instance.
+const adminDb: Firestore = getFirestore();
+const adminAuth: Auth = getAuth();
 
 export { adminDb, adminAuth };
