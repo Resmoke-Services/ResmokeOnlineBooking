@@ -19,14 +19,10 @@ if (!getApps().length) {
   }
 
   try {
-    const credential = typeof serviceAccount === 'string'
-      ? cert(JSON.parse(serviceAccount))
-      : cert(serviceAccount);
-      
     admin.initializeApp({
-      credential,
+      credential: cert(JSON.parse(serviceAccount)),
     });
-  } catch(e) {
+  } catch(e: any) {
     console.error("Failed to initialize Firebase Admin SDK", e);
     throw new Error("Could not initialize Firebase Admin. Please check your service account credentials.");
   }
