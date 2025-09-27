@@ -12,19 +12,7 @@ export interface FirebaseClientServices {
 let clientServices: FirebaseClientServices | null = null;
 
 function getFirebaseConfig() {
-    const firebaseConfigStr = process.env.NEXT_PUBLIC_FIREBASE_CONFIG;
-
-    if (firebaseConfigStr) {
-        try {
-            return JSON.parse(firebaseConfigStr);
-        } catch (e) {
-            console.error("Failed to parse NEXT_PUBLIC_FIREBASE_CONFIG:", e);
-            throw new Error("Invalid Firebase configuration provided in environment variables.");
-        }
-    }
-    
-    // Fallback for local development if NEXT_PUBLIC_FIREBASE_CONFIG is not set
-    const localConfig = {
+    const firebaseConfig = {
         apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
@@ -34,11 +22,11 @@ function getFirebaseConfig() {
         measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
     };
     
-    if (!localConfig.projectId) {
+    if (!firebaseConfig.projectId) {
        throw new Error("Firebase project ID is not configured. Please check your environment variables.");
     }
 
-    return localConfig;
+    return firebaseConfig;
 }
 
 
@@ -53,9 +41,6 @@ export function getFirebaseClientServices(): FirebaseClientServices {
   }
 
   const firebaseConfig = getFirebaseConfig();
-  if (!firebaseConfig.projectId) {
-    throw new Error("Firebase project ID is not configured. Please check your environment variables.");
-  }
   
   const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
   const auth = getAuth(app);
