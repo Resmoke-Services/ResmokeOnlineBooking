@@ -26,8 +26,9 @@ env:
       - RUNTIME
 
   # Explicitly define the FIREBASE_CONFIG environment variable.
+  # This now correctly points to the 'FIREBASE_CONFIG' secret.
   - variable: FIREBASE_CONFIG
-    secret: FIRE_CONFIG
+    secret: FIREBASE_CONFIG
     availability:
       - BUILD
       - RUNTIME
