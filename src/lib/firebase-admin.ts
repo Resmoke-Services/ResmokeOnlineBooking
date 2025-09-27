@@ -1,3 +1,4 @@
+
 import admin from 'firebase-admin';
 import { App, cert, getApps } from 'firebase-admin/app';
 import { Auth, getAuth } from 'firebase-admin/auth';
@@ -17,10 +18,18 @@ if (!getApps().length) {
     throw new Error('CRITICAL: Firebase Admin credentials are not set in the environment.');
   }
 
-  admin.initializeApp({
-    // The credential must be created by parsing the JSON string from the environment variable.
-    credential: cert(JSON.parse(serviceAccount)),
-  });
+  try {
+    const credential = typeof serviceAccount === 'string'
+      ? cert(JSON.parse(serviceAccount))
+      : cert(serviceAccount);
+      
+    admin.initializeApp({
+      credential,
+    });
+  } catch(e) {
+    console.error("Failed to initialize Firebase Admin SDK", e);
+    throw new Error("Could not initialize Firebase Admin. Please check your service account credentials.");
+  }
 }
 
 // Export the initialized admin services for use in your API routes.
