@@ -1,36 +1,34 @@
 # This file configures the settings for your Firebase App Hosting backend.
-# It controls the server environment (Cloud Run) and how secrets are managed,
-# following the official documentation at:
-# https://firebase.google.com/docs/app-hosting/configure
+# It controls the server environment (Cloud Run) and how secrets are managed.
 
 runConfig:
-  # Setting minInstances to 0 is a cost-effective strategy. It allows the
-  # service to scale down to zero when there is no traffic.
-  minInstances: 0
+# Setting minInstances to 0 is cost-effective as it allows the service
+# to scale down to zero when there's no traffic.
+minInstances: 0
 
-# The "env" section defines environment variables for your backend.
+# "env" defines environment variables for your backend.
 # We are securely loading these from Google Cloud Secret Manager.
 env:
-  # This block defines an environment variable named 'APP_FIREBASE_ADMIN_CREDENTIALS'.
-  # It instructs App Hosting to get the value from the secret with the same name
-  # in Google Cloud Secret Manager.
-  - variable: APP_FIREBASE_ADMIN_CREDENTIALS
-    secret: APP_FIREBASE_ADMIN_CREDENTIALS
-    availability:
-      - BUILD
-      - RUNTIME
+# This block explicitly defines an environment variable named
+# 'APP_FIREBASE_ADMIN_CREDENTIALS' and tells it to get its value from
+# the secret with the same name in Secret Manager.
+- variable: APP_FIREBASE_ADMIN_CREDENTIALS
+secret: APP_FIREBASE_ADMIN_CREDENTIALS
+availability:
+- BUILD
+- RUNTIME
 
-  # Defines the GEMINI_API_KEY environment variable.
-  - variable: GEMINI_API_KEY
-    secret: GEMINI_API_KEY
-    availability:
-      - BUILD
-      - RUNTIME
+# Explicitly define the GEMINI_API_KEY environment variable.
+- variable: GEMINI_API_KEY
+secret: GEMINI_API_KEY
+availability:
+- BUILD
+- RUNTIME
 
-  # Defines the FIREBASE_CONFIG environment variable.
-  # This provides the public Firebase config to the server environment.
-  - variable: FIREBASE_CONFIG
-    secret: FIREBASE_CONFIG
-    availability:
-      - BUILD
-      - RUNTIME
+# Explicitly define the FIREBASE_CONFIG environment variable.
+# This now correctly points to the 'FIREBASE_CONFIG' secret.
+- variable: FIREBASE_CONFIG
+secret: FIREBASE_CONFIG
+availability:
+- BUILD
+- RUNTIME
