@@ -29,7 +29,7 @@ env:
       - BUILD
 
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "studio-2610147525-49407.firebaseapp.com"
+    value: "booking.resmoke.co.za"
     availability:
       - BUILD
 
