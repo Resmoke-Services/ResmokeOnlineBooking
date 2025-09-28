@@ -1,32 +1,21 @@
 # This file configures the settings for your Firebase App Hosting backend.
-# It controls the server environment (Cloud Run) and how secrets are managed,
-# following the official documentation at:
-# https://firebase.google.com/docs/app-hosting/configure
+# It controls the server environment (Cloud Run) and how secrets are managed.
 
 runConfig:
-  # Setting minInstances to 0 is a cost-effective strategy. It allows the
-  # service to scale down to zero when there is no traffic.
   minInstances: 0
 
-# The "env" section defines environment variables for your backend and build process.
 env:
   # --- SERVER-SIDE SECRETS (Loaded from Secret Manager) ---
-
-  # Defines the 'APP_FIREBASE_ADMIN_CREDENTIALS' secret for the Admin SDK.
   - variable: APP_FIREBASE_ADMIN_CREDENTIALS
     secret: APP_FIREBASE_ADMIN_CREDENTIALS
     availability:
       - BUILD
       - RUNTIME
-
-  # Defines the 'GEMINI_API_KEY' secret for Genkit.
   - variable: GEMINI_API_KEY
     secret: GEMINI_API_KEY
     availability:
       - BUILD
       - RUNTIME
-
-  # Defines the 'FIREBASE_CONFIG' secret (optional, for server-side consistency).
   - variable: FIREBASE_CONFIG
     secret: FIREBASE_CONFIG
     availability:
@@ -34,15 +23,15 @@ env:
       - RUNTIME
 
   # --- CLIENT-SIDE PUBLIC VARIABLES (Values set directly) ---
-  # These are needed for the Next.js build process to expose them to the browser.
-
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyAs0PxKNxmHD1V00HvTtgsmMkYDUPzyr9c"
     availability:
       - BUILD
 
+  # CRITICAL FIX: Use your custom domain for authentication.
+  # This makes the app and the auth popup share the same origin, solving COOP errors.
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "studio-2610147525-49407.firebaseapp.com"
+    value: "booking.resmoke.co.za"
     availability:
       - BUILD
 
@@ -50,17 +39,14 @@ env:
     value: "studio-2610147525-49407"
     availability:
       - BUILD
-
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
     value: "studio-2610147525-49407.firebasestorage.app"
     availability:
       - BUILD
-
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "841215751788"
     availability:
       - BUILD
-
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: "1:841215751788:web:b9b091c6e467fd25560a49"
     availability:
