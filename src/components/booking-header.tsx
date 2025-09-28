@@ -19,17 +19,16 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { LogIn, LogOut, User } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useFirebase } from '@/hooks/use-firebase';
 import { Loader2 } from 'lucide-react';
+import { auth, db } from '@/lib/firebase-client';
 
 export const BookingHeader = () => {
   const { user, setUser, setUserProfile, resetBooking } = useBookingStore();
   const { toast } = useToast();
   const router = useRouter();
-  const firebase = useFirebase();
 
   const handleGoogleSignIn = async () => {
-    if (!firebase) {
+    if (!auth || !db) {
       toast({
         variant: 'destructive',
         title: 'Initialization Error',
@@ -39,11 +38,11 @@ export const BookingHeader = () => {
     }
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(firebase.auth, provider);
+      const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
       if (firebaseUser) {
-        const userRef = doc(firebase.firestore, 'users', firebaseUser.uid);
+        const userRef = doc(db, 'users', firebaseUser.uid);
         const userDoc = await getDoc(userRef);
 
         const userData = {
@@ -97,9 +96,9 @@ export const BookingHeader = () => {
   };
 
   const handleSignOut = async () => {
-    if (!firebase) return;
+    if (!auth) return;
     try {
-      await signOut(firebase.auth);
+      await signOut(auth);
       resetBooking(); // Clear all booking and user data from the store
       setUser(null);
       router.push('/'); // Redirect to home page after sign out
@@ -151,7 +150,7 @@ export const BookingHeader = () => {
                        <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
                     ) : (
                       <>
-                        <AvatarImage src={(firebase?.auth?.currentUser?.photoURL) || undefined} alt={user.displayName} />
+                        <AvatarImage src={(auth?.currentUser?.photoURL) || undefined} alt={user.displayName} />
                         <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
                       </>
                     )}
@@ -173,8 +172,8 @@ export const BookingHeader = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button onClick={handleGoogleSignIn} variant="outline" disabled={!firebase}>
-              {!firebase ? (
+            <Button onClick={handleGoogleSignIn} variant="outline" disabled={!auth}>
+              {!auth ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading...

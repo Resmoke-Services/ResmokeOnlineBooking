@@ -1,4 +1,6 @@
-
 "use client";
-import { useFirebaseContext } from "@/firebase/client-provider";
-export const useFirebase = useFirebaseContext;
+import { auth, db } from "@/lib/firebase-client";
+
+export const useFirebase = () => {
+    return { auth, db };
+}

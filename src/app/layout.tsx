@@ -3,7 +3,6 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
-import { FirebaseProvider } from '@/firebase/client-provider';
 
 const APP_NAME = "Resmoke Online Booking";
 const APP_DESCRIPTION = "Online booking for Resmoke services.";
@@ -52,9 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <FirebaseProvider>
-          {children}
-        </FirebaseProvider>
+        {children}
         <Toaster />
       </body>
     </html>

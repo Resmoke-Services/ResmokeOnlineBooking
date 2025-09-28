@@ -11,8 +11,8 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, User } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
-import { useFirebase } from '@/hooks/use-firebase';
 import PageSpinner from '@/components/page-spinner';
+import { auth, db } from '@/lib/firebase-client';
 
 const GoogleIcon = () => (
   <svg className="h-5 w-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,6 @@ export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get('next') || '/booking/select-type';
-  const firebase = useFirebase();
   
   const { user, setUserProfile } = useBookingStore();
   const { toast } = useToast();
@@ -40,7 +39,7 @@ export default function AuthPage() {
   }, [user, router, nextUrl]);
 
   const handleGoogleSignIn = async () => {
-    if (!firebase) {
+    if (!auth || !db) {
       toast({
         variant: 'destructive',
         title: 'Initialization Error',
@@ -51,11 +50,11 @@ export default function AuthPage() {
     setIsProcessing(true);
     const provider = new GoogleAuthProvider();
     try {
-      const result = await signInWithPopup(firebase.auth, provider);
+      const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
       if (firebaseUser) {
-        const userRef = doc(firebase.firestore, 'users', firebaseUser.uid);
+        const userRef = doc(db, 'users', firebaseUser.uid);
         const userDoc = await getDoc(userRef);
 
         const userData = {
@@ -124,7 +123,7 @@ export default function AuthPage() {
     router.push(nextUrl);
   };
 
-  if (!firebase) {
+  if (!auth || !db) {
     return <PageSpinner />;
   }
 
@@ -140,7 +139,7 @@ export default function AuthPage() {
         <CardContent className="space-y-4">
           <Button 
             onClick={handleGoogleSignIn} 
-            disabled={isProcessing || !firebase} 
+            disabled={isProcessing || !auth} 
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
           >
             {isProcessing ? (

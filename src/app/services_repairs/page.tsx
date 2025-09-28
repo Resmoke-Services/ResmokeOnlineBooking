@@ -6,8 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { BookingHeader } from "@/components/booking-header";
 import ServiceSelectionTracker from "@/components/service-selection-tracker";
-import { useFirebase } from "@/hooks/use-firebase";
 import PageSpinner from "@/components/page-spinner";
+import { auth } from "@/lib/firebase-client";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 
 interface ServiceCategoryCardProps {
   title: string;
@@ -94,9 +96,9 @@ const serviceCategories: ServiceCategoryCardProps[] = [
 ];
 
 export default function ServicesPage() {
-  const firebase = useFirebase();
+  const [user, loading] = useAuthState(auth);
 
-  if (!firebase) {
+  if (loading) {
     return <PageSpinner />;
   }
 

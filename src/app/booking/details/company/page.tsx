@@ -21,7 +21,7 @@ import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { doc, setDoc } from "firebase/firestore";
-import { useFirebase } from "@/hooks/use-firebase";
+import { db } from "@/lib/firebase-client";
 
 type CompanyBookingFormData = z.infer<typeof companyBookingSchema>;
 
@@ -29,7 +29,6 @@ export default function CompanyDetailsPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
-  const firebase = useFirebase();
 
   useEffect(() => {
     if (!store.user) {
@@ -74,9 +73,9 @@ export default function CompanyDetailsPage() {
         email: data.contactEmail,
     });
     
-    if (store.user && !store.user.isGuest && firebase) {
+    if (store.user && !store.user.isGuest && db) {
       try {
-        const userRef = doc(firebase.firestore, 'users', store.user.uid);
+        const userRef = doc(db, 'users', store.user.uid);
         await setDoc(userRef, {
           name: data.contactName,
           surname: data.contactSurname,
