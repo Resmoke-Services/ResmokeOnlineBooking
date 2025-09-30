@@ -51,7 +51,7 @@ env:
       - BUILD
   
   - variable: NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS
-    value: "https://primary-production-5528.up.railway.app/webhook/available_time_slots"
+    value: "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots"
     availability:
       - BUILD
       - RUNTIME
