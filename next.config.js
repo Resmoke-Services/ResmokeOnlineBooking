@@ -1,3 +1,4 @@
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // This is the standard output mode for Next.js applications when deployed
@@ -16,15 +17,8 @@ const nextConfig = {
       },
     ],
   },
-
-  // This 'experimental' configuration is the fix for the warning.
-  // It tells the Next.js development server to trust requests originating
-  // from your specific Firebase Studio cloud workstation domain.
-  experimental: {
-    allowedDevOrigins: [
-      "6000-firebase-studio-1757605031944.cluster-64pjnskmlbaxowh5lzq6i7v4ra.cloudworkstations.dev",
-    ],
-  },
 };
 
 module.exports = nextConfig;
+
+  

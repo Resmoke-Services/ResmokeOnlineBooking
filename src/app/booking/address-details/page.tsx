@@ -42,11 +42,11 @@ export default function AddressDetailsPage() {
       propertyType: addressDetails?.propertyType || undefined,
       propertyFunction: addressDetails?.propertyFunction || 'Private',
       city: addressDetails?.city || undefined,
-      suburb: addressDetails?.suburb || undefined,
+      suburb: addressDetails?.suburb || '',
       houseNumber: addressDetails?.houseNumber || '',
       streetName: addressDetails?.streetName || '',
       unitNumber: addressDetails?.unitNumber || '',
-      complexName: addressDetails?.complexName || undefined,
+      complexName: addressDetails?.complexName || '',
       otherComplexName: addressDetails?.otherComplexName || '',
       streetNumber: addressDetails?.streetNumber || '',
       streetNameInEstate: addressDetails?.streetNameInEstate || '',
@@ -273,7 +273,7 @@ export default function AddressDetailsPage() {
                   <FormItem>
                     <FormLabel>City / Area</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value} name="city">
-                      <FormControl><SelectTrigger id="city" name="city" autoComplete="address-level2"><SelectValue placeholder="Select a city or area" /></SelectTrigger></FormControl>
+                      <FormControl><SelectTrigger id="city" name="city"><SelectValue placeholder="Select a city or area" /></SelectTrigger></FormControl>
                       <SelectContent>
                         {cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                       </SelectContent>
@@ -293,7 +293,7 @@ export default function AddressDetailsPage() {
                         <FormItem>
                             <FormLabel>Suburb</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value} name="suburb">
-                                <FormControl><SelectTrigger id="suburb" name="suburb" autoComplete="address-level1"><SelectValue placeholder="Select a suburb" /></SelectTrigger></FormControl>
+                                <FormControl><SelectTrigger id="suburb" name="suburb"><SelectValue placeholder="Select a suburb" /></SelectTrigger></FormControl>
                                 <SelectContent>
                                     {suburbOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                                 </SelectContent>
@@ -322,3 +322,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+  
