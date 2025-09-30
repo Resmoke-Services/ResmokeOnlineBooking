@@ -26,10 +26,12 @@ export default function SelectDateTimePage() {
 
   useEffect(() => {
     fetchSlots();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   const fetchSlots = async () => {
     setIsLoading(true);
+    setAvailableTimes([]); // Reset times before fetching
     try {
       const availabilityRequestDetails = {
         // Pass any necessary details from the store
@@ -49,6 +51,15 @@ export default function SelectDateTimePage() {
   };
 
   const today = useMemo(() => startOfDay(new Date()), []);
+
+  const sortedTimes = useMemo(() => {
+    return availableTimes.sort((a, b) => {
+        const [aHour, aMinute] = a.split(':').map(Number);
+        const [bHour, bMinute] = b.split(':').map(Number);
+        if (aHour !== bHour) return aHour - bHour;
+        return aMinute - bMinute;
+    });
+  }, [availableTimes]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
@@ -107,7 +118,7 @@ export default function SelectDateTimePage() {
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
-                {availableTimes.length > 0 ? availableTimes.map((time) => (
+                {sortedTimes.length > 0 ? sortedTimes.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
