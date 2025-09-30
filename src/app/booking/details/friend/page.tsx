@@ -91,7 +91,7 @@ export default function FriendDetailsPage() {
                         <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter their name" {...field} />
+                            <Input placeholder="Enter their name" {...field} id="ownerName" name="ownerName" autoComplete="name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -104,7 +104,7 @@ export default function FriendDetailsPage() {
                         <FormItem>
                         <FormLabel>Surname</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter their surname" {...field} />
+                            <Input placeholder="Enter their surname" {...field} id="ownerSurname" name="ownerSurname" autoComplete="family-name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -123,6 +123,9 @@ export default function FriendDetailsPage() {
                             placeholder="e.g., +27821234567"
                             {...field}
                             onBlur={handlePhoneNumberBlur('ownerCellNumber')}
+                            id="ownerCellNumber"
+                            name="ownerCellNumber"
+                            autoComplete="tel"
                         />
                         </FormControl>
                         <FormMessage />
@@ -136,7 +139,7 @@ export default function FriendDetailsPage() {
                     <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                        <Input type="email" placeholder="friend.email@example.com" {...field} />
+                        <Input type="email" placeholder="friend.email@example.com" {...field} id="ownerEmail" name="ownerEmail" autoComplete="email" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>
@@ -154,7 +157,7 @@ export default function FriendDetailsPage() {
                         <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter your name" {...field} />
+                            <Input placeholder="Enter your name" {...field} id="userName" name="userName" autoComplete="given-name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -167,7 +170,7 @@ export default function FriendDetailsPage() {
                         <FormItem>
                         <FormLabel>Surname</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter your surname" {...field} />
+                            <Input placeholder="Enter your surname" {...field} id="userSurname" name="userSurname" autoComplete="family-name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -186,6 +189,9 @@ export default function FriendDetailsPage() {
                             placeholder="e.g., +27821234567"
                             {...field}
                             onBlur={handlePhoneNumberBlur('userCellNumber')}
+                            id="userCellNumber"
+                            name="userCellNumber"
+                            autoComplete="tel"
                         />
                         </FormControl>
                         <FormMessage />
@@ -199,7 +205,7 @@ export default function FriendDetailsPage() {
                     <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                        <Input type="email" placeholder="your.email@example.com" {...field} />
+                        <Input type="email" placeholder="your.email@example.com" {...field} id="userEmail" name="userEmail" autoComplete="email" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

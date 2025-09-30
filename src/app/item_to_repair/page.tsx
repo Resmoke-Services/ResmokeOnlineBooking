@@ -97,6 +97,8 @@ export default function ItemToRepairPage() {
                                               )
                                             )
                                       }}
+                                      id={`item-${item.id}`}
+                                      name="items"
                                     />
                                   </FormControl>
                                   <div className="space-y-1 leading-none">
@@ -137,6 +139,8 @@ export default function ItemToRepairPage() {
                                             placeholder={`Please describe the issue with the ${itemLabel.toLowerCase()}.`}
                                             {...field}
                                             value={field.value || ''}
+                                            id={`description-${item}`}
+                                            name={`descriptions.${item}`}
                                         />
                                     </FormControl>
                                     <FormMessage />

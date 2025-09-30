@@ -88,7 +88,7 @@ export default function PersonalDetailsPage() {
                     <FormItem>
                       <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your name" {...field} />
+                        <Input placeholder="Enter your name" {...field} id="name" name="name" autoComplete="given-name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -101,7 +101,7 @@ export default function PersonalDetailsPage() {
                     <FormItem>
                       <FormLabel>Surname</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your surname" {...field} />
+                        <Input placeholder="Enter your surname" {...field} id="surname" name="surname" autoComplete="family-name" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -120,6 +120,9 @@ export default function PersonalDetailsPage() {
                         placeholder="e.g., +27821234567"
                         {...field}
                         onBlur={handlePhoneNumberBlur}
+                        id="cellNumber"
+                        name="cellNumber"
+                        autoComplete="tel"
                       />
                     </FormControl>
                     <FormMessage />
@@ -133,7 +136,7 @@ export default function PersonalDetailsPage() {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="your.email@example.com" {...field} />
+                      <Input type="email" placeholder="your.email@example.com" {...field} id="email" name="email" autoComplete="email" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -88,7 +88,7 @@ export default function CompanyDetailsPage() {
                     <FormItem>
                       <FormLabel>Company Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter company name" {...field} />
+                        <Input placeholder="Enter company name" {...field} id="companyName" name="companyName" autoComplete="organization" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -101,7 +101,7 @@ export default function CompanyDetailsPage() {
                     <FormItem>
                       <FormLabel>Company Phone Number</FormLabel>
                       <FormControl>
-                        <Input type="tel" placeholder="e.g., +27123456789" {...field} onBlur={handlePhoneNumberBlur('companyPhone')} />
+                        <Input type="tel" placeholder="e.g., +27123456789" {...field} onBlur={handlePhoneNumberBlur('companyPhone')} id="companyPhone" name="companyPhone" autoComplete="tel" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -114,7 +114,7 @@ export default function CompanyDetailsPage() {
                     <FormItem>
                       <FormLabel>Company Email Address</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="e.g., accounts@company.com" {...field} />
+                        <Input type="email" placeholder="e.g., accounts@company.com" {...field} id="companyEmail" name="companyEmail" autoComplete="email" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -132,7 +132,7 @@ export default function CompanyDetailsPage() {
                         <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter contact's name" {...field} />
+                            <Input placeholder="Enter contact's name" {...field} id="contactName" name="contactName" autoComplete="given-name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -145,7 +145,7 @@ export default function CompanyDetailsPage() {
                         <FormItem>
                         <FormLabel>Surname</FormLabel>
                         <FormControl>
-                            <Input placeholder="Enter contact's surname" {...field} />
+                            <Input placeholder="Enter contact's surname" {...field} id="contactSurname" name="contactSurname" autoComplete="family-name" />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -164,6 +164,9 @@ export default function CompanyDetailsPage() {
                             placeholder="e.g., +27821234567"
                             {...field}
                             onBlur={handlePhoneNumberBlur('contactCellNumber')}
+                            id="contactCellNumber"
+                            name="contactCellNumber"
+                            autoComplete="tel"
                         />
                         </FormControl>
                         <FormMessage />
@@ -177,7 +180,7 @@ export default function CompanyDetailsPage() {
                     <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                        <Input type="email" placeholder="your.email@example.com" {...field} />
+                        <Input type="email" placeholder="your.email@example.com" {...field} id="contactEmail" name="contactEmail" autoComplete="email" />
                         </FormControl>
                         <FormMessage />
                     </FormItem>

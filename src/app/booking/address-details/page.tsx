@@ -98,17 +98,17 @@ export default function AddressDetailsPage() {
       case 'Home':
         return (
           <>
-            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} id="houseNumber" name="houseNumber" autoComplete="address-line2" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />
           </>
         );
       case 'Complex':
       case 'Complex in an Estate':
          return (
           <>
-            <FormField control={control} name="unitNumber" render={({ field }) => ( <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="unitNumber" render={({ field }) => ( <FormItem><FormLabel>Unit / House Number</FormLabel><FormControl><Input {...field} id="unitNumber" name="unitNumber" autoComplete="address-line2" /></FormControl><FormMessage /></FormItem>)} />
             {propertyType === 'Complex in an Estate' && (
-              <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+              <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} id="estateName" name="estateName" /></FormControl><FormMessage /></FormItem>)} />
             )}
              <FormField
                 control={control}
@@ -116,8 +116,8 @@ export default function AddressDetailsPage() {
                 render={({ field }) => (
                 <FormItem>
                     <FormLabel>Complex Name</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder="Select a complex" /></SelectTrigger></FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} name="complexName">
+                        <FormControl><SelectTrigger id="complexName" name="complexName"><SelectValue placeholder="Select a complex" /></SelectTrigger></FormControl>
                         <SelectContent>
                             {complexOptions.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                         </SelectContent>
@@ -127,10 +127,10 @@ export default function AddressDetailsPage() {
                 )}
             />
             {complexName === 'Other' && (
-                <FormField control={control} name="otherComplexName" render={({ field }) => ( <FormItem><FormLabel>Please Specify Complex Name</FormLabel><FormControl><Input {...field} placeholder="e.g., The Willows" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="otherComplexName" render={({ field }) => ( <FormItem><FormLabel>Please Specify Complex Name</FormLabel><FormControl><Input {...field} placeholder="e.g., The Willows" id="otherComplexName" name="otherComplexName" /></FormControl><FormMessage /></FormItem>)} />
             )}
-            {propertyType === 'Complex' && <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />}
-            {propertyType === 'Complex in an Estate' && <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />}
+            {propertyType === 'Complex' && <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />}
+            {propertyType === 'Complex in an Estate' && <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} id="streetNameInEstate" name="streetNameInEstate" /></FormControl><FormMessage /></FormItem>)} />}
              <FormField
                 control={form.control}
                 name="accessCodeRequired"
@@ -138,13 +138,13 @@ export default function AddressDetailsPage() {
                     <FormItem className="space-y-3">
                         <FormLabel>Is an access code required?</FormLabel>
                         <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4" name="accessCodeRequired">
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormControl><RadioGroupItem value="yes" id="accessCodeYes" /></FormControl>
                                     <FormLabel className="font-normal">Yes</FormLabel>
                                 </FormItem>
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormControl><RadioGroupItem value="no" id="accessCodeNo" /></FormControl>
                                     <FormLabel className="font-normal">No</FormLabel>
                                 </FormItem>
                             </RadioGroup>
@@ -158,10 +158,10 @@ export default function AddressDetailsPage() {
       case 'Estate':
          return (
           <>
-            <FormField control={control} name="standNumber" render={({ field }) => ( <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="standNumber" render={({ field }) => ( <FormItem><FormLabel>Stand Number</FormLabel><FormControl><Input {...field} id="standNumber" name="standNumber" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="houseNumber" render={({ field }) => ( <FormItem><FormLabel>House Number</FormLabel><FormControl><Input {...field} id="houseNumber" name="houseNumber" autoComplete="address-line2" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetNameInEstate" render={({ field }) => ( <FormItem><FormLabel>Street Name in Estate</FormLabel><FormControl><Input {...field} id="streetNameInEstate" name="streetNameInEstate" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="estateName" render={({ field }) => ( <FormItem><FormLabel>Estate Name</FormLabel><FormControl><Input {...field} id="estateName" name="estateName" /></FormControl><FormMessage /></FormItem>)} />
              <FormField
                 control={form.control}
                 name="accessCodeRequired"
@@ -169,13 +169,13 @@ export default function AddressDetailsPage() {
                     <FormItem className="space-y-3">
                         <FormLabel>Is an access code required?</FormLabel>
                         <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4" name="accessCodeRequired">
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormControl><RadioGroupItem value="yes" id="accessCodeYes" /></FormControl>
                                     <FormLabel className="font-normal">Yes</FormLabel>
                                 </FormItem>
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormControl><RadioGroupItem value="no" id="accessCodeNo" /></FormControl>
                                     <FormLabel className="font-normal">No</FormLabel>
                                 </FormItem>
                             </RadioGroup>
@@ -189,10 +189,10 @@ export default function AddressDetailsPage() {
       case 'Office':
         return (
           <>
-            <FormField control={control} name="officeName" render={({ field }) => ( <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="officeParkName" render={({ field }) => ( <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="officeName" render={({ field }) => ( <FormItem><FormLabel>Office / Building Name</FormLabel><FormControl><Input {...field} id="officeName" name="officeName" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="officeParkName" render={({ field }) => ( <FormItem><FormLabel>Office Park Name (Optional)</FormLabel><FormControl><Input {...field} id="officeParkName" name="officeParkName" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} id="streetNumber" name="streetNumber" autoComplete="address-line2" /></FormControl><FormMessage /></FormItem>)} />
+            <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />
              <FormField
                 control={form.control}
                 name="accessCodeRequired"
@@ -200,13 +200,13 @@ export default function AddressDetailsPage() {
                     <FormItem className="space-y-3">
                         <FormLabel>Is an access code required?</FormLabel>
                         <FormControl>
-                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4" name="accessCodeRequired">
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="yes" /></FormControl>
+                                    <FormControl><RadioGroupItem value="yes" id="accessCodeYes" /></FormControl>
                                     <FormLabel className="font-normal">Yes</FormLabel>
                                 </FormItem>
                                 <FormItem className="flex items-center space-x-2 space-y-0">
-                                    <FormControl><RadioGroupItem value="no" /></FormControl>
+                                    <FormControl><RadioGroupItem value="no" id="accessCodeNo" /></FormControl>
                                     <FormLabel className="font-normal">No</FormLabel>
                                 </FormItem>
                             </RadioGroup>
@@ -220,23 +220,23 @@ export default function AddressDetailsPage() {
       case 'Small Holding':
         return (
             <>
-                <FormField control={control} name="holdingName" render={({ field }) => ( <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="holdingName" render={({ field }) => ( <FormItem><FormLabel>Holding Name / Number</FormLabel><FormControl><Input {...field} id="holdingName" name="holdingName" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street / Road Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />
             </>
         );
       case 'Farm':
         return (
             <>
-                <FormField control={control} name="farmName" render={({ field }) => ( <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="farmName" render={({ field }) => ( <FormItem><FormLabel>Farm Name / Number</FormLabel><FormControl><Input {...field} id="farmName" name="farmName" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Road Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />
             </>
         );
       case 'Other':
         return (
             <>
-                <FormField control={control} name="otherPropertyType" render={({ field }) => ( <FormItem><FormLabel>Please Specify Property Type</FormLabel><FormControl><Input {...field} placeholder="e.g., Warehouse, School" /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="otherPropertyType" render={({ field }) => ( <FormItem><FormLabel>Please Specify Property Type</FormLabel><FormControl><Input {...field} placeholder="e.g., Warehouse, School" id="otherPropertyType" name="otherPropertyType" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetNumber" render={({ field }) => ( <FormItem><FormLabel>Street Number (Optional)</FormLabel><FormControl><Input {...field} id="streetNumber" name="streetNumber" autoComplete="address-line2" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="streetName" render={({ field }) => ( <FormItem><FormLabel>Street Name</FormLabel><FormControl><Input {...field} id="streetName" name="streetName" autoComplete="street-address" /></FormControl><FormMessage /></FormItem>)} />
             </>
         );
       default:
@@ -256,9 +256,11 @@ export default function AddressDetailsPage() {
           <FormField control={control} name="propertyType" render={({ field }) => (
               <FormItem>
                 <FormLabel>Property Type</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl><SelectTrigger><SelectValue placeholder="Select property type" /></SelectTrigger></FormControl>
-                  <SelectContent>{propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type}</SelectItem>))}</SelectContent>
+                <Select onValueChange={field.onChange} defaultValue={field.value} name="propertyType">
+                  <FormControl><SelectTrigger id="propertyType" name="propertyType"><SelectValue placeholder="Select property type" /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    {propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type}</SelectItem>))}
+                  </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
@@ -270,9 +272,11 @@ export default function AddressDetailsPage() {
               <FormField control={control} name="city" render={({ field }) => (
                   <FormItem>
                     <FormLabel>City / Area</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl><SelectTrigger><SelectValue placeholder="Select a city or area" /></SelectTrigger></FormControl>
-                      <SelectContent>{cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} name="city">
+                      <FormControl><SelectTrigger id="city" name="city" autoComplete="address-level2"><SelectValue placeholder="Select a city or area" /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        {cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -280,7 +284,7 @@ export default function AddressDetailsPage() {
               />
 
               {city === 'Other' && (
-                <FormField control={control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City / Area</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg South" /></FormControl><FormMessage /></FormItem>)} />
+                <FormField control={control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City / Area</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg South" id="otherCityDescription" name="otherCityDescription" autoComplete="address-level2" /></FormControl><FormMessage /></FormItem>)} />
               )}
               
               {city && city !== 'Other' && (
@@ -288,8 +292,8 @@ export default function AddressDetailsPage() {
                     <FormField control={control} name="suburb" render={({ field }) => (
                         <FormItem>
                             <FormLabel>Suburb</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl><SelectTrigger><SelectValue placeholder="Select a suburb" /></SelectTrigger></FormControl>
+                            <Select onValueChange={field.onChange} defaultValue={field.value} name="suburb">
+                                <FormControl><SelectTrigger id="suburb" name="suburb" autoComplete="address-level1"><SelectValue placeholder="Select a suburb" /></SelectTrigger></FormControl>
                                 <SelectContent>
                                     {suburbOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
                                 </SelectContent>
@@ -298,7 +302,7 @@ export default function AddressDetailsPage() {
                         </FormItem>
                     )} />
                     {suburb === 'Other' && (
-                         <FormField control={control} name="otherSuburb" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Rivonia" /></FormControl><FormMessage /></FormItem>)} />
+                         <FormField control={control} name="otherSuburb" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Rivonia" id="otherSuburb" name="otherSuburb" autoComplete="address-level1" /></FormControl><FormMessage /></FormItem>)} />
                     )}
                 </>
               )}
@@ -318,5 +322,3 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
-
-    

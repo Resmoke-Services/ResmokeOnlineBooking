@@ -128,11 +128,12 @@ export default function PaymentAndTermsPage() {
                         onValueChange={field.onChange}
                         value={field.value}
                         className="flex flex-wrap gap-x-8 gap-y-2"
+                        name="paymentMethod"
                       >
                         {paymentMethods.map((method) => (
                            <FormItem key={method.id} className="flex items-center space-x-3 space-y-0">
                              <FormControl>
-                               <RadioGroupItem value={method.id} />
+                               <RadioGroupItem value={method.id} id={`payment-${method.id}`} />
                              </FormControl>
                              <FormLabel className="font-normal">
                                {method.label}
@@ -158,11 +159,12 @@ export default function PaymentAndTermsPage() {
                         value={field.value ?? ""}
                         className="flex flex-wrap gap-x-8 gap-y-2"
                         disabled={store.bookingFor === 'personal'}
+                        name="billingInformation"
                       >
                         {billingOptions.map(bo => (
                           <FormItem key={bo.value} className="flex items-center space-x-3 space-y-0">
                             <FormControl>
-                              <RadioGroupItem value={bo.value} />
+                              <RadioGroupItem value={bo.value} id={`billing-${bo.value}`} />
                             </FormControl>
                             <FormLabel className="font-normal">{bo.label}</FormLabel>
                           </FormItem>
@@ -182,7 +184,7 @@ export default function PaymentAndTermsPage() {
                     render={({field}) => (
                         <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4">
                              <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} id="terms-payment" name="terms.paymentOnPremises" />
                             </FormControl>
                             <div className="space-y-1 leading-none">
                                 <FormLabel>All expenses to be paid while on premises.</FormLabel>
@@ -197,7 +199,7 @@ export default function PaymentAndTermsPage() {
                     render={({field}) => (
                         <FormItem className="flex items-start space-x-3 space-y-0 rounded-md border p-4">
                              <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                <Checkbox checked={field.value} onCheckedChange={field.onChange} id="terms-consent" name="terms.emailConsent" />
                             </FormControl>
                             <div className="space-y-1 leading-none">
                                 <FormLabel>I agree to receive Text and Email messages in relation to this booking.</FormLabel>
