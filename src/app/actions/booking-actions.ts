@@ -4,8 +4,9 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS || "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots";
-const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION || "https://primary-production-5528.up.railway.app/webhook-test/booking_confirmation";
+// Removed hard-coded fallback URLs. The app will now rely solely on environment variables.
+const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
+const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
 
 // This function will now also be responsible for persisting the booking data to Firestore via our API.
 async function saveBookingToDb(bookingData: any) {
@@ -37,7 +38,7 @@ async function saveBookingToDb(bookingData: any) {
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   if (!AVAILABILITY_WEBHOOK_URL) {
-    throw new Error("Availability webhook URL is not configured.");
+    throw new Error("Availability webhook URL is not configured. Please check your environment variables.");
   }
   try {
     const response = await fetch(AVAILABILITY_WEBHOOK_URL, {
@@ -73,7 +74,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
   if (!CONFIRMATION_WEBHOOK_URL) {
-    throw new Error("Confirmation webhook URL is not configured.");
+    throw new Error("Confirmation webhook URL is not configured. Please check your environment variables.");
   }
   try {
     const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
@@ -119,3 +120,4 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     throw new Error(`Failed to confirm booking: ${error.message}`);
   }
 }
+
