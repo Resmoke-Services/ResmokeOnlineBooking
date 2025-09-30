@@ -5,7 +5,7 @@ import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
 const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS || "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots";
-const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
+const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION || "https://primary-production-5528.up.railway.app/webhook-test/booking_confirmation";
 
 // This function will now also be responsible for persisting the booking data to Firestore via our API.
 async function saveBookingToDb(bookingData: any) {

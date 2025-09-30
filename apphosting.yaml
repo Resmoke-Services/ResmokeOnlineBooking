@@ -57,7 +57,7 @@ env:
       - RUNTIME
 
   - variable: NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION
-    value: "https://primary-production-5528.up.railway.app/webhook/booking_confirmation"
+    value: "https://primary-production-5528.up.railway.app/webhook-test/booking_confirmation"
     availability:
       - BUILD
       - RUNTIME
