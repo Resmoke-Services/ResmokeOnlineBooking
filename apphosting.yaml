@@ -27,12 +27,10 @@ env:
     value: "AIzaSyAs0PxKNxmHD1V00HvTtgsmMkYDUPzyr9c"
     availability:
       - BUILD
-
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: "studio-2610147525-49407.firebaseapp.com"
+    value: "booking.resmoke.co.za"
     availability:
       - BUILD
-
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "studio-2610147525-49407"
     availability:
@@ -49,21 +47,23 @@ env:
     value: "1:841215751788:web:b9b091c6e467fd25560a49"
     availability:
       - BUILD
-  
+
+  # --- WEBHOOK & OTHER PUBLIC URLs ---
+  # These must be available to both the build process (for the client)
+  # and the runtime (for server-side API routes like this one).
   - variable: NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS
     value: "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots"
     availability:
       - BUILD
       - RUNTIME
-
   - variable: NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION
-    value: "https://primary-production-5528.up.railway.app/webhook-test/booking_confirmation"
+    value: "https://primary-production-5528.up.railway.app/webhook/booking_confirmation"
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_BASE_URL
+    value: "https://booking.resmoke.co.za"
     availability:
       - BUILD
       - RUNTIME
 
-  - variable: NEXT_PUBLIC_BASE_URL
-    value: "http://localhost:3000"
-    availability:
-      - BUILD
-      - RUNTIME
