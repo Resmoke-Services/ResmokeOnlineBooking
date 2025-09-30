@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
@@ -24,21 +24,20 @@ export default function SelectDateTimePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    fetchSlots();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  
-  const fetchSlots = async () => {
+  const today = useMemo(() => startOfDay(new Date()), []);
+
+  const fetchSlots = useCallback(async (date: Date) => {
     setIsLoading(true);
-    setAvailableTimes([]); // Reset times before fetching
+    setAvailableTimes([]); // Immediately clear old times
+    setSelectedTime(null);  // Reset selected time when date changes
     try {
       const availabilityRequestDetails = {
-        // Pass any necessary details from the store
+        date: format(date, "yyyy-MM-dd"),
+        // Pass any other necessary details from the store
       };
+      // The `await` keyword ensures we wait for the webhook response
       const slots = await getAvailableSlots(availabilityRequestDetails);
       const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
-      // Use a Set to get unique time slots and then convert back to an array
       const uniqueTimes = Array.from(new Set(times));
       setAvailableTimes(uniqueTimes);
     } catch (error: any) {
@@ -47,12 +46,18 @@ export default function SelectDateTimePage() {
         title: "Failed to load times",
         description: error.message || "Could not fetch available time slots.",
       });
+      setAvailableTimes([]); // Ensure times are cleared on error
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const today = useMemo(() => startOfDay(new Date()), []);
+  }, [toast]);
+  
+  useEffect(() => {
+    if (selectedDate) {
+      fetchSlots(selectedDate);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]); // We only want this to run when selectedDate changes. fetchSlots is wrapped in useCallback.
 
   const sortedTimes = useMemo(() => {
     return [...availableTimes].sort((a, b) => {
@@ -66,9 +71,6 @@ export default function SelectDateTimePage() {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
-      setSelectedTime(null);
-      // Here you would typically refetch available times for the new date
-      // For this example, we'll use the same list of times.
     }
   };
 
@@ -88,7 +90,6 @@ export default function SelectDateTimePage() {
 
     store.setSelectedDateTime({ date: formattedDate, time: selectedTime });
     
-    // Navigate to the next step, do not confirm booking here
     router.push("/payment_and_terms");
   };
 
