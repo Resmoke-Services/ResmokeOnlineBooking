@@ -22,14 +22,14 @@ import { useBookingStore } from "@/hooks/use-booking-store";
 import { repairItems, type RepairItem } from "@/lib/types";
 import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
 
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
-  const { user, itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
+  const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
@@ -42,12 +42,6 @@ export default function ItemToRepairPage() {
   });
 
   const selectedItems = form.watch("items", []);
-  
-  useEffect(() => {
-    if (!user) {
-      router.replace('/auth');
-    }
-  }, [user, router]);
   
   function onSubmit(data: ItemToRepairFormData) {
     setIsSubmitting(true);
@@ -64,10 +58,6 @@ export default function ItemToRepairPage() {
     router.push("/select_datetime");
   }
 
-  if (!user) {
-    return <BookingFlowLayout><div className="flex justify-center items-center h-64"></div></BookingFlowLayout>
-  }
-  
   return (
     <BookingFlowLayout>
       <Card className="shadow-xl">

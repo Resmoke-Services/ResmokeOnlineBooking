@@ -77,12 +77,6 @@ export default function PaymentAndTermsPage() {
     }
   }, [store.bookingFor, billingOptions, form]);
 
-  useEffect(() => {
-    if (!store.user) {
-      router.replace('/auth?next=/payment_and_terms');
-    }
-  }, [store.user, router]);
-
   async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
     
@@ -113,10 +107,6 @@ export default function PaymentAndTermsPage() {
     }
   }
 
-  if (!store.user) {
-    return <BookingFlowLayout><div className="flex justify-center items-center h-64"></div></BookingFlowLayout>
-  }
-  
   return (
     <BookingFlowLayout>
       <Card className="shadow-xl">

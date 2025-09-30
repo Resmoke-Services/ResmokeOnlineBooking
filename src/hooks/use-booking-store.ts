@@ -1,14 +1,12 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, UserProfile, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation, AddressDetails } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation, AddressDetails } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface BookingState extends BookingData {
   availability: AvailabilitySlot[];
-  setUser: (user: UserProfile | null) => void;
-  setUserProfile: (profileData: Partial<BookingData>) => void;
   setBookingFor: (bookingFor: BookingFor) => void;
   setPersonalDetails: (details: { name: string; surname: string; cellNumber: string; email: string }) => void;
   setAddressDetails: (details: AddressDetails) => void;
@@ -27,7 +25,7 @@ interface BookingState extends BookingData {
   resetBooking: () => void;
 }
 
-const initialBookingData: Omit<BookingData, 'user' | 'formattedAddress'> = {
+const initialBookingData: Omit<BookingData, 'formattedAddress'> = {
   name: '',
   surname: '',
   cellNumber: '',
@@ -63,7 +61,6 @@ const initialBookingData: Omit<BookingData, 'user' | 'formattedAddress'> = {
 const initialState = {
   ...initialBookingData,
   availability: [],
-  user: null,
   formattedAddress: '',
 };
 
@@ -71,8 +68,6 @@ export const useBookingStore = create<BookingState>()(
   persist(
     (set) => ({
       ...initialState,
-      setUser: (user) => set({ user }),
-      setUserProfile: (profileData) => set((state) => ({ ...state, ...profileData })),
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
       setAddressDetails: (details: AddressDetails) => set(() => {

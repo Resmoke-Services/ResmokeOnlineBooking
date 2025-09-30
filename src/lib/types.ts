@@ -1,10 +1,4 @@
 
-export interface UserProfile {
-  uid: string;
-  email: string;
-  displayName: string;
-  isGuest: boolean;
-}
 
 export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null;
 
@@ -202,13 +196,12 @@ export type AddressDetails = {
     suburb?: string;
     city?: City;
     otherCityDescription?: string;
-    otherSuburb?: string;
+otherSuburb?: string;
 };
 
 
 // This is the complete data structure for the entire booking flow
 export interface BookingData {
-  user: UserProfile | null;
   // Personal details (can be the user, or the contact person for company/friend)
   name: string;
   surname: string;

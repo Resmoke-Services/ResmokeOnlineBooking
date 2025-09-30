@@ -28,7 +28,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "automotive repair workshop"
     },
-    href: "/privacy_notice?next=/booking/select-type"
+    href: "/booking/select-type"
   }
 ];
 

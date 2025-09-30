@@ -19,7 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { landlordBookingSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 type LandlordBookingFormData = z.infer<typeof landlordBookingSchema>;
@@ -29,12 +29,6 @@ export default function LandlordDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
 
-  useEffect(() => {
-    if (!store.user) {
-      router.replace('/auth');
-    }
-  }, [store.user, router]);
-  
   const form = useForm<LandlordBookingFormData>({
     resolver: zodResolver(landlordBookingSchema),
     defaultValues: {

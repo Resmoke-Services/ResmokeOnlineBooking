@@ -25,12 +25,8 @@ export default function SelectDateTimePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!store.user) {
-      router.replace('/auth?next=/select_datetime');
-      return;
-    }
     fetchSlots();
-  }, [store.user, router]);
+  }, []);
   
   const fetchSlots = async () => {
     setIsLoading(true);

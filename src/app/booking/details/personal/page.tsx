@@ -29,12 +29,6 @@ export default function PersonalDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const store = useBookingStore();
   
-  useEffect(() => {
-    if (!store.user) {
-      router.replace('/auth');
-    }
-  }, [store.user, router]);
-  
   const form = useForm<PersonalBookingFormData>({
     resolver: zodResolver(personalBookingSchema),
     defaultValues: {
