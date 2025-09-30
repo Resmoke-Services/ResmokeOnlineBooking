@@ -4,14 +4,10 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-// Removed hard-coded fallback URLs. The app will now rely solely on environment variables.
 const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
 const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
 
-// This function will now also be responsible for persisting the booking data to Firestore via our API.
 async function saveBookingToDb(bookingData: any) {
-  // We construct an absolute URL for the API endpoint.
-  // In a real production environment, you would use an environment variable for the base URL.
   const url = new URL('/api/bookings/add', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
   
   try {
@@ -49,25 +45,27 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
       body: JSON.stringify(details),
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
-        const errorJson = await response.json();
-        errorDetails = errorJson.message || JSON.stringify(errorJson);
+        // Try to parse as JSON, but fall back to text if it fails
+        const errorJson = JSON.parse(responseText);
+        errorDetails = errorJson.message || responseText;
       } catch (e) {
-        errorDetails = `Error in workflow`;
+        // If JSON parsing fails, use the raw text
+        errorDetails = responseText || "An unknown error occurred in the webhook.";
       }
       throw new Error(errorDetails);
     }
 
-    const responseText = await response.text();
     if (responseText) {
       return JSON.parse(responseText);
     }
     return [];
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] getAvailableSlots:", error);
-    // Re-throw the more detailed error message
     throw new Error(`Failed to fetch availability slots: ${error.message}`);
   }
 }
@@ -84,32 +82,30 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       },
       body: JSON.stringify(details),
     });
+    
+    const responseText = await response.text();
 
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
-        const errorJson = await response.json();
-        errorDetails = errorJson.message || JSON.stringify(errorJson);
+        const errorJson = JSON.parse(responseText);
+        errorDetails = errorJson.message || responseText;
       } catch (e) {
-        errorDetails = `Error in workflow`;
+        errorDetails = responseText || "An unknown error occurred in the confirmation webhook.";
       }
       throw new Error(errorDetails);
     }
 
-    // After a successful webhook confirmation, save the booking to our database.
     await saveBookingToDb(details);
 
-    const responseText = await response.text();
     if (responseText) {
       try {
         const parsed = JSON.parse(responseText);
-        // Ensure that the response is always a complete WebhookConfirmation object.
         return { status: 'Confirmed', ...parsed };
       } catch (e) {
         return { status: 'Confirmed', message: responseText };
       }
     }
-    // Return a consistent success object even if the response body is empty
     return { 
       status: 'Confirmed', 
       message: 'Booking confirmed successfully.',
@@ -120,4 +116,3 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     throw new Error(`Failed to confirm booking: ${error.message}`);
   }
 }
-
