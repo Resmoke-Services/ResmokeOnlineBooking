@@ -4,11 +4,10 @@
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 
-const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
-const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
 async function saveBookingToDb(bookingData: any) {
-  const url = new URL('/api/bookings/add', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
+  const url = new URL('/api/bookings/add', BASE_URL);
   
   try {
     const response = await fetch(url.toString(), {
@@ -33,11 +32,10 @@ async function saveBookingToDb(bookingData: any) {
 
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
-  if (!AVAILABILITY_WEBHOOK_URL) {
-    throw new Error("Availability webhook URL is not configured. Please check your environment variables.");
-  }
+  const url = new URL('/api/webhooks/available_time_slots', BASE_URL);
+
   try {
-    const response = await fetch(AVAILABILITY_WEBHOOK_URL, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,11 +48,9 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
     if (!response.ok) {
       let errorDetails = `Error: ${response.status}`;
       try {
-        // Try to parse as JSON, but fall back to text if it fails
         const errorJson = JSON.parse(responseText);
         errorDetails = errorJson.message || responseText;
       } catch (e) {
-        // If JSON parsing fails, use the raw text
         errorDetails = responseText || "An unknown error occurred in the webhook.";
       }
       throw new Error(errorDetails);
@@ -71,11 +67,10 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 }
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
-  if (!CONFIRMATION_WEBHOOK_URL) {
-    throw new Error("Confirmation webhook URL is not configured. Please check your environment variables.");
-  }
+  const url = new URL('/api/webhooks/booking_confirmation', BASE_URL);
+  
   try {
-    const response = await fetch(CONFIRMATION_WEBHOOK_URL, {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
