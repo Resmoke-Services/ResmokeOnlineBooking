@@ -38,7 +38,9 @@ export default function SelectDateTimePage() {
       };
       const slots = await getAvailableSlots(availabilityRequestDetails);
       const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
-      setAvailableTimes(times);
+      // Use a Set to get unique time slots and then convert back to an array
+      const uniqueTimes = Array.from(new Set(times));
+      setAvailableTimes(uniqueTimes);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -53,7 +55,7 @@ export default function SelectDateTimePage() {
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const sortedTimes = useMemo(() => {
-    return availableTimes.sort((a, b) => {
+    return [...availableTimes].sort((a, b) => {
         const [aHour, aMinute] = a.split(':').map(Number);
         const [bHour, bMinute] = b.split(':').map(Number);
         if (aHour !== bHour) return aHour - bHour;
