@@ -3,11 +3,11 @@
 
 import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_time_slots/route';
+import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
 
 async function saveBookingToDb(bookingData: any) {
-  const url = new URL('/api/bookings/add', BASE_URL);
+  const url = new URL('/api/bookings/add', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
   
   try {
     const response = await fetch(url.toString(), {
@@ -30,19 +30,16 @@ async function saveBookingToDb(bookingData: any) {
   }
 }
 
-
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
-  const url = new URL('/api/webhooks/available_time_slots', BASE_URL);
-
   try {
-    const response = await fetch(url.toString(), {
+    // Directly invoke the API route's POST function
+    const request = new Request('http://localhost/api/webhooks/available_time_slots', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(details),
     });
-
+    
+    const response = await postAvailableTimeSlots(request);
     const responseText = await response.text();
 
     if (!response.ok) {
@@ -60,6 +57,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
       return JSON.parse(responseText);
     }
     return [];
+
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] getAvailableSlots:", error);
     throw new Error(`Failed to fetch availability slots: ${error.message}`);
@@ -67,17 +65,15 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
 }
 
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
-  const url = new URL('/api/webhooks/booking_confirmation', BASE_URL);
-  
   try {
-    const response = await fetch(url.toString(), {
+    // Directly invoke the API route's POST function
+    const request = new Request('http://localhost/api/webhooks/booking_confirmation', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(details),
     });
-    
+
+    const response = await postBookingConfirmation(request);
     const responseText = await response.text();
 
     if (!response.ok) {
