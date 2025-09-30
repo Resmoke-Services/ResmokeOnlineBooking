@@ -38,11 +38,28 @@ export default function AddressDetailsPage() {
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressDetailsSchema),
-    defaultValues: addressDetails || {
-      propertyType: undefined,
-      propertyFunction: 'Private',
-      city: undefined,
-      suburb: undefined,
+    defaultValues: {
+      propertyType: addressDetails?.propertyType || undefined,
+      propertyFunction: addressDetails?.propertyFunction || 'Private',
+      city: addressDetails?.city || undefined,
+      suburb: addressDetails?.suburb || undefined,
+      houseNumber: addressDetails?.houseNumber || '',
+      streetName: addressDetails?.streetName || '',
+      unitNumber: addressDetails?.unitNumber || '',
+      complexName: addressDetails?.complexName || undefined,
+      otherComplexName: addressDetails?.otherComplexName || '',
+      streetNumber: addressDetails?.streetNumber || '',
+      streetNameInEstate: addressDetails?.streetNameInEstate || '',
+      estateName: addressDetails?.estateName || '',
+      accessCodeRequired: addressDetails?.accessCodeRequired || 'no',
+      standNumber: addressDetails?.standNumber || '',
+      officeName: addressDetails?.officeName || '',
+      officeParkName: addressDetails?.officeParkName || '',
+      holdingName: addressDetails?.holdingName || '',
+      farmName: addressDetails?.farmName || '',
+      otherPropertyType: addressDetails?.otherPropertyType || '',
+      otherCityDescription: addressDetails?.otherCityDescription || '',
+      otherSuburb: addressDetails?.otherSuburb || '',
     },
     mode: 'onChange',
   });
@@ -301,3 +318,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+    
