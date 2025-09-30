@@ -74,7 +74,7 @@ export default function SelectDateTimePage() {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!selectedDate || !selectedTime) {
       toast({
         variant: "destructive",
