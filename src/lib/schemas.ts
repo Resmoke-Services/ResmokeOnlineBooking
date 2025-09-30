@@ -109,7 +109,6 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
         propertyType: z.literal("Home"),
         houseNumber: z.string().min(1, "House number is required."),
         streetName: z.string().min(2, "Street name is required."),
-        suburb: z.string({ required_error: 'Please select a suburb.' }).min(1, "Suburb is required."),
     }),
     baseAddressSchema.extend({
         propertyType: z.literal("Complex"),
@@ -186,5 +185,3 @@ export const addressDetailsSchema = z.discriminatedUnion("propertyType", [
     message: "Please specify the complex name (min 3 characters).",
     path: ['otherComplexName'],
 });
-
-    
