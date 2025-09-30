@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +21,6 @@ import { companyBookingSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase-client";
 
 type CompanyBookingFormData = z.infer<typeof companyBookingSchema>;
 
@@ -72,21 +71,6 @@ export default function CompanyDetailsPage() {
         cellNumber: data.contactCellNumber,
         email: data.contactEmail,
     });
-    
-    if (store.user && !store.user.isGuest && db) {
-      try {
-        const userRef = doc(db, 'users', store.user.uid);
-        await setDoc(userRef, {
-          name: data.contactName,
-          surname: data.contactSurname,
-          cellNumber: data.contactCellNumber,
-          email: data.contactEmail,
-          displayName: `${data.contactName} ${data.contactSurname}`.trim(),
-        }, { merge: true });
-      } catch (error) {
-        console.error("Failed to save contact person details to Firestore:", error);
-      }
-    }
     
     router.push("/booking/address-details");
   }

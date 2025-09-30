@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,8 +21,6 @@ import { personalBookingSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase-client";
 
 type PersonalBookingFormData = z.infer<typeof personalBookingSchema>;
 
@@ -73,21 +72,6 @@ export default function PersonalDetailsPage() {
         cellNumber: data.cellNumber,
         email: data.email,
     });
-    
-    if (store.user && !store.user.isGuest && db) {
-      try {
-        const userRef = doc(db, 'users', store.user.uid);
-        await setDoc(userRef, {
-          name: data.name,
-          surname: data.surname,
-          cellNumber: data.cellNumber,
-          email: data.email,
-          displayName: `${data.name} ${data.surname}`.trim(),
-        }, { merge: true });
-      } catch (error) {
-        console.error("Failed to save user details to Firestore:", error);
-      }
-    }
     
     router.push("/booking/address-details");
   }

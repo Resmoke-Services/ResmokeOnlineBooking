@@ -7,8 +7,6 @@ import Link from "next/link";
 import { BookingHeader } from "@/components/booking-header";
 import ServiceSelectionTracker from "@/components/service-selection-tracker";
 import PageSpinner from "@/components/page-spinner";
-import { auth } from "@/lib/firebase-client";
-import { useAuthState } from "react-firebase-hooks/auth";
 
 
 interface ServiceCategoryCardProps {
@@ -96,11 +94,6 @@ const serviceCategories: ServiceCategoryCardProps[] = [
 ];
 
 export default function ServicesPage() {
-  const [user, loading] = useAuthState(auth);
-
-  if (loading) {
-    return <PageSpinner />;
-  }
 
   return (
      <div className="min-h-screen flex flex-col bg-background text-foreground">

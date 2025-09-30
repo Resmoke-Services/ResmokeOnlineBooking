@@ -151,7 +151,7 @@ export const useBookingStore = create<BookingState>()(
       resetBooking: () => set(initialState),
     }),
     {
-      name: 'resmoke-booking-storage-v4', 
+      name: 'resmoke-booking-storage-v5', 
       storage: createJSONStorage(() => localStorage), 
     }
   )

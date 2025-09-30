@@ -1,3 +1,4 @@
+
 export const dynamic = 'force-dynamic';
 
 import { adminDb } from '@/lib/firebase-admin';
@@ -10,11 +11,6 @@ import type { BookingData } from '@/lib/types';
 interface BookingDocument extends Omit<BookingData, 'user'> {
   id: string;
   createdAt?: string; // Assuming createdAt is stored as an ISO string
-  user?: { // User object might be stored differently
-    uid: string;
-    displayName: string;
-    email: string;
-  };
 }
 
 // This function fetches data on the server

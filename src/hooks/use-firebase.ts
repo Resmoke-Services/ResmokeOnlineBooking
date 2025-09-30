@@ -1,6 +1,1 @@
-"use client";
-import { auth, db } from "@/lib/firebase-client";
-
-export const useFirebase = () => {
-    return { auth, db };
-}
+// This file is intentionally left blank as Firebase client authentication is no longer used.
