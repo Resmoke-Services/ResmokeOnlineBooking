@@ -1,4 +1,5 @@
 
+
 export const dynamic = 'force-dynamic';
 
 import { adminDb } from '@/lib/firebase-admin';

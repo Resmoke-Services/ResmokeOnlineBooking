@@ -39,3 +39,6 @@ pnpm-debug.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore the folder containing secret keys
+/config/

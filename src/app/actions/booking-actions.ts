@@ -1,25 +1,10 @@
 
 "use server";
 
-import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_time_slots/route';
 import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
-import { getApps, initializeApp, cert, getApp } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-
-// Helper function to initialize Firebase Admin SDK
-function getAdminDb() {
-  if (!getApps().length) {
-    if (!process.env.APP_FIREBASE_ADMIN_CREDENTIALS) {
-      throw new Error("CRITICAL: Firebase Admin credentials are not set in the environment.");
-    }
-    initializeApp({
-      credential: cert(JSON.parse(process.env.APP_FIREBASE_ADMIN_CREDENTIALS)),
-    });
-  }
-  return getFirestore();
-}
+import { adminDb } from "@/lib/firebase-admin";
 
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
@@ -76,13 +61,12 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     
     const confirmationData = await response.json();
 
-    // Get DB instance and save data
-    const adminDb = getAdminDb();
     const dataToSave = {
       ...details,
       createdAt: new Date().toISOString(),
       webhookConfirmation: confirmationData,
     };
+
     const bookingRef = await adminDb.collection('bookings').add(dataToSave);
 
     return { status: 'Confirmed', bookingId: bookingRef.id, ...confirmationData };
