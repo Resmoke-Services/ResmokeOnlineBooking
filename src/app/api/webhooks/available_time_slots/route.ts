@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// TODO: Move this URL to a server-side environment variable for better security and flexibility.
-// For example, in apphosting.yaml or a .env file.
+// TODO: This URL should be moved to a secure, server-side environment variable
+// (e.g., in apphosting.yaml or a .env.local file) instead of being hardcoded.
 const WEBHOOK_BASE_URL = "https://primary-production-5528.up.railway.app/webhook-test";
 
 export async function POST(request: Request) {
@@ -40,10 +40,16 @@ export async function POST(request: Request) {
       });
     }
 
-    return new Response(responseText, {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // Attempt to parse as JSON, but fall back to text if it fails
+    try {
+        const jsonResponse = JSON.parse(responseText);
+        return NextResponse.json(jsonResponse);
+    } catch (e) {
+        return new Response(responseText, {
+            status: 200,
+            headers: { 'Content-Type': 'text/plain' },
+        });
+    }
 
   } catch (error: any) {
     console.error('Error proxying to availability webhook:', error);
