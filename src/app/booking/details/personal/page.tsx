@@ -40,14 +40,16 @@ export default function PersonalDetailsPage() {
     mode: "onChange",
   });
   
+  const { name, surname, cellNumber, email } = store;
+
   useEffect(() => {
     form.reset({
-      name: store.name || "",
-      surname: store.surname || "",
-      cellNumber: store.cellNumber || "",
-      email: store.email || "",
+      name: name || "",
+      surname: surname || "",
+      cellNumber: cellNumber || "",
+      email: email || "",
     });
-  }, [store, form]);
+  }, [name, surname, cellNumber, email, form]);
 
   const handlePhoneNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     let value = e.target.value.trim();
