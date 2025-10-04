@@ -71,8 +71,10 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       body: JSON.stringify(details),
     });
 
+    // First, await the response from the external webhook proxy.
     const response = await postBookingConfirmation(request);
 
+    // Check if the webhook call was successful before proceeding.
     if (!response.ok) {
       const responseText = await response.text();
       let errorDetails = `Error: ${response.status}`;
@@ -85,7 +87,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       throw new Error(errorDetails);
     }
 
-    // Save to the database only after the external webhook confirms successfully.
+    // Only after the external webhook confirms successfully, save to the database.
     await saveBookingToDb(details);
 
     const confirmationData = await response.json();
