@@ -3,23 +3,30 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const AVAILABILITY_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_AVAILABLE_TIME_SLOTS;
+// The base URL for the webhook service.
+const WEBHOOK_BASE_URL = "https://primary-production-5528.up.railway.app/webhook-test";
 
 export async function POST(request: Request) {
-  if (!AVAILABILITY_WEBHOOK_URL) {
-    console.error('CRITICAL: Availability webhook URL is not configured.');
+  if (!WEBHOOK_BASE_URL) {
+    console.error('CRITICAL: Webhook base URL is not configured.');
     return NextResponse.json({ message: 'Server configuration error: Webhook URL is missing.' }, { status: 500 });
   }
 
   try {
     const requestBody = await request.json();
 
-    const webhookResponse = await fetch(AVAILABILITY_WEBHOOK_URL, {
+    // The external service expects the webhook name in the body.
+    const bodyForWebhook = {
+      ...requestBody,
+      webhook: "available_time_slots",
+    };
+
+    const webhookResponse = await fetch(WEBHOOK_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(bodyForWebhook),
     });
 
     const responseText = await webhookResponse.text();
@@ -28,7 +35,7 @@ export async function POST(request: Request) {
       // Forward the error from the external webhook
       return new Response(responseText, {
         status: webhookResponse.status,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': webhookResponse.headers.get('Content-Type') || 'application/json' },
       });
     }
 

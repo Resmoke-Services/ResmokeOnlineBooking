@@ -3,10 +3,12 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const CONFIRMATION_WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION;
+// The base URL for the webhook service.
+const WEBHOOK_BASE_URL = "https://primary-production-5528.up.railway.app/webhook-test";
+
 
 export async function POST(request: Request) {
-  if (!CONFIRMATION_WEBHOOK_URL) {
+  if (!WEBHOOK_BASE_URL) {
     console.error('CRITICAL: Confirmation webhook URL is not configured.');
     return NextResponse.json({ message: 'Server configuration error: Webhook URL is missing.' }, { status: 500 });
   }
@@ -14,12 +16,18 @@ export async function POST(request: Request) {
   try {
     const requestBody = await request.json();
 
-    const webhookResponse = await fetch(CONFIRMATION_WEBHOOK_URL, {
+    // The external service expects the webhook name in the body.
+    const bodyForWebhook = {
+      ...requestBody,
+      webhook: "booking_confirmation",
+    };
+
+    const webhookResponse = await fetch(WEBHOOK_BASE_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(bodyForWebhook),
     });
 
     const responseText = await webhookResponse.text();
