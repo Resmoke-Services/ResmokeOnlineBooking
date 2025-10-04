@@ -67,13 +67,15 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       webhookConfirmation: confirmationData,
     };
 
+    // Save directly to Firestore using the adminDb instance
     const bookingRef = await adminDb.collection('bookings').add(dataToSave);
 
     return { status: 'Confirmed', bookingId: bookingRef.id, ...confirmationData };
 
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
-    throw new Error(`${error.message}`);
+    // Ensure the thrown error message is what the client expects.
+    throw new Error(error.message || "An unexpected error occurred during booking confirmation.");
   }
 }
 
