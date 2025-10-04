@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       webhook: "booking_confirmation",
     };
 
-    const webhookResponse = await fetch(WEBHOOK_BASE_URL, {
+    const webhookResponse = await fetch(WEBHOOK_BASE-URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
