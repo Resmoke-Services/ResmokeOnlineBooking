@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { User, Building, Users, Home } from "lucide-react";
+import { User, Building, Users2, Home } from "lucide-react";
 import type { BookingFor } from "@/lib/types";
 
 const bookingTypes = [
@@ -34,7 +34,7 @@ const bookingTypes = [
     type: "friend",
     title: "A Friend or Family's Equipment",
     description: "You are making this booking for someone else.",
-    icon: Users,
+    icon: Users2,
     href: "/booking/details/friend"
   }
 ] as const;
