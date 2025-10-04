@@ -74,6 +74,8 @@ export default function ItemToRepairPage() {
         setAvailability([]); // Clear any old data
         // Still navigate so user isn't stuck, the next page will show an error.
         router.push("/select_datetime");
+    } finally {
+        setIsSubmitting(false);
     }
   }
 

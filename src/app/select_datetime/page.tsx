@@ -20,60 +20,56 @@ export default function SelectDateTimePage() {
   const store = useBookingStore();
   
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const today = useMemo(() => startOfDay(new Date()), []);
 
-  const processSlots = useCallback((slots: AvailabilitySlot[]) => {
-      const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
-      const uniqueTimes = Array.from(new Set(times));
-      setAvailableTimes(uniqueTimes);
-  }, []);
+  // Process slots from the store into a memoized array of unique times
+  const availableTimes = useMemo(() => {
+    if (!store.availability) return [];
+    const times = store.availability.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
+    const uniqueTimes = Array.from(new Set(times));
+    return uniqueTimes.sort((a, b) => {
+        const [aHour, aMinute] = a.split(':').map(Number);
+        const [bHour, bMinute] = b.split(':').map(Number);
+        if (aHour !== bHour) return aHour - bHour;
+        return aMinute - bMinute;
+    });
+  }, [store.availability]);
 
-  // This function is now only called when the user changes the date.
+
   const fetchSlotsForDate = useCallback(async (date: Date) => {
     setIsLoading(true);
-    setAvailableTimes([]);
     setSelectedTime(null);
     try {
       const slots = await getAvailableSlots({ date: format(date, "yyyy-MM-dd") });
-      processSlots(slots);
+      store.setAvailability(slots);
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Failed to load times",
         description: error.message || "Could not fetch available time slots.",
       });
-      setAvailableTimes([]);
+      store.setAvailability([]);
     } finally {
       setIsLoading(false);
     }
-  }, [toast, processSlots]);
+  }, [toast, store]);
   
-  // On initial load, use the pre-fetched data from the store.
+  // On initial load, if availability is empty (e.g. page refresh), fetch for today.
   useEffect(() => {
-    processSlots(store.availability);
-    // Clear the pre-fetched data so it's not used again accidentally on re-navigation
-    store.setAvailability([]);
-  }, [processSlots, store]);
+    if (store.availability.length === 0) {
+      fetchSlotsForDate(today);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-
-  const sortedTimes = useMemo(() => {
-    return [...availableTimes].sort((a, b) => {
-        const [aHour, aMinute] = a.split(':').map(Number);
-        const [bHour, bMinute] = b.split(':').map(Number);
-        if (aHour !== bHour) return aHour - bHour;
-        return aMinute - bMinute;
-    });
-  }, [availableTimes]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
-      // Fetch slots for the newly selected date
       fetchSlotsForDate(date);
     }
   };
@@ -125,7 +121,7 @@ export default function SelectDateTimePage() {
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
-                {sortedTimes.length > 0 ? sortedTimes.map((time) => (
+                {availableTimes.length > 0 ? availableTimes.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
@@ -162,3 +158,4 @@ export default function SelectDateTimePage() {
     </BookingFlowLayout>
   );
 }
+
