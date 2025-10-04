@@ -22,7 +22,7 @@ export default function SelectDateTimePage() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const today = useMemo(() => startOfDay(new Date()), []);
@@ -33,15 +33,13 @@ export default function SelectDateTimePage() {
       setAvailableTimes(uniqueTimes);
   }, []);
 
-  const fetchSlots = useCallback(async (date: Date) => {
+  // This function is now only called when the user changes the date.
+  const fetchSlotsForDate = useCallback(async (date: Date) => {
     setIsLoading(true);
     setAvailableTimes([]);
     setSelectedTime(null);
     try {
-      const availabilityRequestDetails = {
-        date: format(date, "yyyy-MM-dd"),
-      };
-      const slots = await getAvailableSlots(availabilityRequestDetails);
+      const slots = await getAvailableSlots({ date: format(date, "yyyy-MM-dd") });
       processSlots(slots);
     } catch (error: any) {
       toast({
@@ -55,17 +53,13 @@ export default function SelectDateTimePage() {
     }
   }, [toast, processSlots]);
   
+  // On initial load, use the pre-fetched data from the store.
   useEffect(() => {
-    // If availability was pre-fetched, use it. Otherwise, fetch it.
-    if (store.availability.length > 0 && selectedDate && format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")) {
-        processSlots(store.availability);
-        setIsLoading(false);
-        // Clear the pre-fetched data so it's not used again accidentally
-        store.setAvailability([]);
-    } else if (selectedDate) {
-      fetchSlots(selectedDate);
-    }
-  }, [selectedDate, fetchSlots, store, processSlots]);
+    processSlots(store.availability);
+    // Clear the pre-fetched data so it's not used again accidentally on re-navigation
+    store.setAvailability([]);
+  }, [processSlots, store]);
+
 
   const sortedTimes = useMemo(() => {
     return [...availableTimes].sort((a, b) => {
@@ -79,6 +73,8 @@ export default function SelectDateTimePage() {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
+      // Fetch slots for the newly selected date
+      fetchSlotsForDate(date);
     }
   };
 

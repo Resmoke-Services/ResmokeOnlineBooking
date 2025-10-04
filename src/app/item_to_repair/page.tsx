@@ -26,11 +26,13 @@ import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { getAvailableSlots, testWebhook } from "@/app/actions/booking-actions";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions, setAvailability } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTestingWebhook, setIsTestingWebhook] = useState(false);
@@ -58,17 +60,21 @@ export default function ItemToRepairPage() {
     setItemsToRepair(finalItems);
     setProblemDescriptions(finalDescriptions);
     
-    // Pre-fetch available slots for today to speed up the next page
     try {
         const slots = await getAvailableSlots({ date: format(new Date(), "yyyy-MM-dd") });
         setAvailability(slots);
-    } catch (error) {
-        console.warn("Could not pre-fetch availability slots:", error);
-        // Don't block navigation if pre-fetching fails
-        setAvailability([]);
+        router.push("/select_datetime");
+    } catch (error: any) {
+        console.error("Failed to fetch availability slots:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load times",
+          description: error.message || "Could not fetch available time slots.",
+        });
+        setAvailability([]); // Clear any old data
+        // Still navigate so user isn't stuck, the next page will show an error.
+        router.push("/select_datetime");
     }
-
-    router.push("/select_datetime");
   }
 
   const handleTestWebhook = async () => {
