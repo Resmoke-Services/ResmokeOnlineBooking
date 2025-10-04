@@ -33,7 +33,14 @@ type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 export default function ItemToRepairPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions, setAvailability } = useBookingStore();
+  const { 
+    itemsToRepair, 
+    problemDescriptions, 
+    setItemsToRepair, 
+    setProblemDescriptions, 
+    setAvailability,
+    addressDetails
+  } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTestingWebhook, setIsTestingWebhook] = useState(false);
 
@@ -61,7 +68,10 @@ export default function ItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const slots = await getAvailableSlots({ date: format(new Date(), "yyyy-MM-dd") });
+        const slots = await getAvailableSlots({ 
+          date: format(new Date(), "yyyy-MM-dd"),
+          ...addressDetails 
+        });
         setAvailability(slots);
         router.push("/select_datetime");
     } catch (error: any) {
