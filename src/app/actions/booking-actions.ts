@@ -5,11 +5,25 @@ import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_time_slots/route';
 import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
-import { adminDb } from "@/lib/firebase-admin";
+import { getApps, initializeApp, cert, getApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+
+// Helper function to initialize Firebase Admin SDK
+function getAdminDb() {
+  if (!getApps().length) {
+    if (!process.env.APP_FIREBASE_ADMIN_CREDENTIALS) {
+      throw new Error("CRITICAL: Firebase Admin credentials are not set in the environment.");
+    }
+    initializeApp({
+      credential: cert(JSON.parse(process.env.APP_FIREBASE_ADMIN_CREDENTIALS)),
+    });
+  }
+  return getFirestore();
+}
+
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
-    // Construct a new Request object to pass to the proxy route handler
     const request = new Request('http://localhost/api/webhooks/available_time_slots', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -22,7 +36,6 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
       const responseText = await response.text();
       let errorDetails = `Error: ${response.status}`;
       try {
-        // Attempt to parse error as JSON, otherwise use the raw text.
         const errorJson = JSON.parse(responseText);
         errorDetails = errorJson.message || JSON.stringify(errorJson);
       } catch (e) {
@@ -47,10 +60,8 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       body: JSON.stringify(details),
     });
 
-    // First, await the response from the external webhook proxy.
     const response = await postBookingConfirmation(request);
 
-    // Check if the webhook call was successful before proceeding.
     if (!response.ok) {
       const responseText = await response.text();
       let errorDetails = `Error: ${response.status}`;
@@ -65,15 +76,12 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     
     const confirmationData = await response.json();
 
-    // After the external webhook confirms, save directly to the database
-    // This avoids the internal fetch call that was failing.
-    if (!process.env.APP_FIREBASE_ADMIN_CREDENTIALS) {
-      throw new Error("Server configuration error: Missing Firebase credentials.");
-    }
+    // Get DB instance and save data
+    const adminDb = getAdminDb();
     const dataToSave = {
       ...details,
       createdAt: new Date().toISOString(),
-      webhookConfirmation: confirmationData, // Include confirmation data
+      webhookConfirmation: confirmationData,
     };
     const bookingRef = await adminDb.collection('bookings').add(dataToSave);
 
@@ -81,7 +89,6 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
 
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
-    // Re-throw the original error to be caught by the client-side form handler
     throw new Error(`${error.message}`);
   }
 }
@@ -95,7 +102,7 @@ export async function testWebhook(): Promise<any> {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ test: "payload", date: "2024-08-01" }), // Just a test payload
+      body: JSON.stringify({ test: "payload", date: "2024-08-01" }),
     });
 
     const responseText = await response.text();
@@ -109,7 +116,6 @@ export async function testWebhook(): Promise<any> {
         const data = JSON.parse(responseText);
         return { success: true, data };
     } catch(e) {
-        // If it's not JSON, return the text
         return { success: true, data: responseText };
     }
 

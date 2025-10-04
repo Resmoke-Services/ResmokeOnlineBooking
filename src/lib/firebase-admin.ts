@@ -1,36 +1,36 @@
 
+
 import admin from 'firebase-admin';
 import { App, cert, getApps } from 'firebase-admin/app';
 import { Auth, getAuth } from 'firebase-admin/auth';
 import { Firestore, getFirestore } from 'firebase-admin/firestore';
 
-// This is the service account credential that you stored in Google Cloud Secret Manager.
-// The apphosting.yaml file makes this environment variable available to your backend.
+// This file is now primarily used by non-Server-Action API routes, like the admin page data loader.
+// Server Actions will initialize their own instance to ensure credentials are loaded correctly.
 const serviceAccount = process.env.APP_FIREBASE_ADMIN_CREDENTIALS;
 
-// To prevent re-initializing the app on every hot-reload in development,
-// we check if the apps have already been initialized.
-// This is a crucial performance and safety measure.
-if (!getApps().length) {
-  // Ensure the service account credentials are provided before trying to initialize.
-  // The build should fail if these are missing, as it indicates a critical config error.
-  if (!serviceAccount) {
-    throw new Error('CRITICAL: Firebase Admin credentials are not set in the environment.');
-  }
+function initializeAdminApp() {
+  if (getApps().length === 0) {
+    if (!serviceAccount) {
+      console.warn('Firebase Admin credentials not set. Some server-side features may not work.');
+      return;
+    }
 
-  try {
-    const credential = typeof serviceAccount === 'string' ? cert(JSON.parse(serviceAccount)) : cert(serviceAccount);
-    admin.initializeApp({
-      credential,
-    });
-  } catch(e: any) {
-    console.error("Failed to initialize Firebase Admin SDK", e);
-    throw new Error("Could not initialize Firebase Admin. Please check your service account credentials.");
+    try {
+      const credential = typeof serviceAccount === 'string' ? cert(JSON.parse(serviceAccount)) : cert(serviceAccount);
+      admin.initializeApp({
+        credential,
+      });
+    } catch(e: any) {
+      console.error("Failed to initialize Firebase Admin SDK", e);
+    }
   }
 }
 
-// Export the initialized admin services for use in your API routes.
-// We get the services from the default app instance.
+initializeAdminApp();
+
+// These will throw an error if not initialized, which is expected
+// if the credentials aren't available in the context they are called from.
 const adminDb: Firestore = getFirestore();
 const adminAuth: Auth = getAuth();
 
