@@ -58,10 +58,26 @@ const initialBookingData: Omit<BookingData, 'formattedAddress'> = {
   servicePath: [],
 };
 
-const initialState = {
+const initialState: Omit<BookingState, keyof Omit<BookingData, 'formattedAddress'>> = {
   ...initialBookingData,
   availability: [],
   formattedAddress: '',
+  setBookingFor: () => {},
+  setPersonalDetails: () => {},
+  setAddressDetails: () => {},
+  setLandlordDetails: () => {},
+  setOwnerDetails: () => {},
+  setCompanyDetails: () => {},
+  setItemsToRepair: () => {},
+  setProblemDescriptions: () => {},
+  setPaymentMethods: () => {},
+  setBillingInformation: () => {},
+  setTermsAgreement: () => {},
+  setSelectedDateTime: () => {},
+  setAvailability: () => {},
+  setWebhookConfirmation: () => {},
+  setServicePath: () => {},
+  resetBooking: () => {},
 };
 
 export const useBookingStore = create<BookingState>()(
@@ -70,7 +86,7 @@ export const useBookingStore = create<BookingState>()(
       ...initialState,
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
-      setAddressDetails: (details: AddressDetails) => set(() => {
+      setAddressDetails: (details: AddressDetails) => set((state) => {
         let parts: string[] = [];
         const city = details.city === 'Other' ? details.otherCityDescription : details.city;
         const suburb = details.suburb === 'Other' ? details.otherSuburb : details.suburb;

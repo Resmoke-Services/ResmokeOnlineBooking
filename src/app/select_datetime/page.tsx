@@ -17,10 +17,10 @@ import type { AvailabilitySlot } from "@/lib/types";
 export default function SelectDateTimePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const store = useBookingStore();
+  const { availability, setAvailability, selectedDateTime, setSelectedDateTime } = useBookingStore();
   
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(selectedDateTime ? parseISO(selectedDateTime.date) : new Date());
+  const [selectedTime, setSelectedTime] = useState<string | null>(selectedDateTime ? selectedDateTime.time : null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -28,8 +28,8 @@ export default function SelectDateTimePage() {
 
   // Process slots from the store into a memoized array of unique times
   const availableTimes = useMemo(() => {
-    if (!store.availability) return [];
-    const times = store.availability.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
+    if (!availability) return [];
+    const times = availability.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
     const uniqueTimes = Array.from(new Set(times));
     return uniqueTimes.sort((a, b) => {
         const [aHour, aMinute] = a.split(':').map(Number);
@@ -37,7 +37,7 @@ export default function SelectDateTimePage() {
         if (aHour !== bHour) return aHour - bHour;
         return aMinute - bMinute;
     });
-  }, [store.availability]);
+  }, [availability]);
 
 
   const fetchSlotsForDate = useCallback(async (date: Date) => {
@@ -45,26 +45,26 @@ export default function SelectDateTimePage() {
     setSelectedTime(null);
     try {
       const slots = await getAvailableSlots({ date: format(date, "yyyy-MM-dd") });
-      store.setAvailability(slots);
+      setAvailability(slots);
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Failed to load times",
         description: error.message || "Could not fetch available time slots.",
       });
-      store.setAvailability([]);
+      setAvailability([]);
     } finally {
       setIsLoading(false);
     }
-  }, [toast, store]);
+  }, [toast, setAvailability]);
   
   // On initial load, if availability is empty (e.g. page refresh), fetch for today.
   useEffect(() => {
-    if (store.availability.length === 0) {
+    if (availability.length === 0) {
       fetchSlotsForDate(today);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [availability.length, today]);
 
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -88,7 +88,7 @@ export default function SelectDateTimePage() {
     
     const formattedDate = format(selectedDate, "yyyy-MM-dd");
 
-    store.setSelectedDateTime({ date: formattedDate, time: selectedTime });
+    setSelectedDateTime({ date: formattedDate, time: selectedTime });
     
     router.push("/payment_and_terms");
   };
