@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import { format, parseISO, startOfDay } from "date-fns";
 import BookingFlowLayout from "@/components/booking-flow-layout";
+import type { AvailabilitySlot } from "@/lib/types";
 
 export default function SelectDateTimePage() {
   const router = useRouter();
@@ -26,6 +27,12 @@ export default function SelectDateTimePage() {
 
   const today = useMemo(() => startOfDay(new Date()), []);
 
+  const processSlots = useCallback((slots: AvailabilitySlot[]) => {
+      const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
+      const uniqueTimes = Array.from(new Set(times));
+      setAvailableTimes(uniqueTimes);
+  }, []);
+
   const fetchSlots = useCallback(async (date: Date) => {
     setIsLoading(true);
     setAvailableTimes([]);
@@ -35,9 +42,7 @@ export default function SelectDateTimePage() {
         date: format(date, "yyyy-MM-dd"),
       };
       const slots = await getAvailableSlots(availabilityRequestDetails);
-      const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
-      const uniqueTimes = Array.from(new Set(times));
-      setAvailableTimes(uniqueTimes);
+      processSlots(slots);
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -48,13 +53,19 @@ export default function SelectDateTimePage() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [toast, processSlots]);
   
   useEffect(() => {
-    if (selectedDate) {
+    // If availability was pre-fetched, use it. Otherwise, fetch it.
+    if (store.availability.length > 0 && selectedDate && format(selectedDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")) {
+        processSlots(store.availability);
+        setIsLoading(false);
+        // Clear the pre-fetched data so it's not used again accidentally
+        store.setAvailability([]);
+    } else if (selectedDate) {
       fetchSlots(selectedDate);
     }
-  }, [selectedDate, fetchSlots]);
+  }, [selectedDate, fetchSlots, store, processSlots]);
 
   const sortedTimes = useMemo(() => {
     return [...availableTimes].sort((a, b) => {

@@ -24,12 +24,14 @@ import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
+import { getAvailableSlots } from "@/app/actions/booking-actions";
+import { format } from "date-fns";
 
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function ItemToRepairPage() {
   const router = useRouter();
-  const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions } = useBookingStore();
+  const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions, setAvailability } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
@@ -43,7 +45,7 @@ export default function ItemToRepairPage() {
 
   const selectedItems = form.watch("items", []);
   
-  function onSubmit(data: ItemToRepairFormData) {
+  async function onSubmit(data: ItemToRepairFormData) {
     setIsSubmitting(true);
     const finalItems = data.items as RepairItem[];
     const finalDescriptions: Record<string, string> = {};
@@ -55,6 +57,16 @@ export default function ItemToRepairPage() {
     setItemsToRepair(finalItems);
     setProblemDescriptions(finalDescriptions);
     
+    // Pre-fetch available slots for today to speed up the next page
+    try {
+        const slots = await getAvailableSlots({ date: format(new Date(), "yyyy-MM-dd") });
+        setAvailability(slots);
+    } catch (error) {
+        console.warn("Could not pre-fetch availability slots:", error);
+        // Don't block navigation if pre-fetching fails
+        setAvailability([]);
+    }
+
     router.push("/select_datetime");
   }
 
