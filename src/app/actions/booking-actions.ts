@@ -5,7 +5,6 @@ import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_time_slots/route';
 import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
-import { adminDb } from '@/lib/firebase-admin';
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
@@ -39,6 +38,37 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
   }
 }
 
+// This internal helper function will now be responsible for the database write via the API route.
+async function saveBookingToDb(details: any) {
+  // IMPORTANT: This URL needs to be the absolute URL of your deployed application
+  // for the server action to be able to call the API route.
+  // Using a relative URL will fail in a server environment.
+  // We'll construct it dynamically.
+  const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL 
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` 
+    : 'http://localhost:3000';
+  const url = `${baseUrl}/api/bookings/add`;
+
+  try {
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(details),
+      });
+
+      if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `Failed to save booking. Status: ${response.status}`);
+      }
+
+      return await response.json();
+  } catch (error: any) {
+      console.error('Error in saveBookingToDb:', error);
+       // Re-throw a more specific error to be caught by the calling function
+      throw new Error(`Failed to save booking: ${error.message}`);
+  }
+}
+
 export async function confirmBooking(details: any): Promise<WebhookConfirmation> {
   try {
     const request = new Request('http://localhost/api/webhooks/booking_confirmation', {
@@ -62,34 +92,22 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       }
       throw new Error(errorDetails);
     }
-
-    // Only after the external webhook confirms successfully, save to the database.
-    try {
-        const dataToSave = {
-            ...details,
-            createdAt: new Date().toISOString(),
-        };
-        await adminDb.collection('bookings').add(dataToSave);
-    } catch (dbError: any) {
-        console.error('Error saving booking to Firestore:', dbError);
-        // This is a more specific error for the toast
-        if ((dbError.message as string).includes('Firebase Admin credentials')) {
-             throw new Error('CRITICAL: Firebase Admin credentials are not set in the environment.');
-        }
-        throw new Error(`Failed to save booking after confirmation: ${dbError.message}`);
-    }
-
-
+    
     const confirmationData = await response.json();
+
+    // Only after the external webhook confirms successfully, save to the database
+    // by calling our internal API route.
+    await saveBookingToDb(details);
 
     return { status: 'Confirmed', ...confirmationData };
 
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
     // Re-throw the original error to be caught by the client-side form handler
-    throw new Error(`Failed to confirm booking: ${error.message}`);
+    throw new Error(`${error.message}`);
   }
 }
+
 
 export async function testWebhook(): Promise<any> {
   const url = "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots_test";
