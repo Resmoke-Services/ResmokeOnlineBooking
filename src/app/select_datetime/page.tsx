@@ -28,14 +28,12 @@ export default function SelectDateTimePage() {
 
   const fetchSlots = useCallback(async (date: Date) => {
     setIsLoading(true);
-    setAvailableTimes([]); // Immediately clear old times
-    setSelectedTime(null);  // Reset selected time when date changes
+    setAvailableTimes([]);
+    setSelectedTime(null);
     try {
       const availabilityRequestDetails = {
         date: format(date, "yyyy-MM-dd"),
-        // Pass any other necessary details from the store
       };
-      // The `await` keyword ensures we wait for the webhook response
       const slots = await getAvailableSlots(availabilityRequestDetails);
       const times = slots.map(slot => format(parseISO(slot.slotStart), "HH:mm"));
       const uniqueTimes = Array.from(new Set(times));
@@ -46,7 +44,7 @@ export default function SelectDateTimePage() {
         title: "Failed to load times",
         description: error.message || "Could not fetch available time slots.",
       });
-      setAvailableTimes([]); // Ensure times are cleared on error
+      setAvailableTimes([]);
     } finally {
       setIsLoading(false);
     }
@@ -56,8 +54,7 @@ export default function SelectDateTimePage() {
     if (selectedDate) {
       fetchSlots(selectedDate);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedDate]); // We only want this to run when selectedDate changes. fetchSlots is wrapped in useCallback.
+  }, [selectedDate, fetchSlots]);
 
   const sortedTimes = useMemo(() => {
     return [...availableTimes].sort((a, b) => {

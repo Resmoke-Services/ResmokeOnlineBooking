@@ -52,12 +52,10 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
       throw new Error(errorDetails);
     }
     
-    // The response from the proxy should be the JSON from the external webhook
     return await response.json();
 
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] getAvailableSlots:", error);
-    // Re-throw the error so the client-side can catch it
     throw new Error(`Failed to fetch availability slots: ${error.message}`);
   }
 }
@@ -86,7 +84,6 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
 
     await saveBookingToDb(details);
 
-    // The response from the proxy is the JSON from the external webhook
     const confirmationData = await response.json();
 
     return { status: 'Confirmed', ...confirmationData };
