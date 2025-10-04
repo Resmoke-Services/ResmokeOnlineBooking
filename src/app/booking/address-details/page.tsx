@@ -71,20 +71,23 @@ export default function AddressDetailsPage() {
   const complexName = watch("complexName");
 
   const suburbOptions = useMemo(() => {
+    let suburbs: readonly string[] = [];
     switch (city) {
-      case 'Centurion': return centurionSuburbs;
-      case 'Pretoria': return pretoriaSuburbs;
-      case 'Midrand': return midrandSuburbs;
+      case 'Centurion': suburbs = centurionSuburbs; break;
+      case 'Pretoria': suburbs = pretoriaSuburbs; break;
+      case 'Midrand': suburbs = midrandSuburbs; break;
       default: return [];
     }
+    return [...suburbs, 'Other'];
   }, [city]);
 
   const complexOptions = useMemo(() => {
     if (!city || !suburb) return ['Other'];
-    if (city === 'Centurion' && suburb && centurionComplexes[suburb]) return [...centurionComplexes[suburb], 'Other'];
-    if (city === 'Pretoria' && suburb && pretoriaComplexes[suburb]) return [...pretoriaComplexes[suburb], 'Other'];
-    if (city === 'Midrand' && suburb && midrandComplexes[suburb]) return [...midrandComplexes[suburb], 'Other'];
-    return ['Other'];
+    let complexes: string[] = [];
+    if (city === 'Centurion' && suburb && centurionComplexes[suburb]) complexes = centurionComplexes[suburb];
+    if (city === 'Pretoria' && suburb && pretoriaComplexes[suburb]) complexes = pretoriaComplexes[suburb];
+    if (city === 'Midrand' && suburb && midrandComplexes[suburb]) complexes = midrandComplexes[suburb];
+    return [...complexes, 'Other'];
   }, [city, suburb]);
 
 
