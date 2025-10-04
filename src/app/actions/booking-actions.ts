@@ -72,6 +72,10 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
         await adminDb.collection('bookings').add(dataToSave);
     } catch (dbError: any) {
         console.error('Error saving booking to Firestore:', dbError);
+        // This is a more specific error for the toast
+        if ((dbError.message as string).includes('Firebase Admin credentials')) {
+             throw new Error('CRITICAL: Firebase Admin credentials are not set in the environment.');
+        }
         throw new Error(`Failed to save booking after confirmation: ${dbError.message}`);
     }
 
