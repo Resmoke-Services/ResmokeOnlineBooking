@@ -80,10 +80,10 @@ export default function AddressDetailsPage() {
   }, [city]);
 
   const complexOptions = useMemo(() => {
-    if (!city || !suburb) return [];
-    if (city === 'Centurion') return centurionComplexes[suburb] || ['Other'];
-    if (city === 'Pretoria') return pretoriaComplexes[suburb] || ['Other'];
-    if (city === 'Midrand') return midrandComplexes[suburb] || ['Other'];
+    if (!city || !suburb) return ['Other'];
+    if (city === 'Centurion' && suburb && centurionComplexes[suburb]) return [...centurionComplexes[suburb], 'Other'];
+    if (city === 'Pretoria' && suburb && pretoriaComplexes[suburb]) return [...pretoriaComplexes[suburb], 'Other'];
+    if (city === 'Midrand' && suburb && midrandComplexes[suburb]) return [...midrandComplexes[suburb], 'Other'];
     return ['Other'];
   }, [city, suburb]);
 
@@ -322,3 +322,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+    
