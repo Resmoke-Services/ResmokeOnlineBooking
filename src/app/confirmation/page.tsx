@@ -1,5 +1,6 @@
 "use client";
 
+import "dotenv/config";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/hooks/use-booking-store";
