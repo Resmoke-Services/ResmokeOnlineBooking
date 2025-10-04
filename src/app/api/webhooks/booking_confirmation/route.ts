@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-// The base URL for the webhook service.
+// TODO: Move this URL to a server-side environment variable for better security and flexibility.
+// For example, in apphosting.yaml or a .env file.
 const WEBHOOK_BASE_URL = "https://primary-production-5528.up.railway.app/webhook-test";
 
 
