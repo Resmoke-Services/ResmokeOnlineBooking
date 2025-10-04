@@ -24,7 +24,7 @@ import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
-import { getAvailableSlots } from "@/app/actions/booking-actions";
+import { getAvailableSlots, testWebhook } from "@/app/actions/booking-actions";
 import { format } from "date-fns";
 
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
@@ -33,6 +33,7 @@ export default function ItemToRepairPage() {
   const router = useRouter();
   const { itemsToRepair, problemDescriptions, setItemsToRepair, setProblemDescriptions, setAvailability } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTestingWebhook, setIsTestingWebhook] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
@@ -69,6 +70,21 @@ export default function ItemToRepairPage() {
 
     router.push("/select_datetime");
   }
+
+  const handleTestWebhook = async () => {
+    setIsTestingWebhook(true);
+    console.log("Sending webhook test request...");
+    try {
+      const result = await testWebhook();
+      console.log("Webhook test response:", result);
+      alert(`Webhook test result:\n\n${JSON.stringify(result, null, 2)}`);
+    } catch (error) {
+      console.error("Webhook test failed:", error);
+      alert(`Webhook test failed:\n\n${error}`);
+    } finally {
+      setIsTestingWebhook(false);
+    }
+  };
 
   return (
     <BookingFlowLayout>
@@ -166,16 +182,28 @@ export default function ItemToRepairPage() {
               <Button type="button" variant="outline" onClick={() => router.back()}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
-              <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  "Next"
-                )}
-              </Button>
+              <div className="flex gap-2">
+                <Button onClick={handleTestWebhook} disabled={isTestingWebhook} variant="secondary" type="button">
+                  {isTestingWebhook ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Testing...
+                    </>
+                  ) : (
+                    "Webhook Request"
+                  )}
+                </Button>
+                <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    "Next"
+                  )}
+                </Button>
+              </div>
             </CardFooter>
           </form>
         </Form>
