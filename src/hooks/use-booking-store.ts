@@ -25,12 +25,13 @@ interface BookingState extends BookingData {
   resetBooking: () => void;
 }
 
-const initialBookingData: Omit<BookingData, 'formattedAddress'> = {
+const initialState: BookingState = {
   name: '',
   surname: '',
   cellNumber: '',
   email: '',
   addressDetails: {},
+  formattedAddress: '',
   
   bookingFor: 'personal', // Default value
   // Landlord
@@ -56,12 +57,9 @@ const initialBookingData: Omit<BookingData, 'formattedAddress'> = {
   selectedDateTime: null,
   webhookConfirmation: null,
   servicePath: [],
-};
-
-const initialState: Omit<BookingState, keyof Omit<BookingData, 'formattedAddress'>> = {
-  ...initialBookingData,
   availability: [],
-  formattedAddress: '',
+
+  // Actions are defined in the store creation, these are just placeholders for the type
   setBookingFor: () => {},
   setPersonalDetails: () => {},
   setAddressDetails: () => {},
@@ -80,13 +78,14 @@ const initialState: Omit<BookingState, keyof Omit<BookingData, 'formattedAddress
   resetBooking: () => {},
 };
 
+
 export const useBookingStore = create<BookingState>()(
   persist(
     (set) => ({
       ...initialState,
       setBookingFor: (bookingFor) => set({ bookingFor }),
       setPersonalDetails: (details) => set({ ...details }),
-      setAddressDetails: (details: AddressDetails) => set((state) => {
+      setAddressDetails: (details: AddressDetails) => set(() => {
         let parts: string[] = [];
         const city = details.city === 'Other' ? details.otherCityDescription : details.city;
         const suburb = details.suburb === 'Other' ? details.otherSuburb : details.suburb;
