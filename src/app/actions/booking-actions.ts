@@ -93,3 +93,36 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     throw new Error(`Failed to confirm booking: ${error.message}`);
   }
 }
+
+export async function testWebhook(): Promise<any> {
+  const url = "https://primary-production-5528.up.railway.app/webhook-test/available_time_slots_test";
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ test: "payload", date: "2024-08-01" }), // Just a test payload
+    });
+
+    // We need to handle both JSON and text responses
+    const responseText = await response.text();
+
+    if (!response.ok) {
+        console.error(`Webhook test failed with status ${response.status}:`, responseText);
+        return { success: false, status: response.status, error: responseText };
+    }
+
+    try {
+        const data = JSON.parse(responseText);
+        return { success: true, data };
+    } catch(e) {
+        // If it's not JSON, return the text
+        return { success: true, data: responseText };
+    }
+
+  } catch (error: any) {
+    console.error("[SERVER_ACTION_ERROR] testWebhook:", error);
+    return { success: false, error: error.message };
+  }
+}

@@ -1,4 +1,11 @@
+
+"use client";
+
 import { ServiceCard } from '@/components/service-card';
+import { Button } from '@/components/ui/button';
+import { testWebhook } from '@/app/actions/booking-actions';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 const services = [
   {
@@ -31,8 +38,24 @@ const services = [
   },
 ];
 
-// This is now a server component, so it renders instantly.
 export default function HomePageContent() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleTestWebhook = async () => {
+    setIsLoading(true);
+    console.log("Sending webhook test request...");
+    try {
+      const result = await testWebhook();
+      console.log("Webhook test response:", result);
+      alert(`Webhook test result:\n\n${JSON.stringify(result, null, 2)}`);
+    } catch (error) {
+      console.error("Webhook test failed:", error);
+      alert(`Webhook test failed:\n\n${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
       <main className="flex-1">
         <section id="services" className="py-16">
@@ -45,6 +68,18 @@ export default function HomePageContent() {
               {services.map((service) => (
                 <ServiceCard key={service.title} {...service} />
               ))}
+            </div>
+            <div className="text-center mt-12">
+              <Button onClick={handleTestWebhook} disabled={isLoading} variant="secondary">
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Testing...
+                  </>
+                ) : (
+                  "Webhook Request"
+                )}
+              </Button>
             </div>
           </div>
         </section>
