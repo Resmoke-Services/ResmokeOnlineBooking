@@ -7,6 +7,7 @@ import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_tim
 import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
 
 async function saveBookingToDb(bookingData: any) {
+  // Use a relative path for API routes when calling from server actions
   const url = new URL('/api/bookings/add', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
   
   try {
@@ -32,6 +33,7 @@ async function saveBookingToDb(bookingData: any) {
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
+    // Construct a new Request object to pass to the proxy route handler
     const request = new Request('http://localhost/api/webhooks/available_time_slots', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -44,6 +46,7 @@ export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[
       const responseText = await response.text();
       let errorDetails = `Error: ${response.status}`;
       try {
+        // Attempt to parse error as JSON, otherwise use the raw text.
         const errorJson = JSON.parse(responseText);
         errorDetails = errorJson.message || JSON.stringify(errorJson);
       } catch (e) {
@@ -82,6 +85,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
       throw new Error(errorDetails);
     }
 
+    // Save to the database only after the external webhook confirms successfully.
     await saveBookingToDb(details);
 
     const confirmationData = await response.json();
@@ -105,7 +109,6 @@ export async function testWebhook(): Promise<any> {
       body: JSON.stringify({ test: "payload", date: "2024-08-01" }), // Just a test payload
     });
 
-    // We need to handle both JSON and text responses
     const responseText = await response.text();
 
     if (!response.ok) {
