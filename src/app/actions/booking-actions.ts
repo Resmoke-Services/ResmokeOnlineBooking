@@ -5,31 +5,7 @@ import "dotenv/config";
 import type { AvailabilitySlot, WebhookConfirmation } from "@/lib/types";
 import { POST as postAvailableTimeSlots } from '@/app/api/webhooks/available_time_slots/route';
 import { POST as postBookingConfirmation } from '@/app/api/webhooks/booking_confirmation/route';
-
-async function saveBookingToDb(bookingData: any) {
-  // Use a relative path for API routes when calling from server actions
-  const url = new URL('/api/bookings/add', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000');
-  
-  try {
-    const response = await fetch(url.toString(), {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to save booking to database.');
-    }
-
-    return await response.json();
-  } catch (error: any) {
-    console.error('[SERVER_ACTION_ERROR] saveBookingToDb:', error);
-    throw new Error(`Failed to save booking: ${error.message}`);
-  }
-}
+import { adminDb } from '@/lib/firebase-admin';
 
 export async function getAvailableSlots(details: any): Promise<AvailabilitySlot[]> {
   try {
@@ -88,7 +64,17 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
     }
 
     // Only after the external webhook confirms successfully, save to the database.
-    await saveBookingToDb(details);
+    try {
+        const dataToSave = {
+            ...details,
+            createdAt: new Date().toISOString(),
+        };
+        await adminDb.collection('bookings').add(dataToSave);
+    } catch (dbError: any) {
+        console.error('Error saving booking to Firestore:', dbError);
+        throw new Error(`Failed to save booking after confirmation: ${dbError.message}`);
+    }
+
 
     const confirmationData = await response.json();
 
@@ -96,6 +82,7 @@ export async function confirmBooking(details: any): Promise<WebhookConfirmation>
 
   } catch (error: any) {
     console.error("[SERVER_ACTION_ERROR] confirmBooking:", error);
+    // Re-throw the original error to be caught by the client-side form handler
     throw new Error(`Failed to confirm booking: ${error.message}`);
   }
 }
