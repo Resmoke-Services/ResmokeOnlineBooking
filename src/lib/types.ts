@@ -3,6 +3,7 @@
 
 
 
+
 export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null;
 
 export const repairItems = [
@@ -34,7 +35,7 @@ export const paymentMethods = [
 ] as const;
 export type PaymentMethod = (typeof paymentMethods)[number]['id'];
 
-export const propertyTypes = ['Home', 'Complex', 'House in an Estate', 'Complex in an Estate', 'Office', 'Small Holding', 'Farm', 'Other'] as const;
+export const propertyTypes = ['Home', 'Complex', 'House in an Estate', 'Complex in an Estate', 'Office', 'Small Holding', 'Farm', 'OTHER'] as const;
 export type PropertyType = (typeof propertyTypes)[number];
 
 export const propertyFunctions = ['Private', 'Business'] as const;

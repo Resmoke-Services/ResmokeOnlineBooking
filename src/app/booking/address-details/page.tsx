@@ -332,7 +332,7 @@ export default function AddressDetailsPage() {
                 }} />
             </>
         );
-      case 'Other':
+      case 'OTHER':
         return (
             <>
                 <FormField control={control} name="otherPropertyType" render={({ field }) => ( <FormItem><FormLabel>Please Specify Property Type</FormLabel><FormControl><Input {...field} placeholder="e.g., Warehouse, School" /></FormControl><FormMessage /></FormItem>)} />
@@ -377,7 +377,7 @@ export default function AddressDetailsPage() {
                               </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                              {propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type}</SelectItem>))}
+                              {propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type === 'OTHER' ? 'Other' : type}</SelectItem>))}
                           </SelectContent>
                       </Select>
                       <FormMessage />
