@@ -129,7 +129,7 @@ export const useBookingStore = create<BookingState>()(
                 if (details.farmName) parts.push(details.farmName);
                 if (details.streetName) parts.push(details.streetName);
                 break;
-            case 'Other':
+            case 'OTHER':
                 if (details.otherPropertyType) parts.push(details.otherPropertyType);
                 if (details.streetNumber) parts.push(details.streetNumber);
                 if (details.streetName) parts.push(details.streetName);
