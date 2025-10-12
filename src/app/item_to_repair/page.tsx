@@ -39,7 +39,8 @@ export default function ItemToRepairPage() {
     setItemsToRepair, 
     setProblemDescriptions, 
     setAvailability,
-    addressDetails
+    addressDetails,
+    servicePath
   } = useBookingStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -69,7 +70,10 @@ export default function ItemToRepairPage() {
     try {
         const slots = await getAvailableSlots({ 
           date: format(new Date(), "yyyy-MM-dd"),
-          ...addressDetails 
+          ...addressDetails,
+          itemsToRepair: finalItems,
+          problemDescriptions: finalDescriptions,
+          servicePath,
         });
         setAvailability(slots);
         router.push("/select_datetime");
