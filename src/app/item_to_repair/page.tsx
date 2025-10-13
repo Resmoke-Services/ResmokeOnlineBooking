@@ -67,12 +67,15 @@ export default function ItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
+        const { availability, setAvailability, resetBooking, ...bookingData } = store.getState();
+
         const slots = await getAvailableSlots({ 
-          ...store, // Send the entire store state
+          ...bookingData,
           date: format(new Date(), "yyyy-MM-dd"),
           itemsToRepair: finalItems,
           problemDescriptions: finalDescriptions,
         });
+
         setAvailability(slots);
         router.push("/select_datetime");
     } catch (error: any) {

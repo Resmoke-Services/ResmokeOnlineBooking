@@ -84,8 +84,10 @@ export default function PaymentAndTermsPage() {
     store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
+    const { availability, setAvailability, resetBooking, ...bookingData } = store.getState();
+
     const bookingDetails = {
-      ...store,
+      ...bookingData,
       paymentMethods: [data.paymentMethod],
       billingInformation: data.billingInformation,
       termsAgreement: data.terms,

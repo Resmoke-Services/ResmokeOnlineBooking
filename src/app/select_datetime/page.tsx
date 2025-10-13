@@ -17,7 +17,8 @@ import type { AvailabilitySlot } from "@/lib/types";
 export default function SelectDateTimePage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { availability, setAvailability, selectedDateTime, setSelectedDateTime, addressDetails } = useBookingStore();
+  const store = useBookingStore();
+  const { availability, setAvailability, selectedDateTime, setSelectedDateTime, addressDetails } = store;
   
   const today = useMemo(() => startOfDay(new Date()), []);
 
@@ -63,9 +64,10 @@ export default function SelectDateTimePage() {
     setIsLoading(true);
     setSelectedTime(null);
     try {
+      const { availability, setAvailability, resetBooking, ...bookingData } = store.getState();
       const slots = await getAvailableSlots({ 
+          ...bookingData,
           date: format(date, "yyyy-MM-dd"),
-          ...addressDetails
       });
       setAvailability(slots);
     } catch (error: any) {
@@ -78,7 +80,7 @@ export default function SelectDateTimePage() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast, setAvailability, addressDetails]);
+  }, [toast, setAvailability, store]);
   
   // On initial load, if availability is empty (e.g. page refresh), fetch for today.
   useEffect(() => {
