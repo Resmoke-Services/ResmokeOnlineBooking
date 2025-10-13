@@ -84,37 +84,38 @@ export default function PaymentAndTermsPage() {
     store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    const { 
-        availability, 
-        setAvailability, 
-        resetBooking,
-        setBookingFor,
-        setPersonalDetails,
-        setAddressDetails,
-        setLandlordDetails,
-        setOwnerDetails,
-        setCompanyDetails,
-        setItemsToRepair,
-        setProblemDescriptions,
-        setPaymentMethods,
-        setBillingInformation,
-        setTermsAgreement,
-        setSelectedDateTime,
-        setWebhookConfirmation,
-        setServicePath,
-        ...bookingData 
-      } = store;
-
-    const finalBookingDetails = {
-      ...bookingData,
-      paymentMethods: [data.paymentMethod],
-      billingInformation: data.billingInformation,
-      termsAgreement: data.terms,
+    const bookingData = {
+        name: store.name,
+        surname: store.surname,
+        cellNumber: store.cellNumber,
+        email: store.email,
+        addressDetails: store.addressDetails,
+        formattedAddress: store.formattedAddress,
+        bookingFor: store.bookingFor,
+        landlordName: store.landlordName,
+        landlordSurname: store.landlordSurname,
+        landlordCellNumber: store.landlordCellNumber,
+        landlordEmail: store.landlordEmail,
+        ownerName: store.ownerName,
+        ownerSurname: store.ownerSurname,
+        ownerCellNumber: store.ownerCellNumber,
+        ownerEmail: store.ownerEmail,
+        companyName: store.companyName,
+        companyPhone: store.companyPhone,
+        companyEmail: store.companyEmail,
+        itemsToRepair: store.itemsToRepair,
+        problemDescriptions: store.problemDescriptions,
+        selectedDateTime: store.selectedDateTime,
+        servicePath: store.servicePath,
+        serviceType: store.serviceType,
+        paymentMethods: [data.paymentMethod],
+        billingInformation: data.billingInformation,
+        termsAgreement: data.terms,
     };
 
 
     try {
-        const confirmation = await confirmBooking(finalBookingDetails);
+        const confirmation = await confirmBooking(bookingData);
         store.setWebhookConfirmation(confirmation);
         router.push("/confirmation");
     } catch (error: any) {
