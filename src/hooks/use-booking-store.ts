@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { BookingData, AvailabilitySlot, WebhookConfirmation, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation, AddressDetails } from '@/lib/types';
+import type { BookingData, AvailabilitySlot, WebhookConfirmation, RepairItem, PaymentMethod, TermsAgreement, BookingSlot, BookingFor, BillingInformation, AddressDetails, ServiceType } from '@/lib/types';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
@@ -22,6 +22,7 @@ interface BookingState extends BookingData {
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
   setServicePath: (path: string[]) => void;
+  setServiceType: (type: ServiceType) => void;
   resetBooking: () => void;
 }
 
@@ -57,6 +58,7 @@ const initialState: BookingState = {
   selectedDateTime: null,
   webhookConfirmation: null,
   servicePath: [],
+  serviceType: null,
   availability: [],
 
   // Actions are defined in the store creation, these are just placeholders for the type
@@ -75,6 +77,7 @@ const initialState: BookingState = {
   setAvailability: () => {},
   setWebhookConfirmation: () => {},
   setServicePath: () => {},
+  setServiceType: () => {},
   resetBooking: () => {},
 };
 
@@ -158,6 +161,7 @@ export const useBookingStore = create<BookingState>()(
       setAvailability: (availability) => set({ availability }),
       setWebhookConfirmation: (webhookConfirmation) => set({ webhookConfirmation }),
       setServicePath: (servicePath) => set({ servicePath }),
+      setServiceType: (serviceType) => set({ serviceType }),
       resetBooking: () => set(initialState),
     }),
     {

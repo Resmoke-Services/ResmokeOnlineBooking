@@ -1,14 +1,18 @@
 
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
+import { useBookingStore } from '@/hooks/use-booking-store';
+import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
     type: 'workshop',
-    title: 'Workshop',
+    title: 'Workshop Drop-Off',
     subtitle:
     (
       <span>
@@ -77,6 +81,12 @@ const serviceOptions = [
 ];
 
 export default function ServicesDiagnosticScan() {
+  const { setServiceType } = useBookingStore();
+
+  const handleServiceSelection = (serviceTitle: ServiceType) => {
+    setServiceType(serviceTitle);
+  };
+  
   return (
     <BookingFlowLayout>
       <div className="text-center mb-16">
@@ -86,7 +96,7 @@ export default function ServicesDiagnosticScan() {
        <div className="flex justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch max-w-5xl">
           {serviceOptions.map((details) => (
-            <Link href={details.href} key={details.type} className="block group h-full">
+            <Link href={details.href} key={details.type} className="block group h-full" onClick={() => handleServiceSelection(details.title as ServiceType)}>
               <Card className="w-full h-full overflow-hidden shadow-xl border-2 border-primary/50 animate-in fade-in-50 duration-500 transition-all hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 flex flex-col">
                 <div className="relative w-full aspect-video bg-black/20">
                   <Image

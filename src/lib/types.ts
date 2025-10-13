@@ -1,8 +1,5 @@
 
-
-
-
-
+export type ServiceType = "On-Site Service" | "Workshop Drop-Off" | "Collection & Delivery" | null;
 
 export type BillingInformation = 'personal' | 'user' | 'owner' | 'landlord' | 'company' | string | null;
 
@@ -254,6 +251,7 @@ export interface BookingData {
   
   // Internal tracking
   servicePath: string[];
+  serviceType: ServiceType;
 }
 
 export interface BookingState extends BookingData {
@@ -273,5 +271,6 @@ export interface BookingState extends BookingData {
   setAvailability: (availability: AvailabilitySlot[]) => void;
   setWebhookConfirmation: (data: WebhookConfirmation | null) => void;
   setServicePath: (path: string[]) => void;
+  setServiceType: (type: ServiceType) => void;
   resetBooking: () => void;
 }

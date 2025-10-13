@@ -85,6 +85,7 @@ export default function ItemToRepairPage() {
           setSelectedDateTime,
           setWebhookConfirmation,
           setServicePath,
+          setServiceType,
           ...bookingData 
         } = store;
 
