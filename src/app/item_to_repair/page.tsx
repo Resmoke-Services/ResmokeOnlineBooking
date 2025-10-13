@@ -33,15 +33,14 @@ type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 export default function ItemToRepairPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const store = useBookingStore();
   const { 
     itemsToRepair, 
     problemDescriptions, 
     setItemsToRepair, 
     setProblemDescriptions, 
     setAvailability,
-    addressDetails,
-    servicePath
-  } = useBookingStore();
+  } = store;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
@@ -69,11 +68,10 @@ export default function ItemToRepairPage() {
     
     try {
         const slots = await getAvailableSlots({ 
+          ...store, // Send the entire store state
           date: format(new Date(), "yyyy-MM-dd"),
-          ...addressDetails,
           itemsToRepair: finalItems,
           problemDescriptions: finalDescriptions,
-          servicePath,
         });
         setAvailability(slots);
         router.push("/select_datetime");
