@@ -84,9 +84,28 @@ export default function PaymentAndTermsPage() {
     store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    const { availability, setAvailability, resetBooking, ...bookingData } = store;
+    const { 
+        availability, 
+        setAvailability, 
+        resetBooking,
+        setBookingFor,
+        setPersonalDetails,
+        setAddressDetails,
+        setLandlordDetails,
+        setOwnerDetails,
+        setCompanyDetails,
+        setItemsToRepair,
+        setProblemDescriptions,
+        setPaymentMethods,
+        setBillingInformation,
+        setTermsAgreement,
+        setSelectedDateTime,
+        setWebhookConfirmation,
+        setServicePath,
+        ...bookingData 
+      } = store;
 
-    const bookingDetails = {
+    const finalBookingDetails = {
       ...bookingData,
       paymentMethods: [data.paymentMethod],
       billingInformation: data.billingInformation,
@@ -95,7 +114,7 @@ export default function PaymentAndTermsPage() {
 
 
     try {
-        const confirmation = await confirmBooking(bookingDetails);
+        const confirmation = await confirmBooking(finalBookingDetails);
         store.setWebhookConfirmation(confirmation);
         router.push("/confirmation");
     } catch (error: any) {

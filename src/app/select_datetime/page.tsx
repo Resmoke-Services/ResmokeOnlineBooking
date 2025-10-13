@@ -64,7 +64,27 @@ export default function SelectDateTimePage() {
     setIsLoading(true);
     setSelectedTime(null);
     try {
-      const { availability, setAvailability, resetBooking, ...bookingData } = store;
+      const { 
+          availability, 
+          setAvailability, 
+          resetBooking, 
+          setBookingFor,
+          setPersonalDetails,
+          setAddressDetails,
+          setLandlordDetails,
+          setOwnerDetails,
+          setCompanyDetails,
+          setItemsToRepair,
+          setProblemDescriptions,
+          setPaymentMethods,
+          setBillingInformation,
+          setTermsAgreement,
+          setSelectedDateTime,
+          setWebhookConfirmation,
+          setServicePath,
+          ...bookingData 
+        } = store;
+
       const slots = await getAvailableSlots({ 
           ...bookingData,
           date: format(date, "yyyy-MM-dd"),
@@ -88,7 +108,7 @@ export default function SelectDateTimePage() {
         fetchSlotsForDate(initialDate);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availability.length, initialDate]);
+  }, []);
 
 
   const handleDateSelect = (date: Date | undefined) => {

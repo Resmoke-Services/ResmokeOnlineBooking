@@ -67,13 +67,32 @@ export default function ItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const { availability, setAvailability, resetBooking, ...bookingData } = store;
+        const { 
+          availability, 
+          setAvailability, 
+          resetBooking, 
+          setBookingFor,
+          setPersonalDetails,
+          setAddressDetails,
+          setLandlordDetails,
+          setOwnerDetails,
+          setCompanyDetails,
+          setItemsToRepair,
+          setProblemDescriptions,
+          setPaymentMethods,
+          setBillingInformation,
+          setTermsAgreement,
+          setSelectedDateTime,
+          setWebhookConfirmation,
+          setServicePath,
+          ...bookingData 
+        } = store;
 
         const slots = await getAvailableSlots({ 
           ...bookingData,
-          date: format(new Date(), "yyyy-MM-dd"),
           itemsToRepair: finalItems,
           problemDescriptions: finalDescriptions,
+          date: format(new Date(), "yyyy-MM-dd"),
         });
 
         setAvailability(slots);
@@ -83,11 +102,9 @@ export default function ItemToRepairPage() {
         toast({
           variant: "destructive",
           title: "Failed to load times",
-          description: error.message || "Could not fetch available time slots.",
+          description: error.message || "Could not fetch available time slots. Only Functions passed from the Server can be passed back again.",
         });
         setAvailability([]); // Clear any old data
-        // Still navigate so user isn't stuck, the next page will show an error.
-        router.push("/select_datetime");
     } finally {
         setIsSubmitting(false);
     }
