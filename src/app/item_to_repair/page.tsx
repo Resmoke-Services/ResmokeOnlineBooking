@@ -67,7 +67,7 @@ export default function ItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const { availability, setAvailability, resetBooking, ...bookingData } = store.getState();
+        const { availability, setAvailability, resetBooking, ...bookingData } = store;
 
         const slots = await getAvailableSlots({ 
           ...bookingData,

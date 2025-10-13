@@ -64,7 +64,7 @@ export default function SelectDateTimePage() {
     setIsLoading(true);
     setSelectedTime(null);
     try {
-      const { availability, setAvailability, resetBooking, ...bookingData } = store.getState();
+      const { availability, setAvailability, resetBooking, ...bookingData } = store;
       const slots = await getAvailableSlots({ 
           ...bookingData,
           date: format(date, "yyyy-MM-dd"),
