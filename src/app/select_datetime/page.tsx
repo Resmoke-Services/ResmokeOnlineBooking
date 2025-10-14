@@ -18,7 +18,7 @@ export default function SelectDateTimePage() {
   const router = useRouter();
   const { toast } = useToast();
   const store = useBookingStore();
-  const { availability, setAvailability, selectedDateTime, setSelectedDateTime, addressDetails } = store;
+  const { availability, setAvailability, selectedDateTime, setSelectedDateTime } = store;
   
   const today = useMemo(() => startOfDay(new Date()), []);
 
@@ -64,26 +64,34 @@ export default function SelectDateTimePage() {
     setIsLoading(true);
     setSelectedTime(null);
     try {
-      const { 
-          availability, 
-          setAvailability, 
-          resetBooking, 
-          setBookingFor,
-          setPersonalDetails,
-          setAddressDetails,
-          setLandlordDetails,
-          setOwnerDetails,
-          setCompanyDetails,
-          setItemsToRepair,
-          setProblemDescriptions,
-          setPaymentMethods,
-          setBillingInformation,
-          setTermsAgreement,
-          setSelectedDateTime,
-          setWebhookConfirmation,
-          setServicePath,
-          ...bookingData 
-        } = store;
+        const bookingData = {
+          name: store.name,
+          surname: store.surname,
+          cellNumber: store.cellNumber,
+          email: store.email,
+          addressDetails: store.addressDetails,
+          formattedAddress: store.formattedAddress,
+          bookingFor: store.bookingFor,
+          landlordName: store.landlordName,
+          landlordSurname: store.landlordSurname,
+          landlordCellNumber: store.landlordCellNumber,
+          landlordEmail: store.landlordEmail,
+          ownerName: store.ownerName,
+          ownerSurname: store.ownerSurname,
+          ownerCellNumber: store.ownerCellNumber,
+          ownerEmail: store.ownerEmail,
+          companyName: store.companyName,
+          companyPhone: store.companyPhone,
+          companyEmail: store.companyEmail,
+          itemsToRepair: store.itemsToRepair,
+          problemDescriptions: store.problemDescriptions,
+          selectedDateTime: store.selectedDateTime,
+          servicePath: store.servicePath,
+          serviceType: store.serviceType,
+          paymentMethods: store.paymentMethods,
+          billingInformation: store.billingInformation,
+          termsAgreement: store.termsAgreement,
+        };
 
       const slots = await getAvailableSlots({ 
           ...bookingData,
