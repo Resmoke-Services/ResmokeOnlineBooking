@@ -67,32 +67,37 @@ export default function ItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const { 
-          availability, 
-          setAvailability, 
-          resetBooking, 
-          setBookingFor,
-          setPersonalDetails,
-          setAddressDetails,
-          setLandlordDetails,
-          setOwnerDetails,
-          setCompanyDetails,
-          setItemsToRepair,
-          setProblemDescriptions,
-          setPaymentMethods,
-          setBillingInformation,
-          setTermsAgreement,
-          setSelectedDateTime,
-          setWebhookConfirmation,
-          setServicePath,
-          setServiceType,
-          ...bookingData 
-        } = store;
+        const bookingData = {
+          name: store.name,
+          surname: store.surname,
+          cellNumber: store.cellNumber,
+          email: store.email,
+          addressDetails: store.addressDetails,
+          formattedAddress: store.formattedAddress,
+          bookingFor: store.bookingFor,
+          landlordName: store.landlordName,
+          landlordSurname: store.landlordSurname,
+          landlordCellNumber: store.landlordCellNumber,
+          landlordEmail: store.landlordEmail,
+          ownerName: store.ownerName,
+          ownerSurname: store.ownerSurname,
+          ownerCellNumber: store.ownerCellNumber,
+          ownerEmail: store.ownerEmail,
+          companyName: store.companyName,
+          companyPhone: store.companyPhone,
+          companyEmail: store.companyEmail,
+          itemsToRepair: finalItems,
+          problemDescriptions: finalDescriptions,
+          selectedDateTime: store.selectedDateTime,
+          servicePath: store.servicePath,
+          serviceType: store.serviceType,
+          paymentMethods: store.paymentMethods,
+          billingInformation: store.billingInformation,
+          termsAgreement: store.termsAgreement,
+        };
 
         const slots = await getAvailableSlots({ 
           ...bookingData,
-          itemsToRepair: finalItems,
-          problemDescriptions: finalDescriptions,
           date: format(new Date(), "yyyy-MM-dd"),
         });
 
@@ -103,7 +108,7 @@ export default function ItemToRepairPage() {
         toast({
           variant: "destructive",
           title: "Failed to load times",
-          description: error.message || "Could not fetch available time slots. Only Functions passed from the Server can be passed back again.",
+          description: error.message || "An error occurred in the Server Components render. The specific message is omitted in production builds to avoid leaking sensitive details. A digest property is included on this error instance which may provide additional details about the nature of the error.",
         });
         setAvailability([]); // Clear any old data
     } finally {
@@ -224,3 +229,5 @@ export default function ItemToRepairPage() {
     </BookingFlowLayout>
   );
 }
+
+    
