@@ -64,39 +64,22 @@ export default function SelectDateTimePage() {
     setIsLoading(true);
     setSelectedTime(null);
     try {
-        const bookingData = {
-          name: store.name,
-          surname: store.surname,
-          cellNumber: store.cellNumber,
-          email: store.email,
-          addressDetails: store.addressDetails,
-          formattedAddress: store.formattedAddress,
-          bookingFor: store.bookingFor,
-          landlordName: store.landlordName,
-          landlordSurname: store.landlordSurname,
-          landlordCellNumber: store.landlordCellNumber,
-          landlordEmail: store.landlordEmail,
-          ownerName: store.ownerName,
-          ownerSurname: store.ownerSurname,
-          ownerCellNumber: store.ownerCellNumber,
-          ownerEmail: store.ownerEmail,
-          companyName: store.companyName,
-          companyPhone: store.companyPhone,
-          companyEmail: store.companyEmail,
-          itemsToRepair: store.itemsToRepair,
-          problemDescriptions: store.problemDescriptions,
-          selectedDateTime: store.selectedDateTime,
-          servicePath: store.servicePath,
-          serviceType: store.serviceType,
-          paymentMethods: store.paymentMethods,
-          billingInformation: store.billingInformation,
-          termsAgreement: store.termsAgreement,
-        };
+        const {
+          name, surname, cellNumber, email, addressDetails, formattedAddress,
+          bookingFor, landlordName, landlordSurname, landlordCellNumber, landlordEmail,
+          ownerName, ownerSurname, ownerCellNumber, ownerEmail, companyName,
+          companyPhone, companyEmail, itemsToRepair, problemDescriptions, servicePath, serviceType
+      } = store;
 
-      const slots = await getAvailableSlots({ 
-          ...bookingData,
+      const bookingData = {
+          name, surname, cellNumber, email, addressDetails, formattedAddress,
+          bookingFor, landlordName, landlordSurname, landlordCellNumber, landlordEmail,
+          ownerName, ownerSurname, ownerCellNumber, ownerEmail, companyName,
+          companyPhone, companyEmail, itemsToRepair, problemDescriptions, servicePath, serviceType,
           date: format(date, "yyyy-MM-dd"),
-      });
+      };
+      
+      const slots = await getAvailableSlots(bookingData);
       setAvailability(slots);
     } catch (error: any) {
       toast({
@@ -184,7 +167,7 @@ export default function SelectDateTimePage() {
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
-                {availableTimes.length > 0 ? availableTimes.map((time) => (
+                {Array.isArray(availableTimes) && availableTimes.length > 0 ? availableTimes.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
