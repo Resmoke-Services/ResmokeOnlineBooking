@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
-const WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook/available_time_slots";
+const WEBHOOK_URL = "https://primary-production-5528.up.railway.app/webhook-test/available_timeslots";
 
 export async function POST(request: Request) {
   if (!WEBHOOK_URL) {
