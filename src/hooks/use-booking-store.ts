@@ -145,7 +145,7 @@ export const useBookingStore = create<BookingState>()(
         const formattedAddress = parts.filter(Boolean).join(', ');
 
         return { 
-            addressDetails: details, 
+            addressDetails: { ...details, accessCodeRequired: details.accessCodeRequired || 'no' }, 
             formattedAddress
         };
       }),
