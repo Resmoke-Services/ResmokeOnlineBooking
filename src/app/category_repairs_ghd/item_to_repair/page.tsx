@@ -16,62 +16,50 @@ import {
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useState, useEffect } from "react";
-import { ChevronLeft, Loader2, Plus } from "lucide-react";
+import { useState } from "react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { shallow } from "zustand/shallow";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
-type RepairItemOption = { id: string; label: string };
-const defaultGhdRepairItems: RepairItemOption[] = [
-    { id: 'HAIR_STRAIGHTENER', label: 'HAIR STRAIGHTENER' },
-    { id: 'HAIR_DRYER', label: 'HAIR DRYER' },
-];
+// Custom repair items for GHD
+const ghdRepairItems = [
+    { id: 'HAIR_STRAIGHTENER', label: 'HAIR STRAIGHTENER', note: undefined },
+    { id: 'HAIR_DRYER', label: 'HAIR DRYER', note: undefined },
+    { id: 'OTHER', label: 'Other', note: 'USER MUST INPUT ITEM NAME' },
+] as const;
 
+type RepairItem = (typeof ghdRepairItems)[number]['id'];
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function GhdItemToRepairPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const store = useBookingStore(
+    (state) => state,
+    shallow
+  );
+
   const { 
     itemsToRepair, 
     problemDescriptions, 
     setItemsToRepair, 
     setProblemDescriptions,
     setAvailability,
-    ...store
-  } = useBookingStore(
-    (state) => state,
-    shallow
-  );
+  } = store;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [newItemName, setNewItemName] = useState('');
-  const [repairItemsList, setRepairItemsList] = useState<RepairItemOption[]>(defaultGhdRepairItems);
-  
-  useEffect(() => {
-    // Avoid hydration errors by initializing client-side state after mount
-    const existingCustomItems = itemsToRepair
-        .filter(item => !defaultGhdRepairItems.some(defaultItem => defaultItem.id === item))
-        .map(item => ({ id: item, label: item }));
-    
-    // Use a Set to prevent duplicates if user navigates back and forth
-    const combined = [...defaultGhdRepairItems, ...existingCustomItems];
-    const uniqueItems = Array.from(new Map(combined.map(item => [item.id, item])).values());
-
-    setRepairItemsList(uniqueItems);
-  }, [itemsToRepair]); // Rerun if itemsToRepair changes from store
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
-      items: itemsToRepair,
+      items: itemsToRepair as RepairItem[],
       descriptions: problemDescriptions,
     },
     mode: 'onChange',
@@ -79,66 +67,36 @@ export default function GhdItemToRepairPage() {
 
   const selectedItems = form.watch("items", []);
   
-  const handleAddItem = () => {
-    const trimmedName = newItemName.trim().toUpperCase();
-    if (trimmedName && !repairItemsList.some(item => item.id === trimmedName)) {
-        setRepairItemsList(prevList => [...prevList, { id: trimmedName, label: trimmedName }]);
-    }
-    setNewItemName('');
-  };
-
   async function onSubmit(data: ItemToRepairFormData) {
     setIsSubmitting(true);
-    
-    const finalItems = data.items;
+    const finalItems = data.items as RepairItem[];
     const finalDescriptions: Record<string, string> = {};
     
     finalItems.forEach(item => {
         finalDescriptions[item] = data.descriptions?.[item] || '';
     });
 
-    setItemsToRepair(finalItems);
+    setItemsToRepair(finalItems as GlobalRepairItem[]);
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const bookingData = {
-          name: store.name,
-          surname: store.surname,
-          cellNumber: store.cellNumber,
-          email: store.email,
-          addressDetails: store.addressDetails,
-          formattedAddress: store.formattedAddress,
-          bookingFor: store.bookingFor,
-          landlordName: store.landlordName,
-          landlordSurname: store.landlordSurname,
-          landlordCellNumber: store.landlordCellNumber,
-          landlordEmail: store.landlordEmail,
-          ownerName: store.ownerName,
-          ownerSurname: store.ownerSurname,
-          ownerCellNumber: store.ownerCellNumber,
-          ownerEmail: store.ownerEmail,
-          companyName: store.companyName,
-          companyPhone: store.companyPhone,
-          companyEmail: store.companyEmail,
-          itemsToRepair: finalItems,
-          problemDescriptions: finalDescriptions,
-          selectedDateTime: store.selectedDateTime,
-          servicePath: store.servicePath,
-          serviceType: store.serviceType,
-          paymentMethods: store.paymentMethods,
-          billingInformation: store.billingInformation,
-          termsAgreement: store.termsAgreement,
-          availability: store.availability,
-          webhookConfirmation: store.webhookConfirmation,
-        };
+      const {
+        setItemsToRepair: _,
+        setAvailability: __,
+        setProblemDescriptions: ___,
+        availability: ____,
+        ...bookingDataForAction
+      } = store;
 
-        const slots = await getAvailableSlots({ 
-          ...bookingData,
-          date: format(new Date(), "yyyy-MM-dd"), 
-        });
-
-        setAvailability(slots);
-        router.push("/select_datetime");
+      const slots = await getAvailableSlots({
+        ...bookingDataForAction,
+        itemsToRepair: finalItems,
+        problemDescriptions: finalDescriptions,
+        date: format(new Date(), "yyyy-MM-dd"),
+      });
+      
+      setAvailability(slots);
+      router.push("/select_datetime");
 
     } catch (error: any) {
         console.error("Failed to fetch availability slots:", error);
@@ -169,32 +127,46 @@ export default function GhdItemToRepairPage() {
                   render={() => (
                     <FormItem className="space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {repairItemsList.map((item) => (
+                        {ghdRepairItems.map((item) => (
                           <FormField
                             key={item.id}
                             control={form.control}
                             name="items"
-                            render={({ field }) => (
+                            render={({ field }) => {
+                              return (
                                 <FormItem
+                                  key={item.id}
                                   className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
                                 >
                                   <FormControl>
                                     <Checkbox
                                       checked={field.value?.includes(item.id)}
                                       onCheckedChange={(checked) => {
-                                        const newValue = checked
-                                          ? [...(field.value || []), item.id]
-                                          : field.value?.filter((value) => value !== item.id);
-                                        field.onChange(newValue);
+                                        return checked
+                                          ? field.onChange([...(field.value || []), item.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value) => value !== item.id
+                                              )
+                                            )
                                       }}
+                                      id={`item-${item.id}`}
+                                      name="items"
                                     />
                                   </FormControl>
-                                  <FormLabel className="font-normal cursor-pointer">
-                                    {item.label}
-                                  </FormLabel>
+                                  <div className="space-y-1 leading-none">
+                                      <FormLabel className="font-normal cursor-pointer">
+                                        {item.label}
+                                      </FormLabel>
+                                      {item.note && (
+                                        <p className="text-xs text-muted-foreground">
+                                          *{item.note}
+                                        </p>
+                                      )}
+                                  </div>
                                 </FormItem>
                               )
-                            }
+                            }}
                           />
                         ))}
                       </div>
@@ -202,23 +174,10 @@ export default function GhdItemToRepairPage() {
                     </FormItem>
                   )}
                 />
-                
-                <div className="flex items-center gap-2 pt-4">
-                    <Input 
-                        placeholder="Add another item..."
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
-                        className="uppercase"
-                    />
-                    <Button type="button" onClick={handleAddItem} disabled={!newItemName.trim()}>
-                        <Plus className="mr-2 h-4 w-4" /> Add
-                    </Button>
-                </div>
-
 
                 {selectedItems.length > 0 && <hr className="my-4"/>}
-                
-                {repairItemsList.map((item) => {
+
+                {ghdRepairItems.map((item) => {
                     const isSelected = selectedItems.includes(item.id);
                     if (!isSelected) return null;
 
@@ -236,6 +195,8 @@ export default function GhdItemToRepairPage() {
                                             placeholder={`Please describe the issue with the ${itemLabel.toLowerCase()}.`}
                                             {...field}
                                             value={field.value || ''}
+                                            id={`description-${item.id}`}
+                                            name={`descriptions.${item.id}`}
                                         />
                                     </FormControl>
                                     <FormMessage />
