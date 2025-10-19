@@ -156,7 +156,7 @@ export default function GhdItemToRepairPage() {
                                   </FormControl>
                                   <div className="space-y-1 leading-none">
                                       <FormLabel className="font-normal cursor-pointer">
-                                        {item.label}
+                                        {item.id === 'OTHER' ? 'OTHER: USER INPUT' : item.label}
                                       </FormLabel>
                                       {item.note && (
                                         <p className="text-xs text-muted-foreground">
