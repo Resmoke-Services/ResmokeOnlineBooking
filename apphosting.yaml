@@ -1,0 +1,53 @@
+# This file configures the settings for your Firebase App Hosting backend.
+# It controls the server environment (Cloud Run) and how secrets are managed.
+
+runConfig:
+  minInstances: 0
+
+env:
+  # --- SERVER-SIDE SECRETS (Loaded from Secret Manager) ---
+  - variable: APP_FIREBASE_ADMIN_CREDENTIALS
+    secret: APP_FIREBASE_ADMIN_CREDENTIALS
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: GEMINI_API_KEY
+    secret: GEMINI_API_KEY
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: FIREBASE_CONFIG
+    secret: FIREBASE_CONFIG
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # --- CLIENT-SIDE PUBLIC VARIABLES (Values set directly) ---
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    value: "AIzaSyAs0PxKNxmHD1V00HvTtgsmMkYDUPzyr9c"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_PLACES_API_KEY
+    value: "AIzaSyDzlR50AS9PBmq6oPos4vXuq0jUHUtRU1I"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+    value: "booking.resmoke.co.za"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: "studio-2610147525-49407"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+    value: "studio-2610147525-49407.firebasestorage.app"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+    value: "841215751788"
+    availability:
+      - BUILD
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: "1:841215751788:web:b9b091c6e467fd25560a49"
+    availability:
+      - BUILD
