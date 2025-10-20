@@ -80,11 +80,12 @@ export default function PaymentAndTermsPage() {
   async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
     
+    // Unify state from the store and the final form data
     store.setPaymentMethods([data.paymentMethod]);
     store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    const bookingData = {
+    const payload = {
         name: store.name,
         surname: store.surname,
         cellNumber: store.cellNumber,
@@ -115,30 +116,22 @@ export default function PaymentAndTermsPage() {
 
 
     try {
-        const webhookData = {
-            name: store.name,
-            surname: store.surname,
-            cellNumber: store.cellNumber,
-            email: store.email,
-        };
-
-        console.log('Attempting to send this data to n8n:', webhookData);
-
         if (process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION) {
+          console.log('Preparing to send this payload:', payload);
           fetch(process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION, {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
               },
-              body: JSON.stringify(webhookData),
+              body: JSON.stringify(payload),
           }).catch(error => {
-              console.error('Webhook fetch error:', error);
+              console.error('Webhook request failed:', error);
           });
         } else {
             console.warn('Webhook URL not configured. Skipping webhook call.');
         }
 
-        const confirmation = await confirmBooking(bookingData);
+        const confirmation = await confirmBooking(payload);
         store.setWebhookConfirmation(confirmation);
         router.push("/confirmation");
     } catch (error: any) {
