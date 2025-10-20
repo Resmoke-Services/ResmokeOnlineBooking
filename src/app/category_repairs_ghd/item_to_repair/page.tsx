@@ -58,20 +58,6 @@ export default function GhdItemToRepairPage() {
   const [customItem, setCustomItem] = useState('');
   const [repairItemsList, setRepairItemsList] = useState(baseGhdRepairItems);
 
-  useEffect(() => {
-    const existingCustomItems = itemsToRepair.filter(
-      (item) => !baseGhdRepairItems.some((baseItem) => baseItem.id === item)
-    );
-
-    if (existingCustomItems.length > 0) {
-      const newItems = existingCustomItems.map(item => ({ id: item, label: item, note: undefined }));
-      const allItems = [...baseGhdRepairItems, ...newItems];
-      const uniqueItems = Array.from(new Map(allItems.map(item => [item.id, item])).values());
-      setRepairItemsList(uniqueItems);
-    }
-  }, [itemsToRepair]);
-
-
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
