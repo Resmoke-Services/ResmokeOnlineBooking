@@ -124,16 +124,19 @@ export default function PaymentAndTermsPage() {
 
         console.log('Attempting to send this data to n8n:', webhookData);
 
-        // Send data to n8n webhook
-        fetch('[PASTE_YOUR_N8N_WEBHOOK_URL_HERE]', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(webhookData),
-        }).catch(error => {
-            console.error('Webhook fetch error:', error);
-        });
+        if (process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION) {
+          fetch(process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(webhookData),
+          }).catch(error => {
+              console.error('Webhook fetch error:', error);
+          });
+        } else {
+            console.warn('Webhook URL not configured. Skipping webhook call.');
+        }
 
         const confirmation = await confirmBooking(bookingData);
         store.setWebhookConfirmation(confirmation);
@@ -274,5 +277,3 @@ export default function PaymentAndTermsPage() {
     </BookingFlowLayout>
   );
 }
-
-    

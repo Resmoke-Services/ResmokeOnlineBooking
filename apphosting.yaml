@@ -51,3 +51,7 @@ env:
     value: "1:841215751788:web:b9b091c6e467fd25560a49"
     availability:
       - BUILD
+  - variable: NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION
+    value: ""
+    availability:
+      - BUILD
