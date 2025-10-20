@@ -59,16 +59,12 @@ export default function GhdItemToRepairPage() {
   const [repairItemsList, setRepairItemsList] = useState(baseGhdRepairItems);
 
   useEffect(() => {
-    // This effect runs on the client after hydration.
-    // It merges the base items with any custom items already in the global store.
-    // This prevents hydration errors and ensures custom items persist on back navigation.
     const existingCustomItems = itemsToRepair.filter(
       (item) => !baseGhdRepairItems.some((baseItem) => baseItem.id === item)
     );
 
     if (existingCustomItems.length > 0) {
       const newItems = existingCustomItems.map(item => ({ id: item, label: item, note: undefined }));
-      // Use a Set to ensure unique items before updating state
       const allItems = [...baseGhdRepairItems, ...newItems];
       const uniqueItems = Array.from(new Map(allItems.map(item => [item.id, item])).values());
       setRepairItemsList(uniqueItems);
@@ -109,35 +105,39 @@ export default function GhdItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-        const {
-          // Exclude all functions and complex objects that are not needed by the server action
-          setItemsToRepair: _,
-          setAvailability: __,
-          setProblemDescriptions: ___,
-          availability: ____,
-          webhookConfirmation: _____,
-          resetBooking: ______,
-          setBookingFor: _______,
-          setPersonalDetails: ________,
-          setAddressDetails: _________,
-          setLandlordDetails: __________,
-          setOwnerDetails: ___________,
-          setCompanyDetails: ____________,
-          setPaymentMethods: _____________,
-          setBillingInformation: ______________,
-          setTermsAgreement: _______________,
-          setSelectedDateTime: ________________,
-          setServicePath: _________________,
-          setServiceType: __________________,
-          ...bookingDataForAction
-        } = store;
-
-        const slots = await getAvailableSlots({
-          ...bookingDataForAction,
+        const bookingDataForAction = {
+          name: store.name,
+          surname: store.surname,
+          cellNumber: store.cellNumber,
+          email: store.email,
+          addressDetails: store.addressDetails,
+          formattedAddress: store.formattedAddress,
+          bookingFor: store.bookingFor,
+          landlordName: store.landlordName,
+          landlordSurname: store.landlordSurname,
+          landlordCellNumber: store.landlordCellNumber,
+          landlordEmail: store.landlordEmail,
+          ownerName: store.ownerName,
+          ownerSurname: store.ownerSurname,
+          ownerCellNumber: store.ownerCellNumber,
+          ownerEmail: store.ownerEmail,
+          companyName: store.companyName,
+          companyPhone: store.companyPhone,
+          companyEmail: store.companyEmail,
           itemsToRepair: finalItems,
           problemDescriptions: finalDescriptions,
+          selectedDateTime: store.selectedDateTime,
+          servicePath: store.servicePath,
+          serviceType: store.serviceType,
+          paymentMethods: store.paymentMethods,
+          billingInformation: store.billingInformation,
+          termsAgreement: store.termsAgreement,
           date: format(new Date(), "yyyy-MM-dd"),
-        });
+        };
+        
+        console.log("Data being passed to getAvailableSlots:", bookingDataForAction);
+
+        const slots = await getAvailableSlots(bookingDataForAction);
       
       setAvailability(slots);
       router.push("/select_datetime");
