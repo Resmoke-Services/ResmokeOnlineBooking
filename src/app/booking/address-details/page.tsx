@@ -124,6 +124,7 @@ export default function AddressDetailsPage() {
     if (category) {
       router.push(`/category_repairs_${category}/item_to_repair`);
     } else {
+      // Fallback for older paths or if servicePath[1] is not set
       router.push("/item_to_repair");
     }
   }
@@ -460,5 +461,3 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
-
-    
