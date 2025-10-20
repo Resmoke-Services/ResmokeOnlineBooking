@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronLeft, Loader2, Plus } from "lucide-react";
 import { shallow } from "zustand/shallow";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
@@ -35,7 +35,12 @@ const baseGhdRepairItems = [
     { id: 'HAIR_DRYER', label: 'HAIR DRYER', note: undefined },
 ] as const;
 
-type RepairItem = (typeof baseGhdRepairItems)[number]['id'] | string;
+interface RepairItem {
+  id: string;
+  label: string;
+  note?: string;
+}
+
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function GhdItemToRepairPage() {
@@ -56,12 +61,12 @@ export default function GhdItemToRepairPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customItem, setCustomItem] = useState('');
-  const [repairItemsList, setRepairItemsList] = useState(baseGhdRepairItems);
+  const [repairItemsList, setRepairItemsList] = useState<RepairItem[]>([...baseGhdRepairItems]);
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
-      items: itemsToRepair as RepairItem[],
+      items: itemsToRepair,
       descriptions: problemDescriptions,
     },
     mode: 'onChange',
@@ -80,7 +85,7 @@ export default function GhdItemToRepairPage() {
   
   async function onSubmit(data: ItemToRepairFormData) {
     setIsSubmitting(true);
-    const finalItems = data.items as RepairItem[];
+    const finalItems = data.items;
     const finalDescriptions: Record<string, string> = {};
     
     finalItems.forEach(item => {
@@ -120,8 +125,6 @@ export default function GhdItemToRepairPage() {
           termsAgreement: store.termsAgreement,
           date: format(new Date(), "yyyy-MM-dd"),
         };
-        
-        console.log("Data being passed to getAvailableSlots:", bookingDataForAction);
 
         const slots = await getAvailableSlots(bookingDataForAction);
       
@@ -172,10 +175,11 @@ export default function GhdItemToRepairPage() {
                                     <Checkbox
                                       checked={field.value?.includes(item.id)}
                                       onCheckedChange={(checked) => {
+                                        const currentItems = field.value || [];
                                         return checked
-                                          ? field.onChange([...(field.value || []), item.id])
+                                          ? field.onChange([...currentItems, item.id])
                                           : field.onChange(
-                                              field.value?.filter(
+                                              currentItems.filter(
                                                 (value) => value !== item.id
                                               )
                                             )
