@@ -124,7 +124,6 @@ export default function AddressDetailsPage() {
     if (category) {
       router.push(`/category_repairs_${category}/item_to_repair`);
     } else {
-      // Fallback for older bookings or if servicePath is not set as expected
       router.push("/item_to_repair");
     }
   }
