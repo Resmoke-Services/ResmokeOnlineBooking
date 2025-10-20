@@ -261,7 +261,7 @@ export default function GhdItemToRepairPage() {
                 })}
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => router.back()}>
+              <Button type="button" variant="outline" onClick={() => router.push('/booking/select-type')}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
               <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
