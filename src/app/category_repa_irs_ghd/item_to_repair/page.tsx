@@ -22,7 +22,11 @@ import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { useState } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
+import { shallow } from "zustand/shallow";
+import { getAvailableSlots } from "@/app/actions/booking-actions";
+import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
 // Custom repair items for GHD
 const ghdRepairItems = [
@@ -37,19 +41,25 @@ type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 export default function GhdItemToRepairPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const store = useBookingStore();
+  const store = useBookingStore(
+    (state) => state,
+    shallow
+  );
+
   const { 
     itemsToRepair, 
     problemDescriptions, 
     setItemsToRepair, 
     setProblemDescriptions,
+    setAvailability,
   } = store;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
-      items: itemsToRepair,
+      items: itemsToRepair as RepairItem[],
       descriptions: problemDescriptions,
     },
     mode: 'onChange',
@@ -66,20 +76,46 @@ export default function GhdItemToRepairPage() {
         finalDescriptions[item] = data.descriptions?.[item] || '';
     });
 
-    setItemsToRepair(finalItems);
+    setItemsToRepair(finalItems as GlobalRepairItem[]);
     setProblemDescriptions(finalDescriptions);
     
-    // Navigate to the next step in the booking flow
-    router.push("/booking/select-type");
+    try {
+        const {
+          setItemsToRepair: _,
+          setAvailability: __,
+          setProblemDescriptions: ___,
+          availability: ____,
+          ...bookingDataForAction
+        } = store;
 
-    setIsSubmitting(false);
+        const slots = await getAvailableSlots({
+          ...bookingDataForAction,
+          itemsToRepair: finalItems,
+          problemDescriptions: finalDescriptions,
+          date: format(new Date(), "yyyy-MM-dd"),
+        });
+      
+      setAvailability(slots);
+      router.push("/select_datetime");
+
+    } catch (error: any) {
+        console.error("Failed to fetch availability slots:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load times",
+          description: error.message || "Could not fetch available time slots.",
+        });
+        setAvailability([]); // Clear any old data
+    } finally {
+        setIsSubmitting(false);
+    }
   }
 
   return (
     <BookingFlowLayout>
       <Card className="shadow-xl">
         <CardHeader>
-          <CardTitle className="text-2xl">GHD Item to be Repaired</CardTitle>
+          <CardTitle className="text-2xl">Item to be Repaired</CardTitle>
           <CardDescription>Select the item(s) you need repaired and describe the problem.</CardDescription>
         </CardHeader>
         <Form {...form}>
@@ -120,7 +156,7 @@ export default function GhdItemToRepairPage() {
                                   </FormControl>
                                   <div className="space-y-1 leading-none">
                                       <FormLabel className="font-normal cursor-pointer">
-                                        {item.label}
+                                        {item.id === 'OTHER' ? 'OTHER: USER INPUT' : item.label}
                                       </FormLabel>
                                       {item.note && (
                                         <p className="text-xs text-muted-foreground">
