@@ -115,18 +115,24 @@ export default function PaymentAndTermsPage() {
 
 
     try {
+        const webhookData = {
+            name: store.name,
+            surname: store.surname,
+            cellNumber: store.cellNumber,
+            email: store.email,
+        };
+
+        console.log('Attempting to send this data to n8n:', webhookData);
+
         // Send data to n8n webhook
-        await fetch('[PASTE_YOUR_N8N_WEBHOOK_URL_HERE]', {
+        fetch('[PASTE_YOUR_N8N_WEBHOOK_URL_HERE]', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                name: store.name,
-                surname: store.surname,
-                cellNumber: store.cellNumber,
-                email: store.email,
-            }),
+            body: JSON.stringify(webhookData),
+        }).catch(error => {
+            console.error('Webhook fetch error:', error);
         });
 
         const confirmation = await confirmBooking(bookingData);
