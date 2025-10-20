@@ -15,27 +15,27 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { itemToRepairSchema } from "@/lib/schemas";
 import BookingFlowLayout from "@/components/booking-flow-layout";
-import { useState } from "react";
-import { ChevronLeft, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChevronLeft, Loader2, Plus } from "lucide-react";
 import { shallow } from "zustand/shallow";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
-// Custom repair items for GHD
-const ghdRepairItems = [
+// Base repair items for GHD
+const baseGhdRepairItems = [
     { id: 'HAIR_STRAIGHTENER', label: 'HAIR STRAIGHTENER', note: undefined },
     { id: 'HAIR_DRYER', label: 'HAIR DRYER', note: undefined },
-    { id: 'OTHER', label: 'Other', note: 'USER MUST INPUT ITEM NAME' },
 ] as const;
 
-type RepairItem = (typeof ghdRepairItems)[number]['id'];
+type RepairItem = (typeof baseGhdRepairItems)[number]['id'] | string;
 type ItemToRepairFormData = z.infer<typeof itemToRepairSchema>;
 
 export default function GhdItemToRepairPage() {
@@ -55,6 +55,26 @@ export default function GhdItemToRepairPage() {
   } = store;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [customItem, setCustomItem] = useState('');
+  const [repairItemsList, setRepairItemsList] = useState(baseGhdRepairItems);
+
+  useEffect(() => {
+    // This effect runs on the client after hydration.
+    // It merges the base items with any custom items already in the global store.
+    // This prevents hydration errors and ensures custom items persist on back navigation.
+    const existingCustomItems = itemsToRepair.filter(
+      (item) => !baseGhdRepairItems.some((baseItem) => baseItem.id === item)
+    );
+
+    if (existingCustomItems.length > 0) {
+      const newItems = existingCustomItems.map(item => ({ id: item, label: item, note: undefined }));
+      // Use a Set to ensure unique items before updating state
+      const allItems = [...baseGhdRepairItems, ...newItems];
+      const uniqueItems = Array.from(new Map(allItems.map(item => [item.id, item])).values());
+      setRepairItemsList(uniqueItems);
+    }
+  }, [itemsToRepair]);
+
 
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
@@ -64,6 +84,15 @@ export default function GhdItemToRepairPage() {
     },
     mode: 'onChange',
   });
+
+  const handleAddCustomItem = () => {
+    if (customItem.trim() === '') return;
+    const newItemId = customItem.trim().toUpperCase();
+    if (!repairItemsList.some(item => item.id === newItemId)) {
+        setRepairItemsList([...repairItemsList, { id: newItemId, label: newItemId, note: undefined }]);
+    }
+    setCustomItem('');
+  };
 
   const selectedItems = form.watch("items", []);
   
@@ -85,6 +114,7 @@ export default function GhdItemToRepairPage() {
           setAvailability: __,
           setProblemDescriptions: ___,
           availability: ____,
+          webhookConfirmation: _____,
           ...bookingDataForAction
         } = store;
 
@@ -127,7 +157,7 @@ export default function GhdItemToRepairPage() {
                   render={() => (
                     <FormItem className="space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {ghdRepairItems.map((item) => (
+                        {repairItemsList.map((item) => (
                           <FormField
                             key={item.id}
                             control={form.control}
@@ -156,7 +186,7 @@ export default function GhdItemToRepairPage() {
                                   </FormControl>
                                   <div className="space-y-1 leading-none">
                                       <FormLabel className="font-normal cursor-pointer">
-                                        {item.id === 'OTHER' ? 'OTHER: USER INPUT' : item.label}
+                                        {item.label}
                                       </FormLabel>
                                       {item.note && (
                                         <p className="text-xs text-muted-foreground">
@@ -174,12 +204,32 @@ export default function GhdItemToRepairPage() {
                     </FormItem>
                   )}
                 />
+                
+                <div className="flex gap-2 items-center pt-4">
+                    <Input 
+                        type="text"
+                        placeholder="Add another item..."
+                        value={customItem}
+                        onChange={(e) => setCustomItem(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleAddCustomItem();
+                            }
+                        }}
+                    />
+                    <Button type="button" onClick={handleAddCustomItem} size="icon">
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Add Item</span>
+                    </Button>
+                </div>
+
 
                 {selectedItems.length > 0 && <hr className="my-4"/>}
 
-                {ghdRepairItems.map((item) => {
-                    const isSelected = selectedItems.includes(item.id);
-                    if (!isSelected) return null;
+                {selectedItems.map((selectedItem) => {
+                    const item = repairItemsList.find(i => i.id === selectedItem);
+                    if (!item) return null;
 
                     const itemLabel = item.label || "Item";
                     return (
