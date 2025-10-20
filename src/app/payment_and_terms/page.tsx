@@ -115,11 +115,25 @@ export default function PaymentAndTermsPage() {
 
 
     try {
+        // Send data to n8n webhook
+        await fetch('[PASTE_YOUR_N8N_WEBHOOK_URL_HERE]', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: store.name,
+                surname: store.surname,
+                cellNumber: store.cellNumber,
+                email: store.email,
+            }),
+        });
+
         const confirmation = await confirmBooking(bookingData);
         store.setWebhookConfirmation(confirmation);
         router.push("/confirmation");
     } catch (error: any) {
-      console.error("Failed to confirm booking:", error);
+      console.error("Failed to confirm booking or send to webhook:", error);
       toast({
         variant: "destructive",
         title: "Submission Failed",
