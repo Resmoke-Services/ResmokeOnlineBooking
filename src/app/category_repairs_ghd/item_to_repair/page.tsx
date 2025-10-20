@@ -80,20 +80,20 @@ export default function GhdItemToRepairPage() {
     setProblemDescriptions(finalDescriptions);
     
     try {
-      const {
-        setItemsToRepair: _,
-        setAvailability: __,
-        setProblemDescriptions: ___,
-        availability: ____,
-        ...bookingDataForAction
-      } = store;
+        const {
+          setItemsToRepair: _,
+          setAvailability: __,
+          setProblemDescriptions: ___,
+          availability: ____,
+          ...bookingDataForAction
+        } = store;
 
-      const slots = await getAvailableSlots({
-        ...bookingDataForAction,
-        itemsToRepair: finalItems,
-        problemDescriptions: finalDescriptions,
-        date: format(new Date(), "yyyy-MM-dd"),
-      });
+        const slots = await getAvailableSlots({
+          ...bookingDataForAction,
+          itemsToRepair: finalItems,
+          problemDescriptions: finalDescriptions,
+          date: format(new Date(), "yyyy-MM-dd"),
+        });
       
       setAvailability(slots);
       router.push("/select_datetime");
