@@ -120,12 +120,23 @@ export default function AddressDetailsPage() {
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    const category = servicePath[1]?.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_').replace(/_straighteners_blow_dryers/g, '') || '';
+    // Retrieve the category from the service path, which looks like ["REPAIRS", "APPLIANCES"]
+    const category = servicePath[1];
+    
     if (category) {
-      router.push(`/category_repairs_${category}/item_to_repair_${category}`);
+      // Sanitize the category string for the URL: lowercase and handle special characters.
+      const categorySlug = category.toLowerCase()
+                                   .replace(/ & /g, '_')
+                                   .replace(/ /g, '_')
+                                   .replace(/_straighteners_blow_dryers/g, ''); // Specific cleanup for GHD
+      
+      // Construct the dynamic URL as per the required structure
+      const destinationUrl = `/category_repairs_${categorySlug}/item_to_repair_${categorySlug}`;
+      router.push(destinationUrl);
     } else {
-      // Fallback for older paths or if servicePath[1] is not set
-      router.push("/item_to_repair");
+      // Fallback to a default or show an error if the category is not found, though this shouldn't happen in a normal flow.
+      console.error("Repair category not found in service path.");
+      router.push("/"); // Or an error page
     }
   }
   
@@ -461,5 +472,3 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
-
-    
