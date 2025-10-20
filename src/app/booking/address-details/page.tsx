@@ -120,7 +120,7 @@ export default function AddressDetailsPage() {
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    const category = servicePath[1]?.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_') || '';
+    const category = servicePath[1]?.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_').replace(/_straighteners_blow_dryers/g, '') || '';
     if (category) {
       router.push(`/category_repairs_${category}/item_to_repair_${category}`);
     } else {
@@ -461,3 +461,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+    
