@@ -1,5 +1,10 @@
 
+"use client";
+
+import { useEffect } from 'react';
+import { useBookingStore } from '@/hooks/use-booking-store';
 import { ServiceCard } from '@/components/service-card';
+import { shallow } from 'zustand/shallow';
 
 const services = [
   {
@@ -40,6 +45,21 @@ const services = [
 ];
 
 export default function HomePageContent() {
+  const { setItemsToRepair, setProblemDescriptions } = useBookingStore(
+    (state) => ({
+      setItemsToRepair: state.setItemsToRepair,
+      setProblemDescriptions: state.setProblemDescriptions,
+    }),
+    shallow
+  );
+
+  useEffect(() => {
+    // Reset item selection when the user navigates back to the home page
+    // to start a new booking flow.
+    setItemsToRepair([]);
+    setProblemDescriptions({});
+  }, [setItemsToRepair, setProblemDescriptions]);
+
   return (
       <main className="flex-1">
         <section id="services" className="py-16">
