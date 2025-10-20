@@ -122,7 +122,7 @@ export default function AddressDetailsPage() {
     setStoreAddressDetails(data);
     const category = servicePath[1]?.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_') || '';
     if (category) {
-      router.push(`/category_repairs_${category}/item_to_repair`);
+      router.push(`/category_repairs_${category}/item_to_repair_${category}`);
     } else {
       // Fallback for older paths or if servicePath[1] is not set
       router.push("/item_to_repair");
