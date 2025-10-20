@@ -43,12 +43,19 @@ export default function PersonalDetailsPage() {
   const { name, surname, cellNumber, email } = store;
 
   useEffect(() => {
-    form.reset({
-      name: name || "",
-      surname: surname || "",
-      cellNumber: cellNumber || "",
-      email: email || "",
-    });
+    console.log('Starting data fetch from store...');
+    try {
+      const dataFromStore = {
+        name: name || "",
+        surname: surname || "",
+        cellNumber: cellNumber || "",
+        email: email || "",
+      };
+      console.log('Data fetched successfully:', dataFromStore);
+      form.reset(dataFromStore);
+    } catch (error) {
+      console.error('CRITICAL: Data fetching from store failed in production:', error);
+    }
   }, [name, surname, cellNumber, email, form]);
 
   const handlePhoneNumberBlur = (e: React.FocusEvent<HTMLInputElement>) => {
