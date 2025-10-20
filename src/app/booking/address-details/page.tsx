@@ -35,7 +35,7 @@ type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { addressDetails, setAddressDetails: setStoreAddressDetails } = useBookingStore();
+  const { addressDetails, setAddressDetails: setStoreAddressDetails, servicePath } = useBookingStore();
   const streetNameRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
@@ -120,7 +120,13 @@ export default function AddressDetailsPage() {
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    router.push("/item_to_repair");
+    const category = servicePath[1]?.toLowerCase().replace(/ & /g, '_').replace(/ /g, '_') || '';
+    if (category) {
+      router.push(`/category_repairs_${category}/item_to_repair`);
+    } else {
+      // Fallback for older bookings or if servicePath is not set as expected
+      router.push("/item_to_repair");
+    }
   }
   
   const renderConditionalFields = () => {
