@@ -110,11 +110,25 @@ export default function GhdItemToRepairPage() {
     
     try {
         const {
+          // Exclude all functions and complex objects that are not needed by the server action
           setItemsToRepair: _,
           setAvailability: __,
           setProblemDescriptions: ___,
           availability: ____,
           webhookConfirmation: _____,
+          resetBooking: ______,
+          setBookingFor: _______,
+          setPersonalDetails: ________,
+          setAddressDetails: _________,
+          setLandlordDetails: __________,
+          setOwnerDetails: ___________,
+          setCompanyDetails: ____________,
+          setPaymentMethods: _____________,
+          setBillingInformation: ______________,
+          setTermsAgreement: _______________,
+          setSelectedDateTime: ________________,
+          setServicePath: _________________,
+          setServiceType: __________________,
           ...bookingDataForAction
         } = store;
 
