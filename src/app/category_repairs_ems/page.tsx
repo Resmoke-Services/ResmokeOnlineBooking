@@ -34,7 +34,7 @@ const serviceOptions = [
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ems%2Fsevices_repairs_ems_workshop.png?alt=media&token=5b064c51-54b9-45a8-92f7-2d17c76825c3",
+      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ems%2Fsevices_repairs_ems_workshop.png?alt=media&token=ddcee7e0-7e15-4210-b1d1-6df7423657ab",
       alt: "EMS laser machine on a workshop bench",
       hint: "laser machine workshop"
     },
@@ -70,7 +70,7 @@ const serviceOptions = [
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ems%2Fsevices_repairs_ems_collection.png?alt=media&token=e11c5d79-2479-43c3-9d41-3b7c8449733e",
+      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ems%2Fsevices_repairs_ems_workshop_collection.png?alt=media&token=cc854931-5e01-4893-b4ca-86eed22ac99f",
       alt: "Collection service for an EMS laser machine",
       hint: "laser machine collection"
     },

@@ -69,7 +69,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
    {
     title: "EMS LASER MACHINES",
     href: "/category_repairs_ems",
-    imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ems_laser.png?alt=media&token=18b4566c-f22a-4363-959c-8b89a3f4e1f1",
+    imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ems.png?alt=media&token=558c376b-2341-4f72-80af-0f56d2e6eda7",
     imageAlt: "EMS Laser Machine Repair",
     imageHint: "laser machine repair",
     category: "EMS"
