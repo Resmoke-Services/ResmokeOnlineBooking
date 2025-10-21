@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BookingHeader } from "@/components/booking-header";
 import ServiceSelectionTracker from "@/components/service-selection-tracker";
-import PageSpinner from "@/components/page-spinner";
+import { useBookingStore } from "@/hooks/use-booking-store";
 
 
 interface ServiceCategoryCardProps {
@@ -18,8 +18,16 @@ interface ServiceCategoryCardProps {
 }
 
 function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href }: ServiceCategoryCardProps) {
+  const { setServicePath } = useBookingStore();
+
+  const handleCategoryClick = () => {
+    // The service path is derived from the href. e.g., /category_repairs_appliances -> ["REPAIRS", "APPLIANCES"]
+    const pathSegments = href.split('_').slice(1).map(s => s.toUpperCase());
+    setServicePath(pathSegments);
+  };
+
   return (
-    <Link href={href} className="block group">
+    <Link href={href} className="block group" onClick={handleCategoryClick}>
       <Card className="overflow-hidden h-full flex flex-col bg-card/50 transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 border-2 border-transparent hover:border-primary/50">
         <div className="relative w-full aspect-video bg-black/20">
           <Image
