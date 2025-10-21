@@ -116,21 +116,6 @@ export default function PaymentAndTermsPage() {
 
 
     try {
-        if (process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION) {
-          console.log('Preparing to send this payload:', payload);
-          fetch(process.env.NEXT_PUBLIC_WEBHOOK_URL_BOOKING_CONFIRMATION, {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(payload),
-          }).catch(error => {
-              console.error('Webhook request failed:', error);
-          });
-        } else {
-            console.warn('Webhook URL not configured. Skipping webhook call.');
-        }
-
         const confirmation = await confirmBooking(payload);
         store.setWebhookConfirmation(confirmation);
         router.push("/confirmation");
@@ -270,3 +255,5 @@ export default function PaymentAndTermsPage() {
     </BookingFlowLayout>
   );
 }
+
+    
