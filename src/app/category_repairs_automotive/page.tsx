@@ -32,7 +32,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "automotive repair workshop"
     },
-    href: "/booking/select-type"
+    href: "/category_repairs_automotive/item_to_repair_automotive"
   }
 ];
 
