@@ -39,7 +39,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "mechanical repair onsite"
     },
-    href: "/category_repairs_mechanical/item_to_repair_mechanical"
+    href: "/services_repairs/category_repairs_mechanical/item_to_repair_mechanical"
   },
   {
     type: 'workshop',
@@ -64,7 +64,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "mechanical repair workshop"
     },
-    href: "/category_repairs_mechanical/item_to_repair_mechanical"
+    href: "/services_repairs/category_repairs_mechanical/item_to_repair_mechanical"
   },
   {
     type: 'collection_delivery',
@@ -102,7 +102,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "mechanical repair workshop collect & deliver"
     },
-    href: "/category_repairs_mechanical/item_to_repair_mechanical"
+    href: "/services_repairs/category_repairs_mechanical/item_to_repair_mechanical"
   }
 ];
 
@@ -161,3 +161,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

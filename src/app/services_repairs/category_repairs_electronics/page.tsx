@@ -33,7 +33,7 @@ const serviceOptions = [
         alt: "Repair workshop with tools and appliances",
         hint: "electronic repairs workshop"
       },
-      href: "/category_repairs_electronics/item_to_repair_electronics"
+      href: "/services_repairs/category_repairs_electronics/item_to_repair_electronics"
     },
     {
       type: 'collection_delivery',
@@ -71,7 +71,7 @@ const serviceOptions = [
         alt: "Collection and delivery service van",
         hint: "electronic repairs workshop collect & deliver"
       },
-      href: "/category_repairs_electronics/item_to_repair_electronics"
+      href: "/services_repairs/category_repairs_electronics/item_to_repair_electronics"
     }
   ];
 
@@ -132,3 +132,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

@@ -39,7 +39,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "electrical repair onsite"
     },
-    href: "/category_repairs_electrical/item_to_repair_electrical"
+    href: "/services_repairs/category_repairs_electrical/item_to_repair_electrical"
   },
   {
     type: 'workshop',
@@ -64,7 +64,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "electrical repair workshop"
     },
-    href: "/category_repairs_electrical/item_to_repair_electrical"
+    href: "/services_repairs/category_repairs_electrical/item_to_repair_electrical"
   },
   {
     type: 'collection_delivery',
@@ -102,7 +102,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "electrical repair collection and delivery"
     },
-    href: "/category_repairs_electrical/item_to_repair_electrical"
+    href: "/services_repairs/category_repairs_electrical/item_to_repair_electrical"
   }
 ];
 
@@ -161,3 +161,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,7 +50,7 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
 const serviceCategories: ServiceCategoryCardProps[] = [
   {
     title: "HOME",
-    href: "/category_automation_home",
+    href: "/services_automation/category_automation_home",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_automation%2Fservices_home_automation_onsite.PNG?alt=media&token=f5b90b15-890d-47b2-b909-a44b523bb5cc",
     imageAlt: "Home Automation",
     imageHint: "home automation",
@@ -93,3 +94,5 @@ export default function ServicesAutomation() {
     </div>
   );
 }
+
+    

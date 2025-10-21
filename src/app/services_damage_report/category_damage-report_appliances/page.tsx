@@ -39,7 +39,7 @@ const serviceOptions = [
       alt: "Technician assessing a damaged appliance",
       hint: "appliance damage assessment"
     },
-    href: "/category_damage-report_appliances/item_to_assess_appliances"
+    href: "/services_damage_report/category_damage-report_appliances/item_to_assess_appliances"
   },
   {
     type: 'workshop',
@@ -68,7 +68,7 @@ const serviceOptions = [
       alt: "Appliance on a workbench in a workshop",
       hint: "appliance assessment workshop"
     },
-    href: "/category_damage-report_appliances/item_to_assess_appliances"
+    href: "/services_damage_report/category_damage-report_appliances/item_to_assess_appliances"
   }
 ];
 
@@ -128,3 +128,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

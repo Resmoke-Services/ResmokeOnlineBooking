@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,7 +50,7 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
 const serviceCategories: ServiceCategoryCardProps[] = [
   {
     title: "APPLIANCES",
-    href: "/category_damage-report_appliances",
+    href: "/services_damage_report/category_damage-report_appliances",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_damage_report%2Fservices_damage_report_workshop.png?alt=media&token=d4d731ba-4b06-4033-aa55-e358912c8089",
     imageAlt: "Appliance Damage Report",
     imageHint: "appliance damage report",
@@ -57,7 +58,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "ELECTRONICS",
-    href: "/category_damage-report_electronics",
+    href: "/services_damage_report/category_damage-report_electronics",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_damage_report%2Fservices_damage_report_onsite.png?alt=media&token=f85bc097-506e-4e0d-82b6-820178f366a0",
     imageAlt: "Electronics Damage Report",
     imageHint: "electronics damage report",
@@ -101,3 +102,5 @@ export default function ServicesDamageReport() {
     </div>
   );
 }
+
+    

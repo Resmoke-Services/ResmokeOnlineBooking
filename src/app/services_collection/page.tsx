@@ -50,7 +50,7 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
 const serviceCategories: ServiceCategoryCardProps[] = [
   {
     title: "APPLIANCES",
-    href: "/category_collection_appliances",
+    href: "/services_collection/category_collection_appliances",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_collection%2Fservices_collection_appliances_onsite_collection.PNG?alt=media&token=dd2f5a68-42a5-4e20-945c-e670cd2b0654",
     imageAlt: "Appliance Collection",
     imageHint: "appliance collection",
@@ -94,3 +94,5 @@ export default function ServicesCollection() {
     </div>
   );
 }
+
+    

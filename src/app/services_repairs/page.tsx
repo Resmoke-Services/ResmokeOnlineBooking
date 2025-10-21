@@ -22,7 +22,6 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
   const { setServicePath } = useBookingStore();
 
   const handleCategoryClick = () => {
-    // Directly use the 'category' prop to set the service path.
     setServicePath(["REPAIRS", category]);
   };
 
@@ -52,7 +51,7 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
 const serviceCategories: ServiceCategoryCardProps[] = [
   {
     title: "APPLIANCES",
-    href: "/category_repairs_appliances",
+    href: "/services_repairs/category_repairs_appliances",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_appliances.PNG?alt=media&token=a393630d-4b00-41a5-a254-1cb3633d9ce9",
     imageAlt: "Appliance Repair",
     imageHint: "Appliance Repair",
@@ -60,7 +59,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "GHD STRAIGHTENERS & BLOW DRYERS",
-    href: "/category_repairs_ghd",
+    href: "/services_repairs/category_repairs_ghd",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ghd.PNG?alt=media&token=047a66da-0c76-4f8d-9eb4-746afbea0e53",
     imageAlt: "GHD Straightener Repair",
     imageHint: "GHD Straightener Repair",
@@ -68,7 +67,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
    {
     title: "EMS LASER MACHINES",
-    href: "/category_repairs_ems",
+    href: "/services_repairs/category_repairs_ems",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ems.png?alt=media&token=558c376b-2341-4f72-80af-0f56d2e6eda7",
     imageAlt: "EMS Laser Machine Repair",
     imageHint: "laser machine repair",
@@ -76,7 +75,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "GATE & GARAGE MOTORS",
-    href: "/category_repairs_gate",
+    href: "/services_repairs/category_repairs_gate",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_gate_motor.PNG?alt=media&token=b5407a97-d507-4582-9807-a94c71546bd5",
     imageAlt: "Gate and Garage Motor Repair",
     imageHint: "Gate and Garage Motor Repair",
@@ -84,7 +83,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "ELECTRONICS",
-    href: "/category_repairs_electronics",
+    href: "/services_repairs/category_repairs_electronics",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_electronics.PNG?alt=media&token=370077d9-af5f-43a1-8a35-55be6808aa38",
     imageAlt: "Electronics repair",
     imageHint: "Electronics repair",
@@ -92,7 +91,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "AUTOMOTIVE & MOTORCYCLES",
-    href: "/category_repairs_automotive",
+    href: "/services_repairs/category_repairs_automotive",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_automotive_electronics.PNG?alt=media&token=a6ace560-61c5-4dfb-b52f-c77c0cfe7b97",
     imageAlt: "Automotive Repair",
     imageHint: "Automotive Repair",
@@ -100,7 +99,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "ELECTRICAL",
-    href: "/category_repairs_electrical",
+    href: "/services_repairs/category_repairs_electrical",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_electrical.PNG?alt=media&token=ea6af506-a6b5-44e6-9238-f7fd33c263a2",
     imageAlt: "Electrical Repair",
     imageHint: "Electrical Repair",
@@ -108,7 +107,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
   },
   {
     title: "MECHANICAL",
-    href: "/category_repairs_mechanical",
+    href: "/services_repairs/category_repairs_mechanical",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_mechanical.PNG?alt=media&token=4e5f8e10-f755-4508-b3f8-68c13c417edb",
     imageAlt: "Mechanical Repair",
     imageHint: "Mechanical Repair",

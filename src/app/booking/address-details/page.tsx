@@ -120,24 +120,38 @@ export default function AddressDetailsPage() {
 
   function onSubmit(data: AddressFormValues) {
     setStoreAddressDetails(data);
-    // Retrieve the category from the service path, which looks like ["REPAIRS", "APPLIANCES"]
-    const category = servicePath[1];
-    
-    if (category) {
-      // Sanitize the category string for the URL: lowercase and handle special characters.
-      const categorySlug = category.toLowerCase()
-                                   .replace(/ & /g, '_')
-                                   .replace(/ /g, '_')
-                                   .replace(/_straighteners_blow_dryers/g, ''); // Specific cleanup for GHD
-      
-      // Construct the dynamic URL as per the required structure
-      const destinationUrl = `/category_repairs_${categorySlug}/item_to_repair_${categorySlug}`;
-      router.push(destinationUrl);
-    } else {
-      // Fallback to a default or show an error if the category is not found, though this shouldn't happen in a normal flow.
-      console.error("Repair category not found in service path.");
-      router.push("/"); // Or an error page
+    const mainCategory = servicePath[0]?.toLowerCase() || '';
+    const subCategory = servicePath[1]?.toLowerCase() || '';
+
+    if (!mainCategory || !subCategory) {
+      console.error("Service path not found in store.");
+      router.push("/");
+      return;
     }
+
+    let itemPagePath;
+    switch(mainCategory) {
+        case 'repairs':
+            itemPagePath = `/services_repairs/category_repairs_${subCategory}/item_to_repair_${subCategory}`;
+            break;
+        case 'collection':
+             itemPagePath = `/services_collection/category_collection_${subCategory}/item_to_collect_${subCategory}`;
+            break;
+        case 'diagnostics':
+            itemPagePath = `/services_diagnostic_scan/category_diagnostics_${subCategory}/item_to_scan_${subCategory}`;
+            break;
+        case 'automation':
+             itemPagePath = `/services_automation/category_automation_${subCategory}/item_to_book_${subCategory}`;
+            break;
+        case 'damage_report':
+            itemPagePath = `/services_damage_report/category_damage-report_${subCategory}/item_to_assess_${subCategory}`;
+            break;
+        default:
+            console.error("Unknown main category in service path.");
+            router.push("/");
+            return;
+    }
+    router.push(itemPagePath);
   }
   
   const renderConditionalFields = () => {
@@ -472,3 +486,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+    

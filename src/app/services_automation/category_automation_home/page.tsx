@@ -39,7 +39,7 @@ const serviceOptions = [
       alt: "Smart home dashboard on a tablet",
       hint: "smart home automation"
     },
-    href: "/category_automation_home/item_to_book_home"
+    href: "/services_automation/category_automation_home/item_to_book_home"
   }
 ];
 
@@ -101,3 +101,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

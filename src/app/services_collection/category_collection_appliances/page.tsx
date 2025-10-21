@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "Collection service van",
       hint: "collection van"
     },
-    href: "/category_collection_appliances/item_to_collect_appliances"
+    href: "/services_collection/category_collection_appliances/item_to_collect_appliances"
   }
 ];
 
@@ -100,3 +100,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

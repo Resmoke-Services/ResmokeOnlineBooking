@@ -32,7 +32,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "automotive repair workshop"
     },
-    href: "/category_repairs_automotive/item_to_repair_automotive"
+    href: "/services_repairs/category_repairs_automotive/item_to_repair_automotive"
   }
 ];
 
@@ -93,3 +93,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

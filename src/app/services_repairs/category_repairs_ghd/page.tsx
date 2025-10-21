@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
-    href: "/category_repairs_ghd/item_to_repair_ghd"
+    href: "/services_repairs/category_repairs_ghd/item_to_repair_ghd"
   },
   {
     type: 'collection_delivery',
@@ -76,7 +76,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "ghd repair workshop collect & deliver"
     },
-    href: "/category_repairs_ghd/item_to_repair_ghd"
+    href: "/services_repairs/category_repairs_ghd/item_to_repair_ghd"
   }
 ];
 
@@ -137,3 +137,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

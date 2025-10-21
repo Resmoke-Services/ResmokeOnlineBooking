@@ -39,7 +39,7 @@ const serviceOptions = [
       alt: "Technician assessing a damaged electronic device",
       hint: "electronics damage assessment"
     },
-    href: "/category_damage-report_electronics/item_to_assess_electronics"
+    href: "/services_damage_report/category_damage-report_electronics/item_to_assess_electronics"
   },
   {
     type: 'workshop',
@@ -68,7 +68,7 @@ const serviceOptions = [
       alt: "Electronic device on a workbench in a workshop",
       hint: "electronics assessment workshop"
     },
-    href: "/category_damage-report_electronics/item_to_assess_electronics"
+    href: "/services_damage_report/category_damage-report_electronics/item_to_assess_electronics"
   }
 ];
 
@@ -128,3 +128,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

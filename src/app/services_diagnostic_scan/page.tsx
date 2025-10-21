@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,7 +50,7 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, categ
 const serviceCategories: ServiceCategoryCardProps[] = [
   {
     title: "AUTOMOTIVE",
-    href: "/category_diagnostics_automotive",
+    href: "/services_diagnostic_scan/category_diagnostics_automotive",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_diagnostics%2Fservices_diagnostic_scan_workshop.PNG?alt=media&token=e5720c24-0369-4112-9872-f08e0cb8f413",
     imageAlt: "Automotive Diagnostics",
     imageHint: "car diagnostic",
@@ -93,3 +94,5 @@ export default function ServicesDiagnosticScan() {
     </div>
   );
 }
+
+    

@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "Car connected to diagnostic tool in a workshop",
       hint: "car diagnostic workshop"
     },
-    href: "/category_diagnostics_automotive/item_to_scan_automotive"
+    href: "/services_diagnostic_scan/category_diagnostics_automotive/item_to_scan_automotive"
   }
 ];
 
@@ -100,3 +100,5 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
+
+    

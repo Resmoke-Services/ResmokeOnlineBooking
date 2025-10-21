@@ -38,7 +38,7 @@ const serviceOptions = [
       alt: "EMS laser machine on a workshop bench",
       hint: "laser machine workshop"
     },
-    href: "/category_repairs_ems/item_to_repair_ems"
+    href: "/services_repairs/category_repairs_ems/item_to_repair_ems"
   },
   {
     type: 'collection_delivery',
@@ -74,7 +74,7 @@ const serviceOptions = [
       alt: "Collection service for an EMS laser machine",
       hint: "laser machine collection"
     },
-    href: "/category_repairs_ems/item_to_repair_ems"
+    href: "/services_repairs/category_repairs_ems/item_to_repair_ems"
   }
 ];
 
