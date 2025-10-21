@@ -21,8 +21,11 @@ function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href }: Ser
   const { setServicePath } = useBookingStore();
 
   const handleCategoryClick = () => {
-    // The service path is derived from the href. e.g., /category_repairs_appliances -> ["REPAIRS", "APPLIANCES"]
-    const pathSegments = href.split('_').slice(1).map(s => s.toUpperCase());
+    // Correctly derive the category from the href and set the service path.
+    // e.g., /category_repairs_appliances -> ["REPAIRS", "APPLIANCES"]
+    // e.g., /category_repairs_ghd -> ["REPAIRS", "GHD"]
+    const categorySegment = href.split('_').pop() || '';
+    const pathSegments = ["REPAIRS", categorySegment.toUpperCase()];
     setServicePath(pathSegments);
   };
 
