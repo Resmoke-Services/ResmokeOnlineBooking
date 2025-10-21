@@ -15,18 +15,15 @@ interface ServiceCategoryCardProps {
   imageAlt: string;
   imageHint: string;
   href: string;
+  category: string;
 }
 
-function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href }: ServiceCategoryCardProps) {
+function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, category }: ServiceCategoryCardProps) {
   const { setServicePath } = useBookingStore();
 
   const handleCategoryClick = () => {
-    // Correctly derive the category from the href and set the service path.
-    // e.g., /category_repairs_appliances -> ["REPAIRS", "APPLIANCES"]
-    // e.g., /category_repairs_ghd -> ["REPAIRS", "GHD"]
-    const categorySegment = href.split('_').pop() || '';
-    const pathSegments = ["REPAIRS", categorySegment.toUpperCase()];
-    setServicePath(pathSegments);
+    // Directly use the 'category' prop to set the service path.
+    setServicePath(["REPAIRS", category]);
   };
 
   return (
@@ -58,49 +55,56 @@ const serviceCategories: ServiceCategoryCardProps[] = [
     href: "/category_repairs_appliances",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_appliances.PNG?alt=media&token=a393630d-4b00-41a5-a254-1cb3633d9ce9",
     imageAlt: "Appliance Repair",
-    imageHint: "Appliance Repair"
+    imageHint: "Appliance Repair",
+    category: "APPLIANCES"
   },
   {
     title: "GHD STRAIGHTENERS & BLOW DRYERS",
     href: "/category_repairs_ghd",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ghd.PNG?alt=media&token=047a66da-0c76-4f8d-9eb4-746afbea0e53",
     imageAlt: "GHD Straightener Repair",
-    imageHint: "GHD Straightener Repair"
+    imageHint: "GHD Straightener Repair",
+    category: "GHD"
   },
   {
     title: "GATE & GARAGE MOTORS",
     href: "/category_repairs_gate",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_gate_motor.PNG?alt=media&token=b5407a97-d507-4582-9807-a94c71546bd5",
     imageAlt: "Gate and Garage Motor Repair",
-    imageHint: "Gate and Garage Motor Repair"
+    imageHint: "Gate and Garage Motor Repair",
+    category: "GATE"
   },
   {
     title: "ELECTRONICS",
     href: "/category_repairs_electronics",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_electronics.PNG?alt=media&token=370077d9-af5f-43a1-8a35-55be6808aa38",
     imageAlt: "Electronics repair",
-    imageHint: "Electronics repair"
+    imageHint: "Electronics repair",
+    category: "ELECTRONICS"
   },
   {
     title: "AUTOMOTIVE & MOTORCYCLES",
     href: "/category_repairs_automotive",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_automotive_electronics.PNG?alt=media&token=a6ace560-61c5-4dfb-b52f-c77c0cfe7b97",
     imageAlt: "Automotive Repair",
-    imageHint: "Automotive Repair"
+    imageHint: "Automotive Repair",
+    category: "AUTOMOTIVE"
   },
   {
     title: "ELECTRICAL",
     href: "/category_repairs_electrical",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_electrical.PNG?alt=media&token=ea6af506-a6b5-44e6-9238-f7fd33c263a2",
     imageAlt: "Electrical Repair",
-    imageHint: "Electrical Repair"
+    imageHint: "Electrical Repair",
+    category: "ELECTRICAL"
   },
   {
     title: "MECHANICAL",
     href: "/category_repairs_mechanical",
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_mechanical.PNG?alt=media&token=4e5f8e10-f755-4508-b3f8-68c13c417edb",
     imageAlt: "Mechanical Repair",
-    imageHint: "Mechanical Repair"
+    imageHint: "Mechanical Repair",
+    category: "MECHANICAL"
   }
 ];
 
@@ -127,6 +131,7 @@ export default function ServicesPage() {
                       imageUrl={service.imageUrl}
                       imageAlt={service.imageAlt}
                       imageHint={service.imageHint}
+                      category={service.category}
                     />
                   ))}
                 </div>
