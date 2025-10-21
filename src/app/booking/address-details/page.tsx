@@ -28,41 +28,46 @@ import { useRouter } from "next/navigation";
 import { Progress } from "@/components/ui/progress";
 import { addressDetailsSchema } from "@/lib/schemas";
 import { propertyTypes, cities, centurionSuburbs, pretoriaSuburbs, midrandSuburbs, centurionComplexes, midrandComplexes, pretoriaComplexes } from "@/lib/types";
-import { useEffect, useMemo, useRef, useCallback } from "react";
-import { ChevronLeft } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, Loader2 } from "lucide-react";
+import { getAvailableSlots } from "@/app/actions/booking-actions";
+import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
 export default function AddressDetailsPage() {
   const router = useRouter();
-  const { addressDetails, setAddressDetails: setStoreAddressDetails, servicePath } = useBookingStore();
+  const store = useBookingStore();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const streetNameRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const form = useForm<AddressFormValues>({
     resolver: zodResolver(addressDetailsSchema),
     defaultValues: {
-      propertyType: addressDetails?.propertyType || undefined,
-      propertyFunction: addressDetails?.propertyFunction || 'Private',
-      city: addressDetails?.city || undefined,
-      suburb: addressDetails?.suburb || '',
-      houseNumber: addressDetails?.houseNumber || '',
-      streetName: addressDetails?.streetName || '',
-      unitNumber: addressDetails?.unitNumber || '',
-      complexName: addressDetails?.complexName || '',
-      otherComplexName: addressDetails?.otherComplexName || '',
-      streetNumber: addressDetails?.streetNumber || '',
-      streetNameInEstate: addressDetails?.streetNameInEstate || '',
-      estateName: addressDetails?.estateName || '',
-      accessCodeRequired: addressDetails?.accessCodeRequired || 'no',
-      standNumber: addressDetails?.standNumber || '',
-      officeName: addressDetails?.officeName || '',
-      officeParkName: addressDetails?.officeParkName || '',
-      holdingName: addressDetails?.holdingName || '',
-      farmName: addressDetails?.farmName || '',
-      otherPropertyType: addressDetails?.otherPropertyType || '',
-      otherCityDescription: addressDetails?.otherCityDescription || '',
-      otherSuburb: addressDetails?.otherSuburb || '',
+      propertyType: store.addressDetails?.propertyType || undefined,
+      propertyFunction: store.addressDetails?.propertyFunction || 'Private',
+      city: store.addressDetails?.city || undefined,
+      suburb: store.addressDetails?.suburb || '',
+      houseNumber: store.addressDetails?.houseNumber || '',
+      streetName: store.addressDetails?.streetName || '',
+      unitNumber: store.addressDetails?.unitNumber || '',
+      complexName: store.addressDetails?.complexName || '',
+      otherComplexName: store.addressDetails?.otherComplexName || '',
+      streetNumber: store.addressDetails?.streetNumber || '',
+      streetNameInEstate: store.addressDetails?.streetNameInEstate || '',
+      estateName: store.addressDetails?.estateName || '',
+      accessCodeRequired: store.addressDetails?.accessCodeRequired || 'no',
+      standNumber: store.addressDetails?.standNumber || '',
+      officeName: store.addressDetails?.officeName || '',
+      officeParkName: store.addressDetails?.officeParkName || '',
+      holdingName: store.addressDetails?.holdingName || '',
+      farmName: store.addressDetails?.farmName || '',
+      otherPropertyType: store.addressDetails?.otherPropertyType || '',
+      otherCityDescription: store.addressDetails?.otherCityDescription || '',
+      otherSuburb: store.addressDetails?.otherSuburb || '',
     },
     mode: 'onChange',
   });
@@ -117,41 +122,60 @@ export default function AddressDetailsPage() {
 
   }, [setValue]);
 
+  async function onSubmit(data: AddressFormValues) {
+    setIsSubmitting(true);
+    store.setAddressDetails(data);
+    
+    // Construct the payload using the most up-to-date store data
+    const currentStoreState = useBookingStore.getState();
 
-  function onSubmit(data: AddressFormValues) {
-    setStoreAddressDetails(data);
-    const mainCategory = servicePath[0]?.toLowerCase() || '';
-    const subCategory = servicePath[1]?.toLowerCase() || '';
+    try {
+        const bookingDataForAction = {
+          name: currentStoreState.name,
+          surname: currentStoreState.surname,
+          cellNumber: currentStoreState.cellNumber,
+          email: currentStoreState.email,
+          addressDetails: currentStoreState.addressDetails,
+          formattedAddress: currentStoreState.formattedAddress,
+          bookingFor: currentStoreState.bookingFor,
+          landlordName: currentStoreState.landlordName,
+          landlordSurname: currentStoreState.landlordSurname,
+          landlordCellNumber: currentStoreState.landlordCellNumber,
+          landlordEmail: currentStoreState.landlordEmail,
+          ownerName: currentStoreState.ownerName,
+          ownerSurname: currentStoreState.ownerSurname,
+          ownerCellNumber: currentStoreState.ownerCellNumber,
+          ownerEmail: currentStoreState.ownerEmail,
+          companyName: currentStoreState.companyName,
+          companyPhone: currentStoreState.companyPhone,
+          companyEmail: currentStoreState.companyEmail,
+          itemsToRepair: currentStoreState.itemsToRepair,
+          problemDescriptions: currentStoreState.problemDescriptions,
+          selectedDateTime: currentStoreState.selectedDateTime,
+          servicePath: currentStoreState.servicePath,
+          serviceType: currentStoreState.serviceType,
+          paymentMethods: currentStoreState.paymentMethods,
+          billingInformation: currentStoreState.billingInformation,
+          termsAgreement: currentStoreState.termsAgreement,
+          date: format(new Date(), "yyyy-MM-dd"), // Fetch for today initially
+        };
 
-    if (!mainCategory || !subCategory) {
-      console.error("Service path not found in store.");
-      router.push("/");
-      return;
+        const slots = await getAvailableSlots(bookingDataForAction);
+        
+        store.setAvailability(slots);
+        router.push("/select_datetime");
+
+    } catch (error: any) {
+        console.error("Failed to fetch availability slots:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load times",
+          description: error.message || "Could not fetch available time slots.",
+        });
+        store.setAvailability([]); // Clear any old data
+    } finally {
+        setIsSubmitting(false);
     }
-
-    let itemPagePath;
-    switch(mainCategory) {
-        case 'repairs':
-            itemPagePath = `/services_repairs/category_repairs_${subCategory}/item_to_repair_${subCategory}`;
-            break;
-        case 'collection':
-             itemPagePath = `/services_collection/category_collection_${subCategory}/item_to_collect_${subCategory}`;
-            break;
-        case 'diagnostics':
-            itemPagePath = `/services_diagnostic_scan/category_diagnostics_${subCategory}/item_to_scan_${subCategory}`;
-            break;
-        case 'automation':
-             itemPagePath = `/services_automation/category_automation_${subCategory}/item_to_book_${subCategory}`;
-            break;
-        case 'damage_report':
-            itemPagePath = `/services_damage_report/category_damage-report_${subCategory}/item_to_assess_${subCategory}`;
-            break;
-        default:
-            console.error("Unknown main category in service path.");
-            router.push("/");
-            return;
-    }
-    router.push(itemPagePath);
   }
   
   const renderConditionalFields = () => {
@@ -479,7 +503,16 @@ export default function AddressDetailsPage() {
             <Button type="button" variant="outline" onClick={() => router.back()}>
               <ChevronLeft className="mr-2 h-4 w-4" /> Back
             </Button>
-            <Button type="submit" disabled={!form.formState.isValid}>Next</Button>
+            <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Finding Slots...
+                </>
+              ) : (
+                "Next"
+              )}
+            </Button>
           </div>
         </form>
       </Form>
