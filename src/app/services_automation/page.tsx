@@ -1,99 +1,95 @@
-
 'use client';
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle } from 'lucide-react';
-import BookingFlowLayout from '@/components/booking-flow-layout';
-import { useBookingStore } from '@/hooks/use-booking-store';
-import type { ServiceType } from '@/lib/types';
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
+import { BookingHeader } from "@/components/booking-header";
+import ServiceSelectionTracker from "@/components/service-selection-tracker";
+import { useBookingStore } from "@/hooks/use-booking-store";
 
-const serviceOptions = [
+interface ServiceCategoryCardProps {
+  title: string;
+  imageUrl: string;
+  imageAlt: string;
+  imageHint: string;
+  href: string;
+  category: string;
+}
+
+function ServiceCategoryCard({ title, imageUrl, imageAlt, imageHint, href, category }: ServiceCategoryCardProps) {
+  const { setServicePath } = useBookingStore();
+
+  const handleCategoryClick = () => {
+    setServicePath(["AUTOMATION", category]);
+  };
+
+  return (
+    <Link href={href} className="block group" onClick={handleCategoryClick}>
+      <Card className="overflow-hidden h-full flex flex-col bg-card/50 transition-all duration-300 ease-in-out hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 border-2 border-transparent hover:border-primary/50">
+        <div className="relative w-full aspect-video bg-black/20">
+          <Image
+            src={imageUrl}
+            alt={imageAlt}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            style={{ objectFit: 'cover' }}
+            className="transition-transform duration-300 group-hover:scale-105"
+            data-ai-hint={imageHint}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/80 transition-all duration-300"></div>
+        </div>
+        <CardContent className="p-4 flex-grow flex flex-col justify-center text-center z-10">
+          <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+const serviceCategories: ServiceCategoryCardProps[] = [
   {
-    type: 'onsite',
-    title: 'On-Site Service',
-    subtitle:
-    (
-      <span>
-        <span className="text-gray-300 font-semibold">We come to you</span><br />
-      </span>
-    ),
-    description: "Our technician comes directly to your home or office to assist with your automation needs.",
-    features: [
-      'All repairs include a comprehensive warranty on both parts and labour.',
-      'Card/EFT/PayShap Payments accepted.',
-      'Service at your home or office.',
-      'Smart lighting setup.',
-      'Gate & Garage door automation.',
-      'Custom solutions available.',
-      (
-        <span>
-          Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
-          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
-        </span>
-      ),
-      'Full payment shall be made immediately upon completion of services.'
-    ],
-    image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_automation%2Fservices_home_automation_onsite.PNG?alt=media&token=f5b90b15-890d-47b2-b909-a44b523bb5cc",
-      alt: "Smart home automation",
-      hint: "home automation onsite"
-    },
-    href: "/booking/select-type"
-  }
+    title: "HOME",
+    href: "/category_automation_home",
+    imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_automation%2Fservices_home_automation_onsite.PNG?alt=media&token=f5b90b15-890d-47b2-b909-a44b523bb5cc",
+    imageAlt: "Home Automation",
+    imageHint: "home automation",
+    category: "HOME"
+  },
 ];
 
 export default function ServicesAutomation() {
-  const { setServiceType } = useBookingStore();
-
-  const handleServiceSelection = (serviceTitle: ServiceType) => {
-    setServiceType(serviceTitle);
-  };
-  
   return (
-    <BookingFlowLayout>
-      <div className="text-center mb-16">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">AUTOMATION</h2>
-        <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>
-      </div>
-       <div className="flex justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 items-stretch max-w-md">
-          {serviceOptions.map((details) => (
-            <Link href={details.href} key={details.type} className="block group h-full" onClick={() => handleServiceSelection(details.title as ServiceType)}>
-              <Card className="w-full h-full overflow-hidden shadow-xl border-2 border-primary/50 animate-in fade-in-50 duration-500 transition-all hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-2 flex flex-col">
-                <div className="relative w-full aspect-video bg-black/20">
-                  <Image
-                    src={details.image.src}
-                    alt={details.image.alt}
-                    data-ai-hint={details.image.hint}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/80 transition-all duration-300"></div>
+     <div className="min-h-screen flex flex-col bg-background text-foreground">
+        <ServiceSelectionTracker selections={["AUTOMATION"]} />
+        <BookingHeader />
+        <main className="flex-grow">
+            <section id="services" className="py-24">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">AUTOMATION SERVICES</h2>
+                    <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT A CATEGORY</p>
                 </div>
-                <CardHeader className="text-center items-center space-y-2">
-                   <CardTitle className="text-3xl font-bold">{details.title}</CardTitle>
-                   {details.subtitle && <p className="text-lg text-muted-foreground">{details.subtitle}</p>}
-                  <CardDescription className="text-base px-4 pt-2">{details.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <ul className="space-y-3 text-muted-foreground">
-                    {details.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 mt-1 shrink-0 text-primary" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      </div>
-    </BookingFlowLayout>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {serviceCategories.map((service) => (
+                    <ServiceCategoryCard 
+                      key={service.title}
+                      title={service.title}
+                      href={service.href}
+                      imageUrl={service.imageUrl}
+                      imageAlt={service.imageAlt}
+                      imageHint={service.imageHint}
+                      category={service.category}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+        </main>
+        <footer className="w-full bg-card/50 border-t border-border/50">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-sm">
+            <p>&copy; {new Date().getFullYear()} Resmoke Services. All rights reserved.</p>
+          </div>
+        </footer>
+    </div>
   );
 }
