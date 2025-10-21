@@ -42,7 +42,7 @@ const serviceOptions = [
       alt: "Technician repairing appliance onsite",
       hint: "appliance repair on-site"
     },
-    href: "/booking/select-type"
+    href: "/category_repairs_appliances/item_to_repair_appliances"
   },
   {
     type: 'workshop',
@@ -76,7 +76,7 @@ const serviceOptions = [
       alt: "Repair workshop with tools and appliances",
       hint: "appliance repair workshop"
     },
-    href: "/booking/select-type"
+    href: "/category_repairs_appliances/item_to_repair_appliances"
   },
   {
     type: 'collection_delivery',
@@ -122,7 +122,7 @@ const serviceOptions = [
       alt: "Collection and delivery service van",
       hint: "appliance repair workshop collect & deliver"
     },
-    href: "/booking/select-type"
+    href: "/category_repairs_appliances/item_to_repair_appliances"
   }
 ];
 
