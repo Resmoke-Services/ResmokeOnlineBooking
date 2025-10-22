@@ -34,7 +34,7 @@ const serviceOptions = [
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ghd%2Fsevices_repairs_ghd_workshop.PNG?alt=media&token=4c06684c-1f86-40da-85af-90cd22177fa2",
+      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ghd%2Fsevices_repairs_ghd_workshop_collection.PNG?alt=media&token=7dfe71cb-e345-4c72-85d0-42080fe7046d",
       alt: "Repair workshop with tools and appliances",
       hint: "repair workshop"
     },
@@ -72,7 +72,7 @@ const serviceOptions = [
       'Full payment shall be made prior to the release of any item from the workshop.'
     ],
     image: {
-      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ghd%2Fsevices_repairs_ghd_workshop_collection.PNG?alt=media&token=7dfe71cb-e345-4c72-85d0-42080fe7046d",
+      src: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs_ghd%2Fsevices_repairs_ghd_workshop.PNG?alt=media&token=4c06684c-1f86-40da-85af-90cd22177fa2",
       alt: "Collection and delivery service van",
       hint: "ghd repair workshop collect & deliver"
     },
