@@ -42,8 +42,8 @@ const serviceOptions = [
     href: "/services_repairs/category_repairs_electrical/item_to_repair_electrical"
   },
   {
-    type: 'workshop',
-    title: 'Workshop Drop-Off',
+    type: 'WORKSHOP',
+    title: 'WORKSHOP',
     subtitle:
     (
       <span>
@@ -67,8 +67,8 @@ const serviceOptions = [
     href: "/services_repairs/category_repairs_electrical/item_to_repair_electrical"
   },
   {
-    type: 'collection_delivery',
-    title: 'Collection & Delivery',
+    type: 'COLLECTION_DELIVERY',
+    title: 'COLLECT/DELIVER',
     subtitle:
     (
       <span>

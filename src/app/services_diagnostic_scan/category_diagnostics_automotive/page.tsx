@@ -12,7 +12,7 @@ import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
-    type: 'workshop',
+    type: 'WORKSHOP',
     title: 'Workshop Scan',
     subtitle:
     (

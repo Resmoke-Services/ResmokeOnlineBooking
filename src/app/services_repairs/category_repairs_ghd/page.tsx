@@ -11,8 +11,8 @@ import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
-    type: 'workshop',
-    title: 'Workshop Drop-Off',
+    type: 'WORKSHOP',
+    title: 'WORKSHOP',
     subtitle:
     (
       <span>
@@ -41,8 +41,8 @@ const serviceOptions = [
     href: "/services_repairs/category_repairs_ghd/item_to_repair_ghd"
   },
   {
-    type: 'collection_delivery',
-    title: 'Collection & Delivery',
+    type: 'COLLECTION_DELIVERY',
+    title: 'COLLECT/DELIVER',
     subtitle:
     (
       <span>

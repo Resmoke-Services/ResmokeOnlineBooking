@@ -42,7 +42,7 @@ const serviceOptions = [
     href: "/services_damage_report/category_damage-report_electronics/item_to_assess_electronics"
   },
   {
-    type: 'workshop',
+    type: 'WORKSHOP',
     title: 'Workshop Assessment',
     subtitle:
     (

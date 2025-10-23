@@ -42,7 +42,7 @@ const serviceOptions = [
     href: "/services_damage_report/category_damage-report_appliances/item_to_assess_appliances"
   },
   {
-    type: 'workshop',
+    type: 'WORKSHOP',
     title: 'Workshop Assessment',
     subtitle:
     (

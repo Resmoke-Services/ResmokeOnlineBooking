@@ -12,8 +12,8 @@ import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
-    type: 'onsite',
-    title: 'On-Site Service',
+    type: 'ON-SITE',
+    title: 'ON-SITE',
     subtitle:
     (
       <span>
@@ -45,8 +45,8 @@ const serviceOptions = [
     href: "/services_repairs/category_repairs_appliances/item_to_repair_appliances"
   },
   {
-    type: 'workshop',
-    title: 'Workshop Drop-Off',
+    type: 'WORKSHOP',
+    title: 'WORKSHOP',
     subtitle:
     (
       <span>
@@ -79,8 +79,8 @@ const serviceOptions = [
     href: "/services_repairs/category_repairs_appliances/item_to_repair_appliances"
   },
   {
-    type: 'collection_delivery',
-    title: 'Collection & Delivery',
+    type: 'COLLECTION_DELIVERY',
+    title: 'COLLECT/DELIVER',
     subtitle:
     (
       <span>

@@ -11,8 +11,8 @@ import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
-    type: 'workshop',
-    title: 'Workshop Drop-Off',
+    type: 'WORKSHOP',
+    title: 'WORKSHOP',
     subtitle:
     (
       <span>
