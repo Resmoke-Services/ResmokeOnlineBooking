@@ -5,13 +5,24 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Home, Mail, Phone, User, ArrowLeft } from "lucide-react";
+import { CheckCircle, Home, Mail, Phone, User, ArrowLeft, Wrench, Settings, Truck } from "lucide-react";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { format, parse } from "date-fns";
 
 export default function ConfirmationPage() {
   const router = useRouter();
-  const { name, surname, email, cellNumber, formattedAddress, selectedDateTime, resetBooking } = useBookingStore();
+  const { 
+    name, 
+    surname, 
+    email, 
+    cellNumber, 
+    formattedAddress, 
+    selectedDateTime, 
+    servicePath,
+    serviceType,
+    itemsToRepair,
+    resetBooking 
+  } = useBookingStore();
 
   useEffect(() => {
     // If essential booking data is missing, redirect to the start.
@@ -80,19 +91,34 @@ export default function ConfirmationPage() {
                     <div className="flex items-center gap-3"><Phone className="w-5 h-5 text-muted-foreground" /> <span>{cellNumber}</span></div>
                     <div className="flex items-start gap-3"><Home className="w-5 h-5 text-muted-foreground mt-1" /> <span>{formattedAddress}</span></div>
                 </div>
-                <div className="space-y-3 rounded-lg border p-4 bg-muted/20">
-                    <h3 className="font-semibold text-lg mb-3 border-b pb-2">Next Steps</h3>
-                    <ul className="space-y-2 text-muted-foreground">
-                        <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-primary mt-1 shrink-0" />
-                            <span>You'll receive a booking confirmation email.</span>
-                        </li>
-                         <li className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-primary mt-1 shrink-0" />
-                            <span>For any quiries or concerns, please contact us on 060 084 1133 (Phone 24/7).</span>
-                        </li>
-                    </ul>
+
+                <div className="space-y-3 rounded-lg border p-4">
+                    <h3 className="font-semibold text-lg mb-3 border-b pb-2">Booking Details</h3>
+                    <div className="flex items-center gap-3"><Wrench className="w-5 h-5 text-muted-foreground" /> <span>{servicePath.join(' / ')}</span></div>
+                    <div className="flex items-center gap-3"><Settings className="w-5 h-5 text-muted-foreground" /> <span>{serviceType}</span></div>
+                     <div className="flex items-start gap-3"><Truck className="w-5 h-5 text-muted-foreground mt-1" />
+                        <div>
+                            <h4 className="font-medium">Items Booked:</h4>
+                            <ul className="list-disc pl-5 text-muted-foreground">
+                                {itemsToRepair.map(item => <li key={item}>{item}</li>)}
+                            </ul>
+                        </div>
+                    </div>
                 </div>
+            </div>
+
+            <div className="rounded-lg border p-4 bg-muted/20">
+                <h3 className="font-semibold text-lg mb-3 border-b pb-2">Next Steps</h3>
+                <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-primary mt-1 shrink-0" />
+                        <span>You'll receive a booking confirmation email.</span>
+                    </li>
+                     <li className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-primary mt-1 shrink-0" />
+                        <span>For any quiries or concerns, please contact us on 060 084 1133 (Phone 24/7).</span>
+                    </li>
+                </ul>
             </div>
 
             <div className="text-center pt-6">
@@ -106,4 +132,3 @@ export default function ConfirmationPage() {
     </BookingFlowLayout>
   );
 }
-
