@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useBookingStore } from "@/hooks/use-booking-store";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Home, Mail, Phone, User, ArrowLeft, Wrench, Building2, Truck } from "lucide-react";
+import { CheckCircle, Home, Mail, Phone, User, Wrench, Building2, Truck } from "lucide-react";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import { format, parse } from "date-fns";
 
@@ -94,9 +94,9 @@ export default function ConfirmationPage() {
 
                 <div className="space-y-3 rounded-lg border p-4">
                     <h3 className="font-semibold text-lg mb-3 border-b pb-2">Booking Details</h3>
-                    <div className="flex items-center gap-3"><Wrench className="w-5 h-5 text-muted-foreground" /> <span>{servicePath.join(' / ')}</span></div>
-                    <div className="flex items-center gap-3"><Building2 classame="w-5 h-5 text-muted-foreground" /> <span>{serviceType}</span></div>
-                     <div className="flex items-start gap-3"><Truck className="w-5 h-5 text-muted-foreground mt-1" />
+                    <div className="flex items-center gap-3"><Wrench className="w-5 h-5 text-primary" /> <span>{servicePath.join(' / ')}</span></div>
+                    <div className="flex items-center gap-3"><Building2 className="w-5 h-5 text-primary" /> <span>{serviceType}</span></div>
+                     <div className="flex items-start gap-3"><Truck className="w-5 h-5 text-primary mt-1" />
                         <div>
                             <h4 className="font-medium">Items Booked:</h4>
                             <ul className="list-disc pl-5 text-muted-foreground">
