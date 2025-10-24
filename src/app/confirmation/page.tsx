@@ -44,7 +44,7 @@ export default function ConfirmationPage() {
             "displayDateTime": "Monday, 20 October 2025 at 12:00",
             "isoDateTime": "2025-10-20T12:00:00+02:00",
             "serviceType": "WORKSHOP",
-            "serviceCategory": "APPLIANCESREPAIRS",
+            "serviceCategory": "APPLIANCE REPAIRS",
             "itemsBooked": "<ul><li>DISHWASHER</li></ul>",
             "customerDetails": {
               "name": "Anton Kusel",
@@ -195,4 +195,3 @@ export default function ConfirmationPage() {
     </BookingFlowLayout>
   );
 }
-
