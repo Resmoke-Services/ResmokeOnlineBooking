@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -50,7 +49,7 @@ export default function ConfirmationPage() {
               "name": "Anton Kusel",
               "email": "uniquesystems1@gmail.com",
               "phone": "+27817889504",
-              "address": "2 Basil Rd , Valhalla, Centurion"
+              "address": "2 Basil Rd, Valhalla, Centurion"
             },
             "nextSteps": [
               "You'll receive a booking confirmation email.",
@@ -164,7 +163,7 @@ export default function ConfirmationPage() {
                       <div>
                         <h4 className="font-medium">ITEMS BOOKED:</h4>
                          <div
-                            className="list-disc pl-5 text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5"
+                            className="text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5"
                             dangerouslySetInnerHTML={{ __html: confirmationData.itemsBooked }}
                           />
                       </div>
