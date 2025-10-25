@@ -32,7 +32,7 @@ export default function ConfirmationPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // This is the PRODUCTION-READY code
+    // This logic runs on the client-side after the component mounts
     const loadConfirmationData = () => {
       try {
         // 1. Get the real data from sessionStorage
@@ -43,16 +43,17 @@ export default function ConfirmationPage() {
           setConfirmationData(parsedData);
           
           // Optional: Clear the data so it's not shown again on a refresh
-          sessionStorage.removeItem('confirmationData');
+          // sessionStorage.removeItem('confirmationData');
         } else {
           // If a user lands here directly, there's no data. Redirect them.
-          throw new Error("No booking data found.");
+          throw new Error("No booking data found. Redirecting to home.");
         }
 
-      } catch (err) {
+      } catch (err: any) {
         console.error(err);
+        setError(err.message || "Failed to load booking details.");
         // Redirect to the start of the booking process if anything goes wrong
-        router.replace('/'); 
+        setTimeout(() => router.replace('/'), 3000); 
       } finally {
         // Use a short timeout to prevent visual flicker
         setTimeout(() => setIsLoading(false), 500);
@@ -61,15 +62,12 @@ export default function ConfirmationPage() {
 
     loadConfirmationData();
 
-    // Block the back button and redirect to home
-    window.history.pushState(null, '', '/');
-    window.history.replaceState(null, '', '/');
-
+    // Block the back button and redirect to the company website
+    window.history.pushState(null, '', window.location.href);
     const handleBackButton = (e: PopStateEvent) => {
         e.preventDefault();
-        router.replace('https://www.resmoke.co.za');
+        window.location.href = 'https://www.resmoke.co.za';
     };
-
     window.addEventListener('popstate', handleBackButton);
 
     return () => {
@@ -79,6 +77,7 @@ export default function ConfirmationPage() {
   }, []);
 
   const handleFinish = () => {
+    sessionStorage.removeItem('confirmationData');
     window.location.href = "https://www.resmoke.co.za";
   };
   
@@ -96,7 +95,7 @@ export default function ConfirmationPage() {
     return (
         <BookingFlowLayout>
             <div className="flex flex-col justify-center items-center h-64 text-center">
-                <h2 className="text-2xl font-bold text-destructive mb-4">Error</h2>
+                <h2 className="text-2xl font-bold text-destructive mb-4">Error Loading Confirmation</h2>
                 <p className="text-muted-foreground">{error || "Could not load confirmation details."}</p>
             </div>
         </BookingFlowLayout>
