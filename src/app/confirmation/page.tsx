@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -33,44 +32,34 @@ export default function ConfirmationPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate fetching data from a webhook response
-    const fetchConfirmationData = () => {
+    // This is the PRODUCTION-READY code
+    const loadConfirmationData = () => {
       try {
-        // This is where you would typically fetch data from your API
-        // For now, we'll use the mock data provided.
-        const mockData: ConfirmationData = {
-            "title": "Booking Confirmed!",
-            "subtitle": "We'll see you on",
-            "displayDateTime": "Monday, 20 October 2025 at 12:00",
-            "isoDateTime": "2025-10-20T12:00:00+02:00",
-            "serviceType": "WORKSHOP",
-            "serviceCategory": "APPLIANCE REPAIRS",
-            "itemsBooked": "<ul><li>DISHWASHER</li><li>WASHING MACHINE</li></ul>",
-            "customerDetails": {
-              "name": "Anton Kusel",
-              "email": "uniquesystems1@gmail.com",
-              "phone": "+27817889504",
-              "address": "2 Basil Rd, Valhalla, Centurion"
-            },
-            "nextSteps": [
-              "You'll receive a booking confirmation email.",
-              "For any queries or concerns, please contact us on 060 084 1133 (Phone 24/7)."
-            ]
-          };
+        // 1. Get the real data from sessionStorage
+        const storedData = sessionStorage.getItem('confirmationData');
 
-        setTimeout(() => {
-          setConfirmationData(mockData);
-          setIsLoading(false);
-        }, 1500); // Simulate a 1.5-second network delay
+        if (storedData) {
+          const parsedData: ConfirmationData = JSON.parse(storedData);
+          setConfirmationData(parsedData);
+          
+          // Optional: Clear the data so it's not shown again on a refresh
+          sessionStorage.removeItem('confirmationData');
+        } else {
+          // If a user lands here directly, there's no data. Redirect them.
+          throw new Error("No booking data found.");
+        }
 
       } catch (err) {
-        setError("Failed to load booking confirmation details. Please contact support.");
-        setIsLoading(false);
         console.error(err);
+        // Redirect to the start of the booking process if anything goes wrong
+        router.replace('/'); 
+      } finally {
+        // Use a short timeout to prevent visual flicker
+        setTimeout(() => setIsLoading(false), 500);
       }
     };
 
-    fetchConfirmationData();
+    loadConfirmationData();
 
     // Block the back button and redirect to home
     window.history.pushState(null, '', '/');
@@ -90,7 +79,6 @@ export default function ConfirmationPage() {
   }, []);
 
   const handleFinish = () => {
-    // No need to reset a store, just navigate
     window.location.href = "https://www.resmoke.co.za";
   };
   
@@ -104,19 +92,15 @@ export default function ConfirmationPage() {
     );
   }
 
-  if (error) {
+  if (error || !confirmationData) {
     return (
         <BookingFlowLayout>
             <div className="flex flex-col justify-center items-center h-64 text-center">
                 <h2 className="text-2xl font-bold text-destructive mb-4">Error</h2>
-                <p className="text-muted-foreground">{error}</p>
+                <p className="text-muted-foreground">{error || "Could not load confirmation details."}</p>
             </div>
         </BookingFlowLayout>
     );
-  }
-
-  if (!confirmationData) {
-      return null; // Or some fallback UI
   }
 
   return (
