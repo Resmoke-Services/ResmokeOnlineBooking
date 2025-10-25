@@ -24,7 +24,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
 import { type PaymentMethod, type TermsAgreement, paymentMethods, type BillingInformation } from "@/lib/types";
 import { paymentAndTermsSchema } from "@/lib/schemas";
-import { confirmBooking } from "@/app/actions/booking-actions";
 
 type PaymentAndTermsFormData = z.infer<typeof paymentAndTermsSchema>;
 
@@ -80,12 +79,11 @@ export default function PaymentAndTermsPage() {
   async function onSubmit(data: PaymentAndTermsFormData) {
     setIsSubmitting(true);
     
-    // Unify state from the store and the final form data
     store.setPaymentMethods([data.paymentMethod]);
     store.setBillingInformation(data.billingInformation as BillingInformation);
     store.setTermsAgreement(data.terms as TermsAgreement);
 
-    const payload = {
+    const bookingDetails = {
         name: store.name,
         surname: store.surname,
         cellNumber: store.cellNumber,
@@ -116,9 +114,25 @@ export default function PaymentAndTermsPage() {
 
 
     try {
-        const confirmation = await confirmBooking(payload);
-        store.setWebhookConfirmation(confirmation);
+        const response = await fetch("https://primary-production-5528.up.railway.app/webhook/booking_confirmation", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(bookingDetails),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Webhook failed with status ${response.status}: ${errorText}`);
+        }
+        
+        const responseData = await response.json();
+        
+        sessionStorage.setItem('confirmationData', JSON.stringify(responseData));
+
         router.push("/confirmation");
+
     } catch (error: any) {
       console.error("Failed to confirm booking or send to webhook:", error);
       toast({
@@ -126,7 +140,8 @@ export default function PaymentAndTermsPage() {
         title: "Submission Failed",
         description: error.message || "An unexpected error occurred. Please try again.",
       });
-      setIsSubmitting(false);
+    } finally {
+        setIsSubmitting(false);
     }
   }
 
@@ -242,10 +257,10 @@ export default function PaymentAndTermsPage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
+                    Confirming...
                   </>
                 ) : (
-                  "Next"
+                  "Confirm Booking"
                 )}
               </Button>
             </CardFooter>
