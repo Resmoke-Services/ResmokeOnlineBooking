@@ -173,7 +173,6 @@ export default function AddressDetailsPage() {
           description: error.message || "Could not fetch available time slots.",
         });
         store.setAvailability([]); // Clear any old data
-    } finally {
         setIsSubmitting(false);
     }
   }
@@ -507,7 +506,7 @@ export default function AddressDetailsPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Finding Slots...
+                  Processing...
                 </>
               ) : (
                 "Next"
