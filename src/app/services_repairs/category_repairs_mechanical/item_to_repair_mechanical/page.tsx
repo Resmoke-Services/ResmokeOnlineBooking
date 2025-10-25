@@ -97,53 +97,7 @@ export default function MechanicalItemToRepairPage() {
     setItemsToRepair(finalItems as GlobalRepairItem[]);
     setProblemDescriptions(finalDescriptions);
     
-    try {
-        const bookingDataForAction = {
-          name: store.name,
-          surname: store.surname,
-          cellNumber: store.cellNumber,
-          email: store.email,
-          addressDetails: store.addressDetails,
-          formattedAddress: store.formattedAddress,
-          bookingFor: store.bookingFor,
-          landlordName: store.landlordName,
-          landlordSurname: store.landlordSurname,
-          landlordCellNumber: store.landlordCellNumber,
-          landlordEmail: store.landlordEmail,
-          ownerName: store.ownerName,
-          ownerSurname: store.ownerSurname,
-          ownerCellNumber: store.ownerCellNumber,
-          ownerEmail: store.ownerEmail,
-          companyName: store.companyName,
-          companyPhone: store.companyPhone,
-          companyEmail: store.companyEmail,
-          itemsToRepair: finalItems,
-          problemDescriptions: finalDescriptions,
-          selectedDateTime: store.selectedDateTime,
-          servicePath: store.servicePath,
-          serviceType: store.serviceType,
-          paymentMethods: store.paymentMethods,
-          billingInformation: store.billingInformation,
-          termsAgreement: store.termsAgreement,
-          date: format(new Date(), "yyyy-MM-dd"),
-        };
-
-        const slots = await getAvailableSlots(bookingDataForAction);
-      
-      setAvailability(slots);
-      router.push("/select_datetime");
-
-    } catch (error: any) {
-        console.error("Failed to fetch availability slots:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to load times",
-          description: error.message || "Could not fetch available time slots.",
-        });
-        setAvailability([]); // Clear any old data
-    } finally {
-        setIsSubmitting(false);
-    }
+    router.push("/booking/select-type");
   }
 
   return (
@@ -263,7 +217,7 @@ export default function MechanicalItemToRepairPage() {
                 })}
             </CardContent>
             <CardFooter className="flex justify-between">
-              <Button type="button" variant="outline" onClick={() => router.push('/booking/select-type')}>
+              <Button type="button" variant="outline" onClick={() => router.back()}>
                 <ChevronLeft className="mr-2 h-4 w-4" /> Back
               </Button>
               <Button type="submit" disabled={isSubmitting || !form.formState.isValid} className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base">
@@ -283,5 +237,3 @@ export default function MechanicalItemToRepairPage() {
     </BookingFlowLayout>
   );
 }
-
-    

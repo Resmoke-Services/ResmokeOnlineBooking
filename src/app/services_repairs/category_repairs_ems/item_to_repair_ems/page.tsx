@@ -81,53 +81,7 @@ export default function EmsItemToRepairPage() {
     setItemsToRepair(finalItems as GlobalRepairItem[]);
     setProblemDescriptions(finalDescriptions);
     
-    try {
-        const bookingDataForAction = {
-          name: store.name,
-          surname: store.surname,
-          cellNumber: store.cellNumber,
-          email: store.email,
-          addressDetails: store.addressDetails,
-          formattedAddress: store.formattedAddress,
-          bookingFor: store.bookingFor,
-          landlordName: store.landlordName,
-          landlordSurname: store.landlordSurname,
-          landlordCellNumber: store.landlordCellNumber,
-          landlordEmail: store.landlordEmail,
-          ownerName: store.ownerName,
-          ownerSurname: store.ownerSurname,
-          ownerCellNumber: store.ownerCellNumber,
-          ownerEmail: store.ownerEmail,
-          companyName: store.companyName,
-          companyPhone: store.companyPhone,
-          companyEmail: store.companyEmail,
-          itemsToRepair: finalItems,
-          problemDescriptions: finalDescriptions,
-          selectedDateTime: store.selectedDateTime,
-          servicePath: store.servicePath,
-          serviceType: store.serviceType,
-          paymentMethods: store.paymentMethods,
-          billingInformation: store.billingInformation,
-          termsAgreement: store.termsAgreement,
-          date: format(new Date(), "yyyy-MM-dd"),
-        };
-
-        const slots = await getAvailableSlots(bookingDataForAction);
-      
-      setAvailability(slots);
-      router.push("/select_datetime");
-
-    } catch (error: any) {
-        console.error("Failed to fetch availability slots:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to load times",
-          description: error.message || "Could not fetch available time slots.",
-        });
-        setAvailability([]);
-    } finally {
-        setIsSubmitting(false);
-    }
+    router.push("/booking/select-type");
   }
 
   return (
@@ -235,5 +189,3 @@ export default function EmsItemToRepairPage() {
     </BookingFlowLayout>
   );
 }
-
-    
