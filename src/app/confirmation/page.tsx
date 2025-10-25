@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ export default function ConfirmationPage() {
             "isoDateTime": "2025-10-20T12:00:00+02:00",
             "serviceType": "WORKSHOP",
             "serviceCategory": "APPLIANCE REPAIRS",
-            "itemsBooked": "<ul><li>DISHWASHER</li></ul>",
+            "itemsBooked": "<ul><li>DISHWASHER</li><li>WASHING MACHINE</li></ul>",
             "customerDetails": {
               "name": "Anton Kusel",
               "email": "uniquesystems1@gmail.com",
