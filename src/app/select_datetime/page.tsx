@@ -22,43 +22,23 @@ export default function SelectDateTimePage() {
   
   const today = useMemo(() => startOfDay(new Date()), []);
 
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    selectedDateTime ? startOfDay(parseISO(selectedDateTime.date)) : undefined
+  );
+  
   const availableDates = useMemo(() => {
     if (!availability) return [];
     const dates = availability.map(slot => startOfDay(parseISO(slot.slotStart)));
-    // Create a Set of unique date strings, then map back to Date objects
     return Array.from(new Set(dates.map(d => d.toISOString()))).map(iso => new Date(iso));
   }, [availability]);
   
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    selectedDateTime ? parseISO(selectedDateTime.date) : undefined
-  );
   const [selectedTime, setSelectedTime] = useState<string | null>(selectedDateTime ? selectedDateTime.time : null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Process slots from the store into a memoized array of unique times for the selected date
-  const availableTimes = useMemo(() => {
-    if (!availability || !selectedDate) return [];
-    
-    const timesForSelectedDate = availability
-      .map(slot => parseISO(slot.slotStart))
-      .filter(slotDate => isSameDay(slotDate, selectedDate))
-      .map(slotDate => format(slotDate, "HH:mm"));
-
-    const uniqueTimes = Array.from(new Set(timesForSelectedDate));
-
-    return uniqueTimes.sort((a, b) => {
-        const [aHour, aMinute] = a.split(':').map(Number);
-        const [bHour, bMinute] = b.split(':').map(Number);
-        if (aHour !== bHour) return aHour - bHour;
-        return aMinute - bMinute;
-    });
-  }, [availability, selectedDate]);
-
-
   const fetchSlotsForDate = useCallback(async (date: Date) => {
     setIsLoading(true);
-    setSelectedTime(null);
+    setSelectedTime(null); 
     try {
         const {
           name, surname, cellNumber, email, addressDetails, formattedAddress,
@@ -88,27 +68,36 @@ export default function SelectDateTimePage() {
       setIsLoading(false);
     }
   }, [toast, setAvailability, store]);
-  
-  // On initial load, if availability is empty (e.g. page refresh), fetch for today to populate calendar.
+
+  // Fetch initial availability for the current month so calendar days are styled correctly.
   useEffect(() => {
-    if (availability.length === 0) {
-        fetchSlotsForDate(new Date());
-    }
+    fetchSlotsForDate(new Date());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const availableTimes = useMemo(() => {
+    if (!availability || !selectedDate) return [];
+    
+    const timesForSelectedDate = availability
+      .map(slot => parseISO(slot.slotStart))
+      .filter(slotDate => isSameDay(slotDate, selectedDate))
+      .map(slotDate => format(slotDate, "HH:mm"));
+
+    const uniqueTimes = Array.from(new Set(timesForSelectedDate));
+
+    return uniqueTimes.sort((a, b) => {
+        const [aHour, aMinute] = a.split(':').map(Number);
+        const [bHour, bMinute] = b.split(':').map(Number);
+        if (aHour !== bHour) return aHour - bHour;
+        return aMinute - bMinute;
+    });
+  }, [availability, selectedDate]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       const newDate = startOfDay(date);
       setSelectedDate(newDate);
-      // We only fetch new slots if the data for that day isn't already loaded
-      const hasData = availability.some(slot => isSameDay(parseISO(slot.slotStart), newDate));
-      if (!hasData) {
-        fetchSlotsForDate(newDate);
-      } else {
-        setSelectedTime(null); // Reset time selection when date changes
-      }
+      setSelectedTime(null);
     }
   };
 
@@ -147,10 +136,10 @@ export default function SelectDateTimePage() {
               onSelect={handleDateSelect}
               disabled={(date) => {
                 const isPast = date < today;
-                // Don't disable if it's in the availableDates list
                 const isUnavailable = !availableDates.some(availableDate => isSameDay(date, availableDate));
-                return isPast && isUnavailable;
+                return isPast || isUnavailable;
               }}
+              onMonthChange={(month) => fetchSlotsForDate(month)}
               className="rounded-md border"
             />
           </div>
