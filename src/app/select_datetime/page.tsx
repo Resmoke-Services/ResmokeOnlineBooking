@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Calendar } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft } from "lucide-react";
-import { format, parseISO, startOfDay, isSameDay } from "date-fns";
+import { format, parseISO, startOfDay, isSameDay, isAfter, isBefore } from "date-fns";
 import BookingFlowLayout from "@/components/booking-flow-layout";
 import type { AvailabilitySlot } from "@/lib/types";
 
@@ -23,7 +23,7 @@ export default function SelectDateTimePage() {
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    selectedDateTime ? startOfDay(parseISO(selectedDateTime.date)) : today
+    selectedDateTime ? startOfDay(parseISO(selectedDateTime.date)) : undefined
   );
   
   const availableDates = useMemo(() => {
@@ -57,6 +57,7 @@ export default function SelectDateTimePage() {
       
       const slots = await getAvailableSlots(bookingData);
       setAvailability(slots);
+      return slots;
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -64,18 +65,54 @@ export default function SelectDateTimePage() {
         description: error.message || "Could not fetch available time slots.",
       });
       setAvailability([]);
+      return [];
     } finally {
       setIsLoading(false);
     }
   }, [toast, setAvailability, store]);
-
-  // Fetch initial availability for the current month so calendar days are styled correctly.
+  
   useEffect(() => {
-    // On initial load, fetch slots for the pre-selected date (today or from store)
-    if (selectedDate) {
-        fetchSlotsForDate(selectedDate);
-    }
-  // We only want to run this on the initial render, so we pass an empty dependency array.
+    const findAndSetInitialDate = async () => {
+        setIsLoading(true);
+        // If a date is already selected in the store, don't find a new one.
+        if (selectedDateTime) {
+            const storedDate = startOfDay(parseISO(selectedDateTime.date));
+            setSelectedDate(storedDate);
+            fetchSlotsForDate(storedDate);
+            return;
+        }
+
+        const slots = await fetchSlotsForDate(today);
+        const allAvailableDates = Array.from(new Set(slots.map(slot => startOfDay(parseISO(slot.slotStart)))));
+
+        // Find if today is available
+        const todayIsAvailable = allAvailableDates.some(d => isSameDay(d, today));
+
+        if (todayIsAvailable) {
+            setSelectedDate(today);
+        } else {
+            // Find the next available date
+            const futureDates = allAvailableDates
+                .filter(d => isAfter(d, today))
+                .sort((a, b) => a.getTime() - b.getTime());
+            
+            if (futureDates.length > 0) {
+                setSelectedDate(futureDates[0]);
+                // We already have the slots for the month, just need to set the date
+                // The availableTimes memo will recalculate based on the new selectedDate
+            } else {
+                // Handle case where no slots are available at all
+                toast({
+                    variant: "destructive",
+                    title: "No Availability",
+                    description: "There are no available booking slots at this time.",
+                });
+            }
+        }
+        setIsLoading(false);
+    };
+
+    findAndSetInitialDate();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,7 +138,6 @@ export default function SelectDateTimePage() {
     if (date) {
       const newDate = startOfDay(date);
       setSelectedDate(newDate);
-      // Fetch times for the newly selected date
       fetchSlotsForDate(newDate);
     } else {
       setSelectedDate(undefined);
