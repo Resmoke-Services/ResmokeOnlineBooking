@@ -23,7 +23,7 @@ export default function SelectDateTimePage() {
   const today = useMemo(() => startOfDay(new Date()), []);
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    selectedDateTime ? startOfDay(parseISO(selectedDateTime.date)) : undefined
+    selectedDateTime ? startOfDay(parseISO(selectedDateTime.date)) : today
   );
   
   const availableDates = useMemo(() => {
@@ -71,8 +71,12 @@ export default function SelectDateTimePage() {
 
   // Fetch initial availability for the current month so calendar days are styled correctly.
   useEffect(() => {
-    fetchSlotsForDate(new Date());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // On initial load, fetch slots for the pre-selected date (today or from store)
+    if (selectedDate) {
+        fetchSlotsForDate(selectedDate);
+    }
+  // We only want to run this on the initial render, so we pass an empty dependency array.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const availableTimes = useMemo(() => {
