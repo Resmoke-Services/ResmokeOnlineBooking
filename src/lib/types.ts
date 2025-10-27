@@ -55,7 +55,6 @@ export const centurionSuburbs = [
   'Eco-Park Estate',
   'Eldoraigne',
   'Erasmia',
-  'Hennopsmeer',
   'Hennopspark',
   'Heuweloord',
   'Heuwelsig',
@@ -70,7 +69,7 @@ export const centurionSuburbs = [
   'Lyttelton Manor',
   'Midstream',
   'Monavoni',
-  'Pierre van Ryneveld Park',
+  'Pierre van Ryneveld',
   'Raslouw',
   'Rooihuiskraal',
   'Rooihuiskraal Noord',
@@ -79,7 +78,7 @@ export const centurionSuburbs = [
   'Thatchfield',
   'The Reeds',
   'Valhalla',
-  'Wierda Park',
+  'Wierdapark',
   'Zwartkop'
 ];
 export type CenturionSuburb = (typeof centurionSuburbs)[number];
