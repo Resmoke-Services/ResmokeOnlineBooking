@@ -29,13 +29,9 @@ export default function SelectDateTimePage() {
     return Array.from(new Set(dates.map(d => d.toISOString()))).map(iso => new Date(iso));
   }, [availability]);
   
-  const initialDate = useMemo(() => {
-    if (selectedDateTime) return parseISO(selectedDateTime.date);
-    if (availableDates.length > 0) return availableDates[0];
-    return today;
-  }, [selectedDateTime, availableDates, today]);
-
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(initialDate);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    selectedDateTime ? parseISO(selectedDateTime.date) : undefined
+  );
   const [selectedTime, setSelectedTime] = useState<string | null>(selectedDateTime ? selectedDateTime.time : null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,10 +89,10 @@ export default function SelectDateTimePage() {
     }
   }, [toast, setAvailability, store]);
   
-  // On initial load, if availability is empty (e.g. page refresh), fetch for today.
+  // On initial load, if availability is empty (e.g. page refresh), fetch for today to populate calendar.
   useEffect(() => {
     if (availability.length === 0) {
-        fetchSlotsForDate(initialDate);
+        fetchSlotsForDate(new Date());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -151,8 +147,9 @@ export default function SelectDateTimePage() {
               onSelect={handleDateSelect}
               disabled={(date) => {
                 const isPast = date < today;
+                // Don't disable if it's in the availableDates list
                 const isUnavailable = !availableDates.some(availableDate => isSameDay(date, availableDate));
-                return isPast || isUnavailable;
+                return isPast && isUnavailable;
               }}
               className="rounded-md border"
             />
@@ -167,7 +164,7 @@ export default function SelectDateTimePage() {
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
-                {Array.isArray(availableTimes) && availableTimes.length > 0 ? availableTimes.map((time) => (
+                {selectedDate && Array.isArray(availableTimes) && availableTimes.length > 0 ? availableTimes.map((time) => (
                   <Button
                     key={time}
                     variant={selectedTime === time ? "default" : "outline"}
@@ -176,7 +173,7 @@ export default function SelectDateTimePage() {
                     {time}
                   </Button>
                 )) : (
-                  <p className="col-span-3 text-muted-foreground">No available slots for this day.</p>
+                  <p className="col-span-3 text-muted-foreground">{selectedDate ? 'No available slots for this day.' : 'Please select a date to see available times.'}</p>
                 )}
               </div>
             )}
