@@ -188,7 +188,7 @@ export default function SelectDateTimePage() {
             </Button>
             <Button
                 onClick={handleSubmit}
-                disabled={!selectedDate || !selectedTime || isSubmitting}
+                disabled={!selectedDate || !selectedTime || isSubmitting || availableTimes.length === 0}
                 className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 py-2.5 text-base"
             >
                 {isSubmitting ? (
