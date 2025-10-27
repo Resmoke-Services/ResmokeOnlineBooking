@@ -97,8 +97,12 @@ export default function SelectDateTimePage() {
     if (date) {
       const newDate = startOfDay(date);
       setSelectedDate(newDate);
-      setSelectedTime(null);
+      // Fetch times for the newly selected date
+      fetchSlotsForDate(newDate);
+    } else {
+      setSelectedDate(undefined);
     }
+    setSelectedTime(null);
   };
 
   const handleSubmit = () => {
@@ -143,30 +147,32 @@ export default function SelectDateTimePage() {
               className="rounded-md border"
             />
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-medium mb-4">
-              Available Times for {selectedDate ? format(selectedDate, "PPP") : '...'}
-            </h3>
-            {isLoading ? (
-              <div className="flex justify-center items-center h-48">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-2">
-                {selectedDate && Array.isArray(availableTimes) && availableTimes.length > 0 ? availableTimes.map((time) => (
-                  <Button
-                    key={time}
-                    variant={selectedTime === time ? "default" : "outline"}
-                    onClick={() => setSelectedTime(time)}
-                  >
-                    {time}
-                  </Button>
-                )) : (
-                  <p className="col-span-3 text-muted-foreground">{selectedDate ? 'No available slots for this day.' : 'Please select a date to see available times.'}</p>
-                )}
-              </div>
-            )}
-          </div>
+          {selectedDate && (
+            <div className="flex-1">
+              <h3 className="text-lg font-medium mb-4">
+                Available Times for {format(selectedDate, "PPP")}
+              </h3>
+              {isLoading ? (
+                <div className="flex justify-center items-center h-48">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2">
+                  {availableTimes.length > 0 ? availableTimes.map((time) => (
+                    <Button
+                      key={time}
+                      variant={selectedTime === time ? "default" : "outline"}
+                      onClick={() => setSelectedTime(time)}
+                    >
+                      {time}
+                    </Button>
+                  )) : (
+                    <p className="col-span-3 text-muted-foreground">No available slots for this day.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
         <CardFooter className="flex justify-between">
             <Button type="button" variant="outline" onClick={() => router.back()}>
