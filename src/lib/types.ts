@@ -202,7 +202,7 @@ export interface AvailabilitySlot {
   slotStart: string;
 }
 
-export type BookingFor = 'personal' | 'landlord' | 'company' | 'friend';
+export type BookingFor = 'PERSONAL' | 'LANDLORD' | 'COMPANY' | 'FRIEND';
 
 // Represents the structured address data
 export type AddressDetails = {

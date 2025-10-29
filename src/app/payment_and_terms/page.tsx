@@ -49,18 +49,18 @@ export default function PaymentAndTermsPage() {
   const billingOptions = useMemo(() => {
     const options: { value: string, label: string }[] = [];
     switch (store.bookingFor) {
-      case 'personal':
+      case 'PERSONAL':
         options.push({ value: 'personal', label: `Bill Me (${store.name} ${store.surname})` });
         break;
-      case 'landlord':
+      case 'LANDLORD':
         options.push({ value: 'user', label: `Bill Me (${store.name} ${store.surname})` });
         options.push({ value: 'landlord', label: `Bill the Landlord (${store.landlordName} ${store.landlordSurname})` });
         break;
-      case 'company':
+      case 'COMPANY':
         options.push({ value: 'user', label: `Bill Me (${store.name} ${store.surname})` });
         options.push({ value: 'company', label: `Bill the Company (${store.companyName})` });
         break;
-      case 'friend':
+      case 'FRIEND':
         options.push({ value: 'user', label: `Bill Me (${store.name} ${store.surname})` });
         options.push({ value: 'owner', label: `Bill my Friend/Family (${store.ownerName} ${store.ownerSurname})` });
         break;
@@ -71,7 +71,7 @@ export default function PaymentAndTermsPage() {
   }, [store.bookingFor, store.name, store.surname, store.landlordName, store.landlordSurname, store.companyName, store.ownerName, store.ownerSurname]);
   
   useEffect(() => {
-    if (store.bookingFor === 'personal' && billingOptions.length > 0) {
+    if (store.bookingFor === 'PERSONAL' && billingOptions.length > 0) {
       form.setValue('billingInformation', billingOptions[0]?.value ?? '', { shouldValidate: true });
     }
   }, [store.bookingFor, billingOptions, form]);
@@ -196,7 +196,7 @@ export default function PaymentAndTermsPage() {
                         onValueChange={field.onChange}
                         value={field.value ?? ""}
                         className="flex flex-wrap gap-x-8 gap-y-2"
-                        disabled={store.bookingFor === 'personal'}
+                        disabled={store.bookingFor === 'PERSONAL'}
                         name="billingInformation"
                       >
                         {billingOptions.map(bo => (

@@ -26,7 +26,7 @@ interface BookingState extends BookingData {
   resetBooking: () => void;
 }
 
-const initialState: BookingState = {
+const initialState: Omit<BookingState, keyof Omit<BookingData, 'bookingFor'>> = {
   name: '',
   surname: '',
   cellNumber: '',
@@ -34,7 +34,7 @@ const initialState: BookingState = {
   addressDetails: {},
   formattedAddress: '',
   
-  bookingFor: 'personal', // Default value
+  bookingFor: 'PERSONAL', // Default value
   // Landlord
   landlordName: '',
   landlordSurname: '',
@@ -60,25 +60,6 @@ const initialState: BookingState = {
   servicePath: [],
   serviceType: null,
   availability: [],
-
-  // Actions are defined in the store creation, these are just placeholders for the type
-  setBookingFor: () => {},
-  setPersonalDetails: () => {},
-  setAddressDetails: () => {},
-  setLandlordDetails: () => {},
-  setOwnerDetails: () => {},
-  setCompanyDetails: () => {},
-  setItemsToRepair: () => {},
-  setProblemDescriptions: () => {},
-  setPaymentMethods: () => {},
-  setBillingInformation: () => {},
-  setTermsAgreement: () => {},
-  setSelectedDateTime: () => {},
-  setAvailability: () => {},
-  setWebhookConfirmation: () => {},
-  setServicePath: () => {},
-  setServiceType: () => {},
-  resetBooking: () => {},
 };
 
 

@@ -10,28 +10,28 @@ import type { BookingFor } from "@/lib/types";
 
 const bookingTypes = [
   {
-    type: "personal",
+    type: "PERSONAL",
     title: "My Own Equipment",
     description: "The booking is for equipment you personally own.",
     icon: User,
     href: "/booking/details/personal"
   },
   {
-    type: "landlord",
+    type: "LANDLORD",
     title: "The Landlord's Equipment",
     description: "The booking is for equipment in a rental property.",
     icon: Home,
     href: "/booking/details/landlord"
   },
   {
-    type: "company",
+    type: "COMPANY",
     title: "A Company's Equipment",
     description: "The booking is on behalf of a registered company.",
     icon: Building,
     href: "/booking/details/company"
   },
   {
-    type: "friend",
+    type: "FRIEND",
     title: "A Friend or Family's Equipment",
     description: "You are making this booking for someone else.",
     icon: Users2,
