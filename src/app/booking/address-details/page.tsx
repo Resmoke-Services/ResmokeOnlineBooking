@@ -116,7 +116,10 @@ export default function AddressDetailsPage() {
     autocompleteRef.current.addListener("place_changed", () => {
         const place = autocompleteRef.current?.getPlace();
         if (place?.formatted_address) {
-            setValue("streetName", place.formatted_address, { shouldValidate: true });
+            const addressParts = place.formatted_address.split(',');
+            // Extract the first part, which is typically the street address.
+            const streetAddress = addressParts[0].trim();
+            setValue("streetName", streetAddress, { shouldValidate: true });
         }
     });
 
@@ -518,3 +521,5 @@ export default function AddressDetailsPage() {
     </div>
   );
 }
+
+    

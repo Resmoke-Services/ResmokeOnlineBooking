@@ -81,7 +81,7 @@ export default function ServicePage() {
   
   return (
     <BookingFlowLayout>
-      <ServiceSelectionTracker selections={["DAMAGE_REPORT", "APPLIANCES"]} />
+      <ServiceSelectionTracker selections={["DAMAGE REPORT", "APPLIANCES"]} />
       <div className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">APPLIANCE DAMAGE REPORT</h1>
         <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>

@@ -69,7 +69,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
 export default function ServicesDamageReport() {
   return (
      <div className="min-h-screen flex flex-col bg-background text-foreground">
-        <ServiceSelectionTracker selections={["DAMAGE_REPORT"]} />
+        <ServiceSelectionTracker selections={["DAMAGE REPORT"]} />
         <BookingHeader />
         <main className="flex-grow">
             <section id="services" className="py-24">
