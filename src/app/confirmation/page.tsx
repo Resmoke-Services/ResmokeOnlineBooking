@@ -136,7 +136,7 @@ export default function ConfirmationPage() {
 
                     <div className="flex items-start gap-3"><Building2 className="w-5 h-5 text-primary mt-1" />
                         <div>
-                            <h4 className="font-medium">PLACE BOOKED:</h4>
+                            <h4 className="font-medium">TYPE BOOKED:</h4>
                             <ul className="list-disc pl-5 text-muted-foreground">
                                 <li>{confirmationData.serviceType}</li>
                             </ul>

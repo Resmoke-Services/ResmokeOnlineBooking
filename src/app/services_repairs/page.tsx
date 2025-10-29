@@ -71,7 +71,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ems.png?alt=media&token=558c376b-2341-4f72-80af-0f56d2e6eda7",
     imageAlt: "EMS Laser Machine Repair",
     imageHint: "laser machine repair",
-    category: "EMS"
+    category: "ELECTRONICS"
   },
   {
     title: "GATE & GARAGE MOTORS",
@@ -79,7 +79,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_gate_motor.PNG?alt=media&token=b5407a97-d507-4582-9807-a94c71546bd5",
     imageAlt: "Gate and Garage Motor Repair",
     imageHint: "Gate and Garage Motor Repair",
-    category: "GATE"
+    category: "ELECTRONICS"
   },
   {
     title: "ELECTRONICS",

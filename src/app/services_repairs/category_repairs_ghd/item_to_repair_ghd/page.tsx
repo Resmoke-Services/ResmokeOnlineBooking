@@ -31,8 +31,8 @@ import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
 // Base repair items for GHD
 const baseGhdRepairItems = [
-    { id: 'HAIR_STRAIGHTENER', label: 'HAIR STRAIGHTENER', note: undefined },
-    { id: 'HAIR_DRYER', label: 'HAIR DRYER', note: undefined },
+    { id: 'HAIR STRAIGHTENER', label: 'HAIR STRAIGHTENER', note: undefined },
+    { id: 'HAIR DRYER', label: 'HAIR DRYER', note: undefined },
 ] as const;
 
 interface RepairItem {

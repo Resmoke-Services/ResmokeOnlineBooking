@@ -8,6 +8,7 @@ import { CheckCircle } from 'lucide-react';
 import BookingFlowLayout from '@/components/booking-flow-layout';
 import { useBookingStore } from '@/hooks/use-booking-store';
 import type { ServiceType } from '@/lib/types';
+import ServiceSelectionTracker from '@/components/service-selection-tracker';
 
 const serviceOptions = [
   {
@@ -89,6 +90,7 @@ export default function ServicePage() {
   
   return (
     <BookingFlowLayout>
+      <ServiceSelectionTracker selections={["REPAIRS", "ELECTRONICS"]} />
       <div className="text-center mb-16">
         <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground uppercase">GHD REPAIRS</h1>
         <p className="mt-4 text-lg text-muted-foreground animate-zoom-in-out">SELECT AN OPTION</p>
@@ -137,5 +139,3 @@ export default function ServicePage() {
     </BookingFlowLayout>
   );
 }
-
-    
