@@ -33,6 +33,7 @@ import { ChevronLeft, Loader2 } from "lucide-react";
 import { getAvailableSlots } from "@/app/actions/booking-actions";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import BookingFlowLayout from "@/components/booking-flow-layout";
 
 type AddressFormValues = z.infer<typeof addressDetailsSchema>;
 
@@ -414,111 +415,113 @@ export default function AddressDetailsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-4 sm:p-6 md:p-8">
-      <Progress value={40} className="mb-8" />
-      <h2 className="text-2xl font-bold mb-4 text-center">Address Details</h2>
-      <p className="text-center text-muted-foreground mb-8">
-        Where will we be doing the repair?
-      </p>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField control={control} name="propertyType" render={({ field }) => {
-              const { formItemId } = useFormField();
-              return (
-                  <FormItem>
-                      <FormLabel>Property Type</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                              <SelectTrigger id={formItemId} name={field.name}>
-                                  <SelectValue placeholder="Select property type" />
-                              </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                              {propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type === 'OTHER' ? 'Other' : type}</SelectItem>))}
-                          </SelectContent>
-                      </Select>
-                      <FormMessage />
-                  </FormItem>
-              );
-            }}
-          />
+    <BookingFlowLayout>
+      <div className="max-w-2xl mx-auto">
+        <Progress value={40} className="mb-8" />
+        <h2 className="text-2xl font-bold mb-4 text-center">Address Details</h2>
+        <p className="text-center text-muted-foreground mb-8">
+          Where will we be doing the repair?
+        </p>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField control={control} name="propertyType" render={({ field }) => {
+                const { formItemId } = useFormField();
+                return (
+                    <FormItem>
+                        <FormLabel>Property Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                                <SelectTrigger id={formItemId} name={field.name}>
+                                    <SelectValue placeholder="Select property type" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                {propertyTypes.map((type) => (<SelectItem key={type} value={type}>{type === 'OTHER' ? 'Other' : type}</SelectItem>))}
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                    </FormItem>
+                );
+              }}
+            />
 
-          {propertyType && (
-            <>
-              <FormField control={control} name="city" render={({ field }) => {
-                  const { formItemId } = useFormField();
-                  return (
-                      <FormItem>
-                          <FormLabel>City / Area</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                              <FormControl>
-                                  <SelectTrigger id={formItemId} name={field.name}>
-                                      <SelectValue placeholder="Select a city or area" />
-                                  </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                  {cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-                              </SelectContent>
-                          </Select>
-                          <FormMessage />
-                      </FormItem>
-                  );
-                }}
-              />
-
-              {city === 'Other' && (
-                <FormField control={control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City / Area</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg South" autoComplete="address-level2" /></FormControl><FormMessage /></FormItem>)} />
-              )}
-              
-              {city && city !== 'Other' && (
-                <FormField control={control} name="suburb" render={({ field }) => {
+            {propertyType && (
+              <>
+                <FormField control={control} name="city" render={({ field }) => {
                     const { formItemId } = useFormField();
                     return (
                         <FormItem>
-                            <FormLabel>Suburb</FormLabel>
+                            <FormLabel>City / Area</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger id={formItemId} name={field.name}>
-                                        <SelectValue placeholder="Select a suburb" />
+                                        <SelectValue placeholder="Select a city or area" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    {suburbOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                    {cities.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
                         </FormItem>
                     );
-                }} />
-              )}
+                  }}
+                />
 
-              {suburb === 'Other' && (
-                  <FormField control={control} name="otherSuburb" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Rivonia" autoComplete="address-level3" /></FormControl><FormMessage /></FormItem>)} />
-              )}
-              
-              {((city && city !== 'Other' && suburb && suburb !== 'Other') || (city === 'Other')) && renderConditionalFields()}
+                {city === 'Other' && (
+                  <FormField control={control} name="otherCityDescription" render={({ field }) => ( <FormItem><FormLabel>Please Specify City / Area</FormLabel><FormControl><Input {...field} placeholder="e.g., Johannesburg South" autoComplete="address-level2" /></FormControl><FormMessage /></FormItem>)} />
+                )}
+                
+                {city && city !== 'Other' && (
+                  <FormField control={control} name="suburb" render={({ field }) => {
+                      const { formItemId } = useFormField();
+                      return (
+                          <FormItem>
+                              <FormLabel>Suburb</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                  <FormControl>
+                                      <SelectTrigger id={formItemId} name={field.name}>
+                                          <SelectValue placeholder="Select a suburb" />
+                                      </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                      {suburbOptions.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                                  </SelectContent>
+                              </Select>
+                              <FormMessage />
+                          </FormItem>
+                      );
+                  }} />
+                )}
 
-            </>
-          )}
-          
-          <div className="flex justify-between pt-4">
-            <Button type="button" variant="outline" onClick={() => router.back()}>
-              <ChevronLeft className="mr-2 h-4 w-4" /> Back
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                "Next"
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
+                {suburb === 'Other' && (
+                    <FormField control={control} name="otherSuburb" render={({ field }) => ( <FormItem><FormLabel>Please Specify Suburb</FormLabel><FormControl><Input {...field} placeholder="e.g., Rivonia" autoComplete="address-level3" /></FormControl><FormMessage /></FormItem>)} />
+                )}
+                
+                {((city && city !== 'Other' && suburb && suburb !== 'Other') || (city === 'Other')) && renderConditionalFields()}
+
+              </>
+            )}
+            
+            <div className="flex justify-between pt-4">
+              <Button type="button" variant="outline" onClick={() => router.back()}>
+                <ChevronLeft className="mr-2 h-4 w-4" /> Back
+              </Button>
+              <Button type="submit" disabled={isSubmitting || !form.formState.isValid}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Next"
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    </BookingFlowLayout>
   );
 }
 
