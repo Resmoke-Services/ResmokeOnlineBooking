@@ -63,7 +63,7 @@ const serviceCategories: ServiceCategoryCardProps[] = [
     imageUrl: "https://firebasestorage.googleapis.com/v0/b/studio-2610147525-49407.firebasestorage.app/o/resmokeonlinebooking_pwa%2Fimages%2Fservices_repairs%2Fservices_repairs_ghd.PNG?alt=media&token=047a66da-0c76-4f8d-9eb4-746afbea0e53",
     imageAlt: "GHD Straightener Repair",
     imageHint: "GHD Straightener Repair",
-    category: "GHD"
+    category: "ELECTRONICS"
   },
    {
     title: "EMS LASER MACHINES",
