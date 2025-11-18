@@ -27,9 +27,15 @@ const serviceOptions = [
       'Service at your home or office.',
       (
         <span>
-          Assessment fee applies based on location:<br />
+          Callout Fee applies based on location:<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
           &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
+        </span>
+      ),
+      (
+        <span>
+          Damage report Fee:<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R750 (All Items)</span>
         </span>
       ),
       'Full payment shall be made immediately upon completion of the assessment.'
@@ -57,8 +63,8 @@ const serviceOptions = [
       'Drop off at our Centurion workshop.',
        (
         <span>
-          Assessment Fee:<br />
-          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R350 (All Items)</span>
+          Damage report Fee:<br />
+          &nbsp;&nbsp; <span className="text-green-500 font-semibold">R750 (All Items)</span>
         </span>
       ),
       'Full payment shall be made prior to the release of any item from the workshop.'
