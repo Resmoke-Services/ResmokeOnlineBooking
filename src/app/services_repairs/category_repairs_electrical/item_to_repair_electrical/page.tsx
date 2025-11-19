@@ -31,10 +31,8 @@ import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
 // Define a specific list for this category
 const baseElectricalRepairItems = [
-    { id: 'DISTRIBUTION_BOARD', label: 'DISTRIBUTION BOARD (DB)', note: undefined },
-    { id: 'WIRING_FAULT', label: 'WIRING FAULT', note: undefined },
-    { id: 'GENERATOR', label: 'GENERATOR', note: undefined },
-    { id: 'INVERTER', label: 'INVERTER', note: undefined },
+    { id: 'ELECTRICAL WALL PLUGS/SOCKETS', label: 'ELECTRICAL WALL PLUGS/SOCKETS (REPAIR/REPLACEMENT ONLY)', note: undefined },
+    { id: 'WIRING FAULT', label: 'WIRING FAULT (REPAIR/REPLACEMENT ONLY - NOT COC)', note: undefined },
 ] as const;
 
 

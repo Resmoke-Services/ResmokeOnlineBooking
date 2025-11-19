@@ -11,8 +11,8 @@ import type { ServiceType } from '@/lib/types';
 
 const serviceOptions = [
   {
-    type: 'onsite',
-    title: 'On-Site Service',
+    type: 'ON-SITE',
+    title: 'ON-SITE',
     subtitle:
     (
       <span>
@@ -25,13 +25,17 @@ const serviceOptions = [
       'Card/EFT/PayShap Payments accepted.',
       'Service at your home or office.',
       'All major brands and models serviced.',
+      'We do Replacements and NOT New Installations (Contact us for enquiries).',
+      'We Do NOT do Structual Repairs.',
       (
         <span>
           Callout fee applies based on location (Excludes Parts, Labour & Additional Fees):<br />
           &nbsp;&nbsp; <span className="text-green-500 font-semibold">R550 (Centurion Area)</span><br />
-          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span>
-        </span>
-      ),
+          &nbsp;&nbsp; <span className="text-orange-500 font-semibold">R650+ (Outside Centurion Area)</span><br /><br />
+          Cost Breakdown Example: R550 (Callout Fee) + R750 (Parts) + R650 (Labour) = R1950.<br /><br />
+          </span>
+    ),
+      '"While you are here" or non-prebooked items will be charged an additional "While you are here" fee of R250 per item.',
       'Full payment shall be made immediately upon completion of services.'
     ],
     image: {

@@ -32,8 +32,8 @@ import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 // Define a specific list for this category
 const baseElectronicsRepairItems = [
     { id: 'TV', label: 'TV', note: undefined },
-    { id: 'GAME_CONSOLE', label: 'GAME CONSOLE', note: 'e.g., PlayStation, Xbox, Nintendo' },
-    { id: 'DRONE', label: 'DRONE', note: undefined },
+    { id: 'PCB', label: 'PCB', note: undefined },
+    { id: 'GAME CONSOLE', label: 'GAME CONSOLE', note: 'e.g., PlayStation, Xbox, Nintendo' },
     { id: 'REMOTE', label: 'REMOTE', note: undefined },
 ] as const;
 

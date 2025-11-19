@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
 const baseEmsRepairItems = [
-    { id: 'EMS_LASER_MACHINE', label: 'EMS LASER MACHINE', note: 'Specify model in description' },
+    { id: 'EMS LASER MACHINE', label: 'EMS LASER MACHINE', note: 'Specify model in description' },
 ] as const;
 
 interface RepairItem {
@@ -61,7 +61,7 @@ export default function EmsItemToRepairPage() {
   const form = useForm<ItemToRepairFormData>({
     resolver: zodResolver(itemToRepairSchema),
     defaultValues: {
-      items: itemsToRepair.length > 0 ? itemsToRepair : ['EMS_LASER_MACHINE'],
+      items: itemsToRepair,
       descriptions: problemDescriptions,
     },
     mode: 'onChange',

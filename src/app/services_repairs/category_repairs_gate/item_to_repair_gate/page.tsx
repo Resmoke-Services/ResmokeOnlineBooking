@@ -31,10 +31,10 @@ import type { RepairItem as GlobalRepairItem } from "@/lib/types";
 
 // Define a specific list for this category
 const baseGateRepairItems = [
-    { id: 'SLIDING_GATE_MOTOR', label: 'SLIDING GATE MOTOR', note: undefined },
-    { id: 'SWING_GATE_MOTOR', label: 'SWING GATE MOTOR', note: undefined },
-    { id: 'GARAGE_DOOR_MOTOR', label: 'GARAGE DOOR MOTOR', note: undefined },
-    { id: 'INTERCOM_SYSTEM', label: 'INTERCOM SYSTEM', note: undefined },
+    { id: 'SLIDING GATE MOTOR', label: 'SLIDING GATE MOTOR', note: undefined },
+    { id: 'SWING GATE MOTOR', label: 'SWING GATE MOTOR', note: undefined },
+    { id: 'GARAGE DOOR MOTOR', label: 'GARAGE DOOR MOTOR', note: undefined },
+    { id: 'INTERCOM SYSTEM', label: 'INTERCOM SYSTEM', note: undefined },
 ] as const;
 
 
